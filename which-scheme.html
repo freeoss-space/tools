@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Which Theme? — Color Scheme Comparison</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg2: #161b22;
+      --bg3: #21262d;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #7d8590;
+      --accent: #388bfd;
+      --accent-hover: #58a6ff;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 24px 0;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #58a6ff, #bc8cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    header p {
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-size: 15px;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .control-group { display: flex; flex-direction: column; gap: 8px; }
+
+    .control-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Tom Select overrides */
+    .ts-wrapper { max-width: 700px; }
+    .ts-control {
+      background: var(--bg2) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: var(--radius-sm) !important;
+      color: var(--text) !important;
+      padding: 8px 12px !important;
+      min-height: 44px !important;
+    }
+    .ts-control input { color: var(--text) !important; }
+    .ts-control .item {
+      background: var(--bg3) !important;
+      border: 1px solid var(--border) !important;
+      color: var(--text) !important;
+      border-radius: 6px !important;
+      padding: 2px 8px !important;
+    }
+    .ts-dropdown {
+      background: var(--bg2) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: var(--radius-sm) !important;
+      color: var(--text) !important;
+    }
+    .ts-dropdown .option { color: var(--text) !important; padding: 8px 12px !important; }
+    .ts-dropdown .option:hover,
+    .ts-dropdown .option.active { background: var(--bg3) !important; }
+    .ts-dropdown .option.selected { color: var(--accent-hover) !important; }
+    .ts-dropdown .optgroup-header {
+      color: var(--text-muted) !important;
+      font-size: 11px !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.05em !important;
+    }
+    .ts-wrapper.disabled .ts-control { opacity: 0.5 !important; cursor: not-allowed !important; }
+
+    #port-group { transition: opacity 0.2s; }
+    #port-group[hidden] { display: none; }
+
+    .port-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Cards */
+    #cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+      padding-bottom: 60px;
+    }
+
+    .theme-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .theme-card:hover {
+      border-color: #58a6ff44;
+      transform: translateY(-2px);
+    }
+
+    .card-preview {
+      position: relative;
+      aspect-ratio: 16/10;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .card-preview img,
+    .card-preview svg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .card-body { padding: 18px; flex: 1; display: flex; flex-direction: column; gap: 16px; }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    /* Color format toggle */
+    .color-format-toggle {
+      display: flex;
+      gap: 4px;
+      background: var(--bg3);
+      border-radius: 8px;
+      padding: 3px;
+    }
+
+    .fmt-btn {
+      flex: 1;
+      padding: 4px 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.03em;
+    }
+
+    .fmt-btn.active {
+      background: var(--bg2);
+      color: var(--text);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .fmt-btn:hover:not(.active) { color: var(--text); }
+
+    /* Color list */
+    .color-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .color-list::-webkit-scrollbar { width: 4px; }
+    .color-list::-webkit-scrollbar-track { background: transparent; }
+    .color-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .color-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 8px;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+
+    .color-item:hover { background: var(--bg3); }
+
+    .squircle {
+      width: 24px;
+      height: 24px;
+      border-radius: 30%;
+      flex-shrink: 0;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+    }
+
+    .color-name {
+      font-size: 12px;
+      color: var(--text-muted);
+      min-width: 80px;
+      flex-shrink: 0;
+    }
+
+    .color-value {
+      font-size: 12px;
+      font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+      color: var(--text);
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+
+    .color-value:hover { background: var(--bg3); }
+
+    .color-copied {
+      font-size: 10px;
+      color: #3fb950;
+      margin-left: auto;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .color-copied.show { opacity: 1; }
+
+    /* Card actions */
+    .card-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: none;
+      text-align: center;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: var(--accent-hover); }
+
+    .btn-secondary {
+      background: var(--bg3);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover { border-color: #58a6ff88; color: var(--accent-hover); }
+
+    .btn-copied {
+      background: #238636 !important;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--text-muted);
+      grid-column: 1 / -1;
+    }
+
+    .empty-state svg { margin-bottom: 16px; opacity: 0.4; }
+    .empty-state h3 { font-size: 18px; color: var(--text); margin-bottom: 8px; }
+    .empty-state p { font-size: 14px; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #238636;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.2s;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 600px) {
+      #cards-container { grid-template-columns: 1fr; }
+      .card-actions { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Which Theme?</h1>
+      <p>Compare color schemes side by side across your favorite apps</p>
+    </header>
+
+    <div class="controls">
+      <div class="control-group">
+        <label>Color Schemes</label>
+        <select id="theme-select" multiple placeholder="Search and select themes…"></select>
+      </div>
+
+      <div class="control-group" id="port-group" hidden>
+        <label>Port / Application</label>
+        <select id="port-select">
+          <option value="">— Select a port —</option>
+        </select>
+        <p class="port-hint" id="port-hint"></p>
+      </div>
+    </div>
+
+    <div id="cards-container">
+      <div class="empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>
+        </svg>
+        <h3>Select color schemes to get started</h3>
+        <p>Choose one or more themes above to compare them side by side</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+  <script>
+  // ─────────────────────────────────────────────
+  // Data
+  // ─────────────────────────────────────────────
+
+  const ALL_PORTS = {
+    vscode:           { name: "VS Code" },
+    neovim:           { name: "Neovim" },
+    iterm2:           { name: "iTerm2" },
+    jetbrains:        { name: "JetBrains IDEs" },
+    obsidian:         { name: "Obsidian" },
+    "windows-terminal": { name: "Windows Terminal" },
+    alacritty:        { name: "Alacritty" },
+    zed:              { name: "Zed" },
+    helix:            { name: "Helix" },
+    slack:            { name: "Slack" },
+  };
+
+  const THEMES = {
+    catppuccin: {
+      name: "Catppuccin",
+      homepage: "https://github.com/catppuccin/catppuccin",
+      preview: {
+        bg: "#1e1e2e", bg2: "#181825", text: "#cdd6f4", comment: "#6c7086",
+        keyword: "#cba6f7", func: "#89b4fa", string: "#a6e3a1", number: "#fab387",
+        operator: "#89dceb", type: "#f5c2e7", highlight: "#313244",
+      },
+      colors: [
+        { name: "Rosewater", hex: "#f5e0dc" },
+        { name: "Flamingo",  hex: "#f2cdcd" },
+        { name: "Pink",      hex: "#f5c2e7" },
+        { name: "Mauve",     hex: "#cba6f7" },
+        { name: "Red",       hex: "#f38ba8" },
+        { name: "Maroon",    hex: "#eba0ac" },
+        { name: "Peach",     hex: "#fab387" },
+        { name: "Yellow",    hex: "#f9e2af" },
+        { name: "Green",     hex: "#a6e3a1" },
+        { name: "Teal",      hex: "#94e2d5" },
+        { name: "Sky",       hex: "#89dceb" },
+        { name: "Sapphire",  hex: "#74c7ec" },
+        { name: "Blue",      hex: "#89b4fa" },
+        { name: "Lavender",  hex: "#b4befe" },
+        { name: "Text",      hex: "#cdd6f4" },
+        { name: "Subtext 1", hex: "#bac2de" },
+        { name: "Subtext 0", hex: "#a6adc8" },
+        { name: "Overlay 2", hex: "#9399b2" },
+        { name: "Overlay 1", hex: "#7f849c" },
+        { name: "Overlay 0", hex: "#6c7086" },
+        { name: "Surface 2", hex: "#585b70" },
+        { name: "Surface 1", hex: "#45475a" },
+        { name: "Surface 0", hex: "#313244" },
+        { name: "Base",      hex: "#1e1e2e" },
+        { name: "Mantle",    hex: "#181825" },
+        { name: "Crust",     hex: "#11111b" },
+      ],
+      ports: {
+        vscode:             { url: "https://github.com/catppuccin/vscode" },
+        neovim:             { url: "https://github.com/catppuccin/nvim" },
+        iterm2:             { url: "https://github.com/catppuccin/iterm" },
+        jetbrains:          { url: "https://github.com/catppuccin/jetbrains" },
+        obsidian:           { url: "https://github.com/catppuccin/obsidian" },
+        "windows-terminal": { url: "https://github.com/catppuccin/windows-terminal" },
+        alacritty:          { url: "https://github.com/catppuccin/alacritty" },
+        zed:                { url: "https://github.com/catppuccin/zed" },
+        helix:              { url: "https://github.com/catppuccin/helix" },
+        slack:              { url: "https://github.com/catppuccin/slack" },
+      },
+    },
+
+    rosepine: {
+      name: "Rosé Pine",
+      homepage: "https://rosepinetheme.com",
+      preview: {
+        bg: "#191724", bg2: "#1f1d2e", text: "#e0def4", comment: "#6e6a86",
+        keyword: "#eb6f92", func: "#9ccfd8", string: "#f6c177", number: "#ebbcba",
+        operator: "#31748f", type: "#c4a7e7", highlight: "#26233a",
+      },
+      colors: [
+        { name: "Base",           hex: "#191724" },
+        { name: "Surface",        hex: "#1f1d2e" },
+        { name: "Overlay",        hex: "#26233a" },
+        { name: "Muted",          hex: "#6e6a86" },
+        { name: "Subtle",         hex: "#908caa" },
+        { name: "Text",           hex: "#e0def4" },
+        { name: "Love",           hex: "#eb6f92" },
+        { name: "Gold",           hex: "#f6c177" },
+        { name: "Rose",           hex: "#ebbcba" },
+        { name: "Pine",           hex: "#31748f" },
+        { name: "Foam",           hex: "#9ccfd8" },
+        { name: "Iris",           hex: "#c4a7e7" },
+        { name: "Highlight Low",  hex: "#21202e" },
+        { name: "Highlight Med",  hex: "#403d52" },
+        { name: "Highlight High", hex: "#524f67" },
+      ],
+      ports: {
+        vscode:             { url: "https://github.com/rose-pine/vscode" },
+        neovim:             { url: "https://github.com/rose-pine/neovim" },
+        iterm2:             { url: "https://github.com/rose-pine/iterm" },
+        jetbrains:          { url: "https://github.com/rose-pine/jetbrains" },
+        obsidian:           { url: "https://github.com/rose-pine/obsidian" },
+        "windows-terminal": { url: "https://github.com/rose-pine/windows-terminal" },
+        alacritty:          { url: "https://github.com/rose-pine/alacritty" },
+        zed:                { url: "https://github.com/rose-pine/zed" },
+        helix:              { url: "https://github.com/rose-pine/helix" },
+        slack:              { url: "https://github.com/rose-pine/slack" },
+      },
+    },
+
+    dracula: {
+      name: "Dracula",
+      homepage: "https://draculatheme.com",
+      preview: {
+        bg: "#282a36", bg2: "#21222c", text: "#f8f8f2", comment: "#6272a4",
+        keyword: "#ff79c6", func: "#50fa7b", string: "#f1fa8c", number: "#bd93f9",
+        operator: "#ff79c6", type: "#8be9fd", highlight: "#44475a",
+      },
+      colors: [
+        { name: "Background",    hex: "#282a36" },
+        { name: "Current Line",  hex: "#44475a" },
+        { name: "Foreground",    hex: "#f8f8f2" },
+        { name: "Comment",       hex: "#6272a4" },
+        { name: "Cyan",          hex: "#8be9fd" },
+        { name: "Green",         hex: "#50fa7b" },
+        { name: "Orange",        hex: "#ffb86c" },
+        { name: "Pink",          hex: "#ff79c6" },
+        { name: "Purple",        hex: "#bd93f9" },
+        { name: "Red",           hex: "#ff5555" },
+        { name: "Yellow",        hex: "#f1fa8c" },
+      ],
+      ports: {
+        vscode:             { url: "https://github.com/dracula/visual-studio-code" },
+        neovim:             { url: "https://github.com/dracula/vim" },
+        iterm2:             { url: "https://github.com/dracula/iterm" },
+        jetbrains:          { url: "https://github.com/dracula/jetbrains" },
+        obsidian:           { url: "https://github.com/dracula/obsidian" },
+        "windows-terminal": { url: "https://github.com/dracula/windows-terminal" },
+        alacritty:          { url: "https://github.com/dracula/alacritty" },
+        slack:              { url: "https://github.com/dracula/slack" },
+      },
+    },
+
+    nord: {
+      name: "Nord",
+      homepage: "https://www.nordtheme.com",
+      preview: {
+        bg: "#2e3440", bg2: "#272c36", text: "#d8dee9", comment: "#4c566a",
+        keyword: "#81a1c1", func: "#88c0d0", string: "#a3be8c", number: "#b48ead",
+        operator: "#81a1c1", type: "#8fbcbb", highlight: "#3b4252",
+      },
+      colors: [
+        { name: "Nord 0",  hex: "#2e3440" },
+        { name: "Nord 1",  hex: "#3b4252" },
+        { name: "Nord 2",  hex: "#434c5e" },
+        { name: "Nord 3",  hex: "#4c566a" },
+        { name: "Nord 4",  hex: "#d8dee9" },
+        { name: "Nord 5",  hex: "#e5e9f0" },
+        { name: "Nord 6",  hex: "#eceff4" },
+        { name: "Nord 7",  hex: "#8fbcbb" },
+        { name: "Nord 8",  hex: "#88c0d0" },
+        { name: "Nord 9",  hex: "#81a1c1" },
+        { name: "Nord 10", hex: "#5e81ac" },
+        { name: "Nord 11", hex: "#bf616a" },
+        { name: "Nord 12", hex: "#d08770" },
+        { name: "Nord 13", hex: "#ebcb8b" },
+        { name: "Nord 14", hex: "#a3be8c" },
+        { name: "Nord 15", hex: "#b48ead" },
+      ],
+      ports: {
+        vscode:             { url: "https://github.com/nordtheme/visual-studio-code" },
+        neovim:             { url: "https://github.com/nordtheme/vim" },
+        iterm2:             { url: "https://github.com/nordtheme/iterm2" },
+        jetbrains:          { url: "https://github.com/nordtheme/jetbrains" },
+        "windows-terminal": { url: "https://github.com/nordtheme/windows-terminal" },
+        alacritty:          { url: "https://github.com/nordtheme/alacritty" },
+        slack:              { url: "https://github.com/nordtheme/slack" },
+      },
+    },
+
+    atomone: {
+      name: "Atom One Dark",
+      homepage: "https://github.com/atom/one-dark-ui",
+      preview: {
+        bg: "#282c34", bg2: "#21252b", text: "#abb2bf", comment: "#5c6370",
+        keyword: "#c678dd", func: "#61afef", string: "#98c379", number: "#d19a66",
+        operator: "#56b6c2", type: "#e06c75", highlight: "#2c323c",
+      },
+      colors: [
+        { name: "Background",    hex: "#282c34" },
+        { name: "Current Line",  hex: "#2c323c" },
+        { name: "Selection",     hex: "#3e4451" },
+        { name: "Foreground",    hex: "#abb2bf" },
+        { name: "Comment",       hex: "#5c6370" },
+        { name: "Red",           hex: "#e06c75" },
+        { name: "Orange",        hex: "#d19a66" },
+        { name: "Yellow",        hex: "#e5c07b" },
+        { name: "Green",         hex: "#98c379" },
+        { name: "Cyan",          hex: "#56b6c2" },
+        { name: "Blue",          hex: "#61afef" },
+        { name: "Purple",        hex: "#c678dd" },
+      ],
+      ports: {
+        vscode:  { url: "https://github.com/Binaryify/OneDark-Pro" },
+        neovim:  { url: "https://github.com/navarasu/onedark.nvim" },
+        iterm2:  { url: "https://github.com/nathanbuchar/atom-one-dark-terminal" },
+      },
+    },
+
+    ayu: {
+      name: "Ayu",
+      homepage: "https://github.com/ayu-theme",
+      preview: {
+        bg: "#1f2430", bg2: "#191e2a", text: "#cbccc6", comment: "#5c6773",
+        keyword: "#ffa759", func: "#ffd580", string: "#bae67e", number: "#d4bfff",
+        operator: "#f29e74", type: "#5ccfe6", highlight: "#262c3a",
+      },
+      colors: [
+        { name: "Background",  hex: "#1f2430" },
+        { name: "Foreground",  hex: "#cbccc6" },
+        { name: "Comment",     hex: "#5c6773" },
+        { name: "Tag",         hex: "#5ccfe6" },
+        { name: "Func",        hex: "#ffd580" },
+        { name: "Entity",      hex: "#73d0ff" },
+        { name: "String",      hex: "#bae67e" },
+        { name: "Regexp",      hex: "#95e6cb" },
+        { name: "Markup",      hex: "#f28779" },
+        { name: "Keyword",     hex: "#ffa759" },
+        { name: "Special",     hex: "#ffe6b3" },
+        { name: "Constant",    hex: "#d4bfff" },
+        { name: "Operator",    hex: "#f29e74" },
+        { name: "Error",       hex: "#ff3333" },
+        { name: "Accent",      hex: "#ffcc66" },
+      ],
+      ports: {
+        vscode:    { url: "https://github.com/ayu-theme/vscode-ayu" },
+        neovim:    { url: "https://github.com/Shatur/neovim-ayu" },
+        iterm2:    { url: "https://github.com/ayu-theme/ayu-colors" },
+        jetbrains: { url: "https://github.com/ayu-theme/ayu-jetbrains" },
+      },
+    },
+
+    material: {
+      name: "Material",
+      homepage: "https://material-theme.com",
+      preview: {
+        bg: "#263238", bg2: "#1e272c", text: "#eeffff", comment: "#546e7a",
+        keyword: "#89ddff", func: "#82aaff", string: "#c3e88d", number: "#f78c6c",
+        operator: "#89ddff", type: "#c792ea", highlight: "#2e3c43",
+      },
+      colors: [
+        { name: "Background",  hex: "#263238" },
+        { name: "Foreground",  hex: "#eeffff" },
+        { name: "Comments",    hex: "#546e7a" },
+        { name: "Caret",       hex: "#ffcc00" },
+        { name: "Red",         hex: "#ff5370" },
+        { name: "Orange",      hex: "#f78c6c" },
+        { name: "Yellow",      hex: "#ffcb6b" },
+        { name: "Green",       hex: "#c3e88d" },
+        { name: "Cyan",        hex: "#89ddff" },
+        { name: "Blue",        hex: "#82aaff" },
+        { name: "Purple",      hex: "#c792ea" },
+        { name: "Teal",        hex: "#009688" },
+        { name: "Pale Blue",   hex: "#b0c9ff" },
+        { name: "White",       hex: "#ffffff" },
+      ],
+      ports: {
+        vscode:    { url: "https://github.com/material-theme/vsc-material-theme" },
+        neovim:    { url: "https://github.com/marko-cerovac/material.nvim" },
+        iterm2:    { url: "https://github.com/MartinSeeler/iterm2-material-design" },
+        jetbrains: { url: "https://plugins.jetbrains.com/plugin/8006-material-theme-ui" },
+      },
+    },
+
+    monokai: {
+      name: "Monokai",
+      homepage: "https://monokai.pro",
+      preview: {
+        bg: "#272822", bg2: "#1e1f1c", text: "#f8f8f2", comment: "#75715e",
+        keyword: "#f92672", func: "#a6e22e", string: "#e6db74", number: "#ae81ff",
+        operator: "#f92672", type: "#66d9e8", highlight: "#3e3d32",
+      },
+      colors: [
+        { name: "Background",   hex: "#272822" },
+        { name: "Current Line", hex: "#3e3d32" },
+        { name: "Foreground",   hex: "#f8f8f2" },
+        { name: "Comment",      hex: "#75715e" },
+        { name: "Red",          hex: "#f92672" },
+        { name: "Orange",       hex: "#fd971f" },
+        { name: "Yellow",       hex: "#e6db74" },
+        { name: "Green",        hex: "#a6e22e" },
+        { name: "Blue",         hex: "#66d9e8" },
+        { name: "Purple",       hex: "#ae81ff" },
+      ],
+      ports: {
+        vscode:    { url: "https://github.com/taniarascia/new-moon" },
+        neovim:    { url: "https://github.com/sickill/vim-monokai" },
+        iterm2:    { url: "https://github.com/stephenway/monokai.terminal" },
+        jetbrains: { url: "https://plugins.jetbrains.com/plugin/12255-monokai-theme" },
+      },
+    },
+
+    solarized: {
+      name: "Solarized",
+      homepage: "https://ethanschoonover.com/solarized",
+      preview: {
+        bg: "#002b36", bg2: "#00212b", text: "#839496", comment: "#586e75",
+        keyword: "#859900", func: "#268bd2", string: "#2aa198", number: "#d33682",
+        operator: "#2aa198", type: "#b58900", highlight: "#073642",
+      },
+      colors: [
+        { name: "Base 03",  hex: "#002b36" },
+        { name: "Base 02",  hex: "#073642" },
+        { name: "Base 01",  hex: "#586e75" },
+        { name: "Base 00",  hex: "#657b83" },
+        { name: "Base 0",   hex: "#839496" },
+        { name: "Base 1",   hex: "#93a1a1" },
+        { name: "Base 2",   hex: "#eee8d5" },
+        { name: "Base 3",   hex: "#fdf6e3" },
+        { name: "Yellow",   hex: "#b58900" },
+        { name: "Orange",   hex: "#cb4b16" },
+        { name: "Red",      hex: "#dc322f" },
+        { name: "Magenta",  hex: "#d33682" },
+        { name: "Violet",   hex: "#6c71c4" },
+        { name: "Blue",     hex: "#268bd2" },
+        { name: "Cyan",     hex: "#2aa198" },
+        { name: "Green",    hex: "#859900" },
+      ],
+      ports: {
+        vscode:             { url: "https://github.com/ryanolsonx/vscode-solarized-theme" },
+        neovim:             { url: "https://github.com/ishan9299/nvim-solarized-lua" },
+        iterm2:             { url: "https://github.com/altercation/solarized" },
+        jetbrains:          { url: "https://plugins.jetbrains.com/plugin/12153-solarized-themes" },
+        "windows-terminal": { url: "https://github.com/neilotoole/solarized-dark-for-windows-terminal" },
+        alacritty:          { url: "https://github.com/eendroroy/alacritty-theme" },
+        slack:              { url: "https://ethanschoonover.com/solarized" },
+      },
+    },
+  };
+
+  // ─────────────────────────────────────────────
+  // Color Conversion
+  // ─────────────────────────────────────────────
+
+  function hexToRgb(hex) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return { r, g, b };
+  }
+
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; }
+    else {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+        case g: h = ((b - r) / d + 2) / 6; break;
+        case b: h = ((r - g) / d + 4) / 6; break;
+      }
+    }
+    return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
+  }
+
+  function linearize(c) {
+    c /= 255;
+    return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  }
+
+  function hexToOklch(hex) {
+    const { r, g, b } = hexToRgb(hex);
+    const lr = linearize(r), lg = linearize(g), lb = linearize(b);
+    // Linear sRGB → LMS
+    const l = 0.4122214708 * lr + 0.5363325363 * lg + 0.0514459929 * lb;
+    const m = 0.2119034982 * lr + 0.6806995451 * lg + 0.1073969566 * lb;
+    const s = 0.0883024619 * lr + 0.2817188376 * lg + 0.6299787005 * lb;
+    // Cube root
+    const l_ = Math.cbrt(l), m_ = Math.cbrt(m), s_ = Math.cbrt(s);
+    // LMS → OKLab
+    const L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
+    const a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
+    const bv = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+    // OKLab → OKLCH
+    const C = Math.sqrt(a * a + bv * bv);
+    let H = Math.atan2(bv, a) * 180 / Math.PI;
+    if (H < 0) H += 360;
+    return { L: Math.round(L * 1000) / 1000, C: Math.round(C * 1000) / 1000, H: Math.round(H * 10) / 10 };
+  }
+
+  function formatColor(hex, fmt) {
+    if (fmt === 'hex') return hex;
+    const { r, g, b } = hexToRgb(hex);
+    if (fmt === 'rgb') return `rgb(${r}, ${g}, ${b})`;
+    if (fmt === 'hsl') {
+      const { h, s, l } = rgbToHsl(r, g, b);
+      return `hsl(${h}, ${s}%, ${l}%)`;
+    }
+    if (fmt === 'oklch') {
+      const { L, C, H } = hexToOklch(hex);
+      return `oklch(${L} ${C} ${H})`;
+    }
+    return hex;
+  }
+
+  // ─────────────────────────────────────────────
+  // SVG Preview Generator
+  // ─────────────────────────────────────────────
+
+  function generatePreviewSVG(p) {
+    const W = 600, H = 375;
+    const TITLEBAR = 34, SIDEBAR = 44, LINENUM = 38;
+    const contentX = SIDEBAR + LINENUM;
+    const lineH = 22;
+    const startY = TITLEBAR + 14;
+
+    // [indent, [{w, c},...]] or null
+    const codeLines = [
+      { indent: 0,  tokens: [{w:44,c:'keyword'},{w:8,c:'text'},{w:54,c:'func'},{w:8,c:'text'},{w:36,c:'type'},{w:6,c:'text'},{w:6,c:'text'},{w:6,c:'operator'}] },
+      { indent: 16, tokens: [{w:10,c:'comment'},{w:48,c:'comment'},{w:50,c:'comment'}] },
+      { indent: 16, tokens: [{w:36,c:'keyword'},{w:6,c:'text'},{w:40,c:'text'},{w:6,c:'operator'},{w:70,c:'string'},{w:6,c:'operator'},{w:40,c:'text'},{w:6,c:'operator'}] },
+      { indent: 16, tokens: [{w:50,c:'keyword'},{w:6,c:'text'},{w:36,c:'text'},{w:6,c:'operator'}] },
+      { indent: 0,  tokens: [{w:6,c:'text'}] },
+      null,
+      { indent: 0,  tokens: [{w:44,c:'keyword'},{w:6,c:'text'},{w:60,c:'func'},{w:6,c:'text'},{w:6,c:'text'},{w:6,c:'text'},{w:6,c:'operator'}] },
+      { indent: 16, tokens: [{w:36,c:'keyword'},{w:6,c:'text'},{w:6,c:'operator'},{w:36,c:'number'},{w:6,c:'operator'},{w:36,c:'text'},{w:6,c:'operator'},{w:36,c:'number'},{w:6,c:'operator'}] },
+      { indent: 32, tokens: [{w:50,c:'keyword'},{w:6,c:'text'},{w:54,c:'string'},{w:6,c:'operator'}] },
+      { indent: 16, tokens: [{w:6,c:'text'}] },
+      { indent: 0,  tokens: [{w:6,c:'text'}] },
+      null,
+      { indent: 0,  tokens: [{w:50,c:'keyword'},{w:6,c:'text'},{w:44,c:'func'},{w:6,c:'text'},{w:6,c:'text'},{w:6,c:'operator'}] },
+      { indent: 16, tokens: [{w:50,c:'type'},{w:6,c:'text'},{w:60,c:'func'},{w:6,c:'text'},{w:6,c:'text'},{w:6,c:'text'}] },
+      { indent: 0,  tokens: [{w:6,c:'text'}] },
+    ];
+
+    const cmap = { keyword: p.keyword, func: p.func, string: p.string, number: p.number,
+                   operator: p.operator, type: p.type, comment: p.comment, text: p.text };
+
+    let codeRects = '';
+    codeLines.forEach((line, i) => {
+      if (!line) return;
+      const y = startY + i * lineH;
+      let x = contentX + line.indent;
+      line.tokens.forEach(t => {
+        codeRects += `<rect x="${x}" y="${y+5}" width="${t.w}" height="10" rx="2" fill="${cmap[t.c] || p.text}" opacity="0.88"/>`;
+        x += t.w + 5;
+      });
+    });
+
+    let lineNums = '';
+    codeLines.forEach((_, i) => {
+      lineNums += `<text x="${SIDEBAR + LINENUM - 6}" y="${startY + i * lineH + 14}" text-anchor="end" fill="${p.comment}" font-family="monospace" font-size="10.5" opacity="0.7">${i + 1}</text>`;
+    });
+
+    const sideIcons = [0,1,2,3,4].map(i => `
+      <rect x="12" y="${TITLEBAR + 18 + i * 28}" width="20" height="3" rx="1.5" fill="${p.comment}" opacity="0.35"/>
+      <rect x="12" y="${TITLEBAR + 23 + i * 28}" width="13" height="2.5" rx="1.25" fill="${p.comment}" opacity="0.2"/>
+    `).join('');
+
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}">
+      <rect width="${W}" height="${H}" fill="${p.bg}"/>
+      <rect width="${W}" height="${TITLEBAR}" fill="${p.bg2}"/>
+      <circle cx="18" cy="17" r="5.5" fill="#ff5f57"/>
+      <circle cx="34" cy="17" r="5.5" fill="#febc2e"/>
+      <circle cx="50" cy="17" r="5.5" fill="#28c840"/>
+      <text x="${W/2}" y="22" text-anchor="middle" fill="${p.comment}" font-family="sans-serif" font-size="12" opacity="0.7">main.ts — editor</text>
+      <rect width="${SIDEBAR}" height="${H - TITLEBAR}" y="${TITLEBAR}" fill="${p.bg2}" opacity="0.85"/>
+      ${sideIcons}
+      <rect x="${SIDEBAR}" y="${TITLEBAR}" width="${LINENUM}" height="${H - TITLEBAR}" fill="${p.bg}" opacity="0.25"/>
+      <rect x="${SIDEBAR}" y="${startY + 2 * lineH - 3}" width="${W - SIDEBAR}" height="${lineH}" fill="${p.highlight || p.bg2}" opacity="0.55"/>
+      ${lineNums}
+      ${codeRects}
+      <rect x="${contentX + 6}" y="${startY + 3 * lineH + 4}" width="2" height="13" fill="${p.text}" opacity="0.75"/>
+    </svg>`;
+  }
+
+  // ─────────────────────────────────────────────
+  // App State
+  // ─────────────────────────────────────────────
+
+  let selectedThemes = [];
+  let selectedPort = '';
+  let colorFormat = 'hex'; // 'hex' | 'rgb' | 'hsl' | 'oklch'
+
+  // ─────────────────────────────────────────────
+  // Tom Select Initialization
+  // ─────────────────────────────────────────────
+
+  const themeSelect = new TomSelect('#theme-select', {
+    options: Object.entries(THEMES).map(([k, v]) => ({ value: k, text: v.name })),
+    plugins: ['remove_button'],
+    placeholder: 'Search and select themes…',
+    maxItems: null,
+    onChange(val) {
+      selectedThemes = val;
+      updatePortSelect();
+      renderCards();
+    },
+  });
+
+  const portSelectEl = document.getElementById('port-select');
+  const portGroup = document.getElementById('port-group');
+  const portHint = document.getElementById('port-hint');
+
+  portSelectEl.addEventListener('change', () => {
+    selectedPort = portSelectEl.value;
+    renderCards();
+  });
+
+  function updatePortSelect() {
+    portGroup.hidden = selectedThemes.length === 0;
+    portSelectEl.innerHTML = '<option value="">— Select a port —</option>';
+    selectedPort = '';
+
+    if (selectedThemes.length === 0) return;
+
+    // Find all ports from selected themes
+    const portSets = selectedThemes.map(t => new Set(Object.keys(THEMES[t].ports)));
+    const allPortsInAny = new Set(portSets.flatMap(s => [...s]));
+
+    portHint.textContent = '';
+
+    allPortsInAny.forEach(portId => {
+      if (!ALL_PORTS[portId]) return;
+      const missingIn = selectedThemes.filter(t => !THEMES[t].ports[portId]);
+      const opt = document.createElement('option');
+      opt.value = portId;
+      opt.textContent = ALL_PORTS[portId].name;
+      opt.disabled = missingIn.length > 0;
+      if (missingIn.length > 0) {
+        const names = missingIn.map(t => THEMES[t].name).join(', ');
+        opt.textContent += ` (missing: ${names})`;
+      }
+      portSelectEl.appendChild(opt);
+    });
+  }
+
+  // ─────────────────────────────────────────────
+  // Clipboard
+  // ─────────────────────────────────────────────
+
+  function copyText(text) {
+    return navigator.clipboard.writeText(text);
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  // ─────────────────────────────────────────────
+  // Card Rendering
+  // ─────────────────────────────────────────────
+
+  function buildCssVariables(theme) {
+    const lines = theme.colors.map(c => {
+      const name = c.name.toLowerCase().replace(/\s+/g, '-');
+      return `  --color-${name}: ${formatColor(c.hex, colorFormat)};`;
+    });
+    return `:root {\n${lines.join('\n')}\n}`;
+  }
+
+  function renderCard(themeId, portId) {
+    const theme = THEMES[themeId];
+    const portInfo = portId ? theme.ports[portId] : null;
+    const portName = portId ? ALL_PORTS[portId]?.name : '';
+
+    const svgContent = generatePreviewSVG(theme.preview);
+    const svgDataUri = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgContent)}`;
+
+    const colorItems = theme.colors.map((c, idx) => `
+      <div class="color-item">
+        <div class="squircle" style="background:${c.hex}"></div>
+        <span class="color-name">${c.name}</span>
+        <span class="color-value" data-hex="${c.hex}" data-theme="${themeId}" data-idx="${idx}"
+              onclick="handleColorClick(this)">${formatColor(c.hex, colorFormat)}</span>
+        <span class="color-copied" id="copied-${themeId}-${idx}">Copied!</span>
+      </div>
+    `).join('');
+
+    const portUrl = portInfo?.url;
+    const pageUrl = portUrl || theme.homepage;
+    const pageLinkText = portUrl ? `Open ${portName} page` : 'Open homepage';
+
+    return `
+      <div class="theme-card" data-theme-id="${themeId}">
+        <div class="card-preview">
+          <img src="${svgDataUri}" alt="${theme.name} preview" loading="lazy"/>
+        </div>
+        <div class="card-body">
+          <div class="card-title">${theme.name}${portName ? ` <span style="font-weight:400;font-size:14px;color:var(--text-muted)">· ${portName}</span>` : ''}</div>
+
+          <div class="color-format-toggle" data-theme="${themeId}">
+            <button class="fmt-btn ${colorFormat==='hex'?'active':''}" data-fmt="hex" onclick="setFormat('${themeId}',this,'hex')">HEX</button>
+            <button class="fmt-btn ${colorFormat==='rgb'?'active':''}" data-fmt="rgb" onclick="setFormat('${themeId}',this,'rgb')">RGB</button>
+            <button class="fmt-btn ${colorFormat==='hsl'?'active':''}" data-fmt="hsl" onclick="setFormat('${themeId}',this,'hsl')">HSL</button>
+            <button class="fmt-btn ${colorFormat==='oklch'?'active':''}" data-fmt="oklch" onclick="setFormat('${themeId}',this,'oklch')">OKLCH</button>
+          </div>
+
+          <div class="color-list">${colorItems}</div>
+
+          <div class="card-actions">
+            <button class="btn btn-secondary" onclick="copyAllCss('${themeId}', this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              Copy CSS vars
+            </button>
+            <a class="btn btn-primary" href="${pageUrl}" target="_blank" rel="noopener">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+              ${pageLinkText}
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderCards() {
+    const container = document.getElementById('cards-container');
+
+    if (selectedThemes.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>
+          </svg>
+          <h3>Select color schemes to get started</h3>
+          <p>Choose one or more themes above to compare them side by side</p>
+        </div>`;
+      return;
+    }
+
+    if (selectedThemes.length > 0 && !selectedPort) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+          <h3>Now select a port</h3>
+          <p>Choose which application's theme you'd like to compare</p>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = selectedThemes.map(t => renderCard(t, selectedPort)).join('');
+  }
+
+  // ─────────────────────────────────────────────
+  // Interactivity
+  // ─────────────────────────────────────────────
+
+  function handleColorClick(el) {
+    const hex = el.getAttribute('data-hex');
+    const themeId = el.getAttribute('data-theme');
+    const idx = el.getAttribute('data-idx');
+    const value = formatColor(hex, colorFormat);
+    copyText(value).then(() => {
+      const copied = document.getElementById(`copied-${themeId}-${idx}`);
+      if (copied) {
+        copied.classList.add('show');
+        setTimeout(() => copied.classList.remove('show'), 1500);
+      }
+    });
+  }
+
+  function setFormat(themeId, btn, fmt) {
+    // Update global format and re-render all color values on all cards
+    colorFormat = fmt;
+
+    // Update all cards' format toggles + values
+    document.querySelectorAll('.fmt-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.fmt === fmt);
+    });
+
+    document.querySelectorAll('.color-value').forEach(el => {
+      el.textContent = formatColor(el.dataset.hex, fmt);
+    });
+  }
+
+  function copyAllCss(themeId, btn) {
+    const theme = THEMES[themeId];
+    const css = buildCssVariables(theme);
+    copyText(css).then(() => {
+      const orig = btn.innerHTML;
+      btn.innerHTML = '✓ Copied!';
+      btn.classList.add('btn-copied');
+      setTimeout(() => {
+        btn.innerHTML = orig;
+        btn.classList.remove('btn-copied');
+      }, 2000);
+    });
+  }
+
+  // Initial render
+  renderCards();
+  </script>
+</body>
+</html>
