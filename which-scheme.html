@@ -235,6 +235,23 @@
 
     .color-value:hover { background: var(--bg3); }
 
+    .copy-icon {
+      display: flex;
+      align-items: center;
+      padding: 2px 4px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity 0.15s, color 0.15s, background 0.15s;
+      flex-shrink: 0;
+    }
+
+    .color-item:hover .copy-icon { opacity: 1; }
+    .copy-icon:hover { color: var(--text); background: var(--bg3); }
+
     .color-copied {
       font-size: 10px;
       color: #3fb950;
@@ -804,6 +821,11 @@
         <span class="color-name">${c.name}</span>
         <span class="color-value" data-hex="${c.hex}" data-theme="${themeId}" data-idx="${idx}"
               onclick="handleColorClick(this)">${formatColor(c.hex, colorFormat)}</span>
+        <button class="copy-icon" onclick="handleColorClick(this.previousElementSibling)" title="Copy">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+        </button>
         <span class="color-copied" id="copied-${themeId}-${idx}">Copied!</span>
       </div>
     `).join('');
