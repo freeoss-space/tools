@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Which Theme? — Color Scheme Comparison</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
   <style>
     :root {
       --bg: #0d1117;
@@ -301,10 +302,6 @@
 
     .btn-secondary:hover { border-color: #58a6ff88; color: var(--accent-hover); }
 
-    .btn-copied {
-      background: #238636 !important;
-    }
-
     /* Empty state */
     .empty-state {
       text-align: center;
@@ -341,6 +338,189 @@
       #cards-container { grid-template-columns: 1fr; }
       .card-actions { flex-direction: column; }
     }
+
+    /* ── Modal ── */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 24px;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-backdrop[hidden] { display: none; }
+
+    .modal {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 720px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 22px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .modal-header h2 {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+    }
+
+    .modal-close {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 20px;
+      cursor: pointer;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .modal-close:hover { color: var(--text); background: var(--bg3); }
+
+    .modal-body {
+      padding: 20px 22px;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .modal-body .ts-wrapper { max-width: 100%; }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 14px 22px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    /* OS tabs */
+    .os-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--bg3);
+      border-radius: 8px;
+      padding: 3px;
+      align-self: flex-start;
+    }
+
+    .os-tab {
+      padding: 5px 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .os-tab.active {
+      background: var(--bg2);
+      color: var(--text);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .os-tab:hover:not(.active) { color: var(--text); }
+
+    /* Instructions */
+    .instructions {
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .instructions ol {
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .instructions code {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 12px;
+      background: var(--bg3);
+      padding: 1px 5px;
+      border-radius: 4px;
+      color: var(--accent-hover);
+    }
+
+    .instructions kbd {
+      font-family: inherit;
+      font-size: 11px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 6px;
+    }
+
+    /* Code block */
+    .code-block-wrapper {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .code-block-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px;
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .code-filename {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .code-block-wrapper pre[class*="language-"] {
+      margin: 0;
+      border-radius: 0;
+      background: var(--bg) !important;
+      max-height: 320px;
+      overflow-y: auto;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    #port-output { display: flex; flex-direction: column; gap: 16px; }
+    #port-output[hidden] { display: none; }
+
+    .btn-download {
+      background: #238636;
+      color: #fff;
+    }
+
+    .btn-download:hover { background: #2ea043; }
   </style>
 </head>
 <body>
@@ -369,9 +549,53 @@
     </div>
   </div>
 
+  <!-- Create Port Modal -->
+  <div class="modal-backdrop" id="modal-backdrop" hidden>
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Create Port</h2>
+        <button class="modal-close" onclick="closeModal()" aria-label="Close">&#x2715;</button>
+      </div>
+      <div class="modal-body">
+        <div class="control-group">
+          <label>Application</label>
+          <select id="port-picker" placeholder="Search and select an application…"></select>
+        </div>
+        <div id="port-output" hidden>
+          <div id="os-tabs" class="os-tabs"></div>
+          <div id="instructions" class="instructions"></div>
+          <div class="code-block-wrapper">
+            <div class="code-block-header">
+              <span class="code-filename" id="code-filename"></span>
+              <button class="btn btn-secondary" style="padding:3px 10px;font-size:12px" onclick="copyPortCode(this)">Copy</button>
+            </div>
+            <pre id="code-pre" class="line-numbers"><code id="code-content"></code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-download" id="btn-download" onclick="downloadPort()" hidden>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Download
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script>
+  if (Prism.plugins && Prism.plugins.autoloader) {
+    Prism.plugins.autoloader.languages_path = 'https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/';
+  }
+  </script>
   <script>
   // ─────────────────────────────────────────────
   // Data
@@ -802,14 +1026,6 @@
   // Card Rendering
   // ─────────────────────────────────────────────
 
-  function buildCssVariables(theme) {
-    const lines = theme.colors.map(c => {
-      const name = c.name.toLowerCase().replace(/\s+/g, '-');
-      return `  --color-${name}: ${formatColor(c.hex, colorFormat)};`;
-    });
-    return `:root {\n${lines.join('\n')}\n}`;
-  }
-
   function renderCard(themeId) {
     const theme = THEMES[themeId];
     const svgContent = generatePreviewSVG(theme.preview);
@@ -848,11 +1064,11 @@
           <div class="color-list">${colorItems}</div>
 
           <div class="card-actions">
-            <button class="btn btn-secondary" onclick="copyAllCss('${themeId}', this)">
+            <button class="btn btn-secondary" onclick="openPortModal('${themeId}')">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
               </svg>
-              Copy CSS vars
+              Create Port
             </button>
             <a class="btn btn-primary" href="${theme.homepage}" target="_blank" rel="noopener">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -915,19 +1131,528 @@
     });
   }
 
-  function copyAllCss(themeId, btn) {
-    const theme = THEMES[themeId];
-    const css = buildCssVariables(theme);
-    copyText(css).then(() => {
-      const orig = btn.innerHTML;
-      btn.innerHTML = '✓ Copied!';
-      btn.classList.add('btn-copied');
-      setTimeout(() => {
-        btn.innerHTML = orig;
-        btn.classList.remove('btn-copied');
-      }, 2000);
+  // ─────────────────────────────────────────────
+  // Base24 Color Mappings  [base00…base17]
+  // ─────────────────────────────────────────────
+  // Indices: 0=base00 … 15=base0F, 16=base10, 17=base11, 18=base12 … 23=base17
+  const BASE24 = {
+    catppuccin: [
+      '#1e1e2e','#313244','#45475a','#6c7086','#9399b2','#cdd6f4','#f5e0dc','#b4befe',
+      '#f38ba8','#fab387','#f9e2af','#a6e3a1','#89dceb','#89b4fa','#cba6f7','#f5c2e7',
+      '#181825','#11111b','#f38ba8','#f9e2af','#a6e3a1','#94e2d5','#74c7ec','#cba6f7',
+    ],
+    rosepine: [
+      '#191724','#1f1d2e','#26233a','#6e6a86','#908caa','#e0def4','#e0def4','#e0def4',
+      '#eb6f92','#f6c177','#f6c177','#9ccfd8','#9ccfd8','#31748f','#c4a7e7','#ebbcba',
+      '#21202e','#191724','#eb6f92','#f6c177','#9ccfd8','#9ccfd8','#31748f','#c4a7e7',
+    ],
+    dracula: [
+      '#282a36','#44475a','#44475a','#6272a4','#f8f8f2','#f8f8f2','#f8f8f2','#ffffff',
+      '#ff5555','#ffb86c','#f1fa8c','#50fa7b','#8be9fd','#8be9fd','#bd93f9','#ff79c6',
+      '#21222c','#191a21','#ff5555','#f1fa8c','#50fa7b','#8be9fd','#6272a4','#bd93f9',
+    ],
+    nord: [
+      '#2e3440','#3b4252','#434c5e','#4c566a','#d8dee9','#e5e9f0','#eceff4','#eceff4',
+      '#bf616a','#d08770','#ebcb8b','#a3be8c','#88c0d0','#81a1c1','#b48ead','#bf616a',
+      '#282c34','#1e222a','#bf616a','#ebcb8b','#a3be8c','#8fbcbb','#5e81ac','#b48ead',
+    ],
+    atomone: [
+      '#282c34','#2c323c','#3e4451','#5c6370','#abb2bf','#abb2bf','#abb2bf','#abb2bf',
+      '#e06c75','#d19a66','#e5c07b','#98c379','#56b6c2','#61afef','#c678dd','#e06c75',
+      '#21252b','#181a1f','#e06c75','#e5c07b','#98c379','#56b6c2','#61afef','#c678dd',
+    ],
+    ayu: [
+      '#1f2430','#232834','#2d3343','#5c6773','#cbccc6','#cbccc6','#ffe6b3','#ffe6b3',
+      '#f28779','#f29e74','#ffd580','#bae67e','#95e6cb','#73d0ff','#ffa759','#d4bfff',
+      '#191e2a','#141925','#f28779','#ffd580','#bae67e','#5ccfe6','#73d0ff','#d4bfff',
+    ],
+    material: [
+      '#263238','#2e3c43','#314549','#546e7a','#b0bec5','#eeffff','#eeffff','#ffffff',
+      '#ff5370','#f78c6c','#ffcb6b','#c3e88d','#89ddff','#82aaff','#c792ea','#ff5370',
+      '#1e272c','#0f111a','#ff5370','#ffcb6b','#c3e88d','#89ddff','#82aaff','#c792ea',
+    ],
+    monokai: [
+      '#272822','#3e3d32','#49483e','#75715e','#f8f8f2','#f8f8f2','#f8f8f2','#f9f8f5',
+      '#f92672','#fd971f','#e6db74','#a6e22e','#66d9e8','#66d9e8','#ae81ff','#f92672',
+      '#1e1f1c','#19191a','#f92672','#e6db74','#a6e22e','#66d9e8','#66d9e8','#ae81ff',
+    ],
+    solarized: [
+      '#002b36','#073642','#586e75','#657b83','#839496','#93a1a1','#eee8d5','#fdf6e3',
+      '#dc322f','#cb4b16','#b58900','#859900','#2aa198','#268bd2','#6c71c4','#d33682',
+      '#001e26','#00151c','#dc322f','#b58900','#859900','#2aa198','#268bd2','#6c71c4',
+    ],
+  };
+
+  const SLUGS = {
+    catppuccin:'catppuccin', rosepine:'rose-pine', dracula:'dracula', nord:'nord',
+    atomone:'atom-one-dark', ayu:'ayu', material:'material', monokai:'monokai', solarized:'solarized',
+  };
+
+  function makeCtx(themeId) {
+    const h = BASE24[themeId];
+    const ctx = { name: THEMES[themeId].name, slug: SLUGS[themeId] };
+    const keys = ['00','01','02','03','04','05','06','07','08','09','0A','0B','0C','0D','0E','0F','10','11','12','13','14','15','16','17'];
+    h.forEach((hex, i) => {
+      const k = keys[i];
+      const { r, g, b } = hexToRgb(hex);
+      ctx[`h${k}`] = hex.slice(1);
+      ctx[`R${k}`] = r; ctx[`G${k}`] = g; ctx[`B${k}`] = b;
+      ctx[`d${k}r`] = (r/255).toFixed(6); ctx[`d${k}g`] = (g/255).toFixed(6); ctx[`d${k}b`] = (b/255).toFixed(6);
+    });
+    return ctx;
+  }
+
+  // ─────────────────────────────────────────────
+  // Port Definitions
+  // ─────────────────────────────────────────────
+  const PORTS = {
+    kitty: {
+      name: 'Kitty',
+      filename: s => `${s}.conf`,
+      language: 'ini',
+      oses: ['macOS','Linux'],
+      generate: c => `# ${c.name}\n# Generated by Which Theme?\nbackground              #${c.h00}\nforeground              #${c.h05}\nselection_background    #${c.h02}\nselection_foreground    #${c.h05}\nurl_color               #${c.h0D}\ncursor                  #${c.h05}\ncursor_text_color       #${c.h00}\n\n# Black\ncolor0   #${c.h01}\ncolor8   #${c.h02}\n\n# Red\ncolor1   #${c.h08}\ncolor9   #${c.h12}\n\n# Green\ncolor2   #${c.h0B}\ncolor10  #${c.h14}\n\n# Yellow\ncolor3   #${c.h09}\ncolor11  #${c.h13}\n\n# Blue\ncolor4   #${c.h0D}\ncolor12  #${c.h16}\n\n# Magenta\ncolor5   #${c.h0E}\ncolor13  #${c.h17}\n\n# Cyan\ncolor6   #${c.h0C}\ncolor14  #${c.h15}\n\n# White\ncolor7   #${c.h06}\ncolor15  #${c.h07}`,
+      instructions: {
+        macOS: (slug, name) => `<ol>
+          <li>Save <code>${slug}.conf</code> to <code>~/.config/kitty/themes/</code></li>
+          <li>In <code>~/.config/kitty/kitty.conf</code> add: <code>include themes/${slug}.conf</code></li>
+          <li>Reload Kitty with <kbd>Ctrl+Shift+F5</kbd></li>
+        </ol>`,
+        Linux: (slug, name) => `<ol>
+          <li>Save <code>${slug}.conf</code> to <code>~/.config/kitty/themes/</code></li>
+          <li>In <code>~/.config/kitty/kitty.conf</code> add: <code>include themes/${slug}.conf</code></li>
+          <li>Reload Kitty with <kbd>Ctrl+Shift+F5</kbd></li>
+        </ol>`,
+      },
+    },
+
+    alacritty: {
+      name: 'Alacritty',
+      filename: s => `${s}.toml`,
+      language: 'toml',
+      oses: ['macOS','Linux','Windows'],
+      generate: c => `# ${c.name}\n# Generated by Which Theme?\n\n[colors.primary]\nbackground = "#${c.h00}"\nforeground = "#${c.h05}"\n\n[colors.cursor]\ntext   = "#${c.h00}"\ncursor = "#${c.h05}"\n\n[colors.selection]\ntext       = "#${c.h00}"\nbackground = "#${c.h02}"\n\n[colors.normal]\nblack   = "#${c.h01}"\nred     = "#${c.h08}"\ngreen   = "#${c.h0B}"\nyellow  = "#${c.h09}"\nblue    = "#${c.h0D}"\nmagenta = "#${c.h0E}"\ncyan    = "#${c.h0C}"\nwhite   = "#${c.h06}"\n\n[colors.bright]\nblack   = "#${c.h02}"\nred     = "#${c.h12}"\ngreen   = "#${c.h14}"\nyellow  = "#${c.h13}"\nblue    = "#${c.h16}"\nmagenta = "#${c.h17}"\ncyan    = "#${c.h15}"\nwhite   = "#${c.h07}"`,
+      instructions: {
+        macOS: (slug) => `<ol>
+          <li>Create the themes folder: <code>mkdir -p ~/.config/alacritty/themes</code></li>
+          <li>Save <code>${slug}.toml</code> to <code>~/.config/alacritty/themes/</code></li>
+          <li>In <code>~/.config/alacritty/alacritty.toml</code> add:<br><code>[general]<br>import = ["~/.config/alacritty/themes/${slug}.toml"]</code></li>
+          <li>Restart Alacritty</li>
+        </ol>`,
+        Linux: (slug) => `<ol>
+          <li>Create the themes folder: <code>mkdir -p ~/.config/alacritty/themes</code></li>
+          <li>Save <code>${slug}.toml</code> to <code>~/.config/alacritty/themes/</code></li>
+          <li>In <code>~/.config/alacritty/alacritty.toml</code> add:<br><code>[general]<br>import = ["~/.config/alacritty/themes/${slug}.toml"]</code></li>
+          <li>Restart Alacritty</li>
+        </ol>`,
+        Windows: (slug) => `<ol>
+          <li>Save <code>${slug}.toml</code> to <code>%APPDATA%\\alacritty\\themes\\</code></li>
+          <li>In <code>%APPDATA%\\alacritty\\alacritty.toml</code> add:<br><code>[general]<br>import = ["%APPDATA%/alacritty/themes/${slug}.toml"]</code></li>
+          <li>Restart Alacritty</li>
+        </ol>`,
+      },
+    },
+
+    'windows-terminal': {
+      name: 'Windows Terminal',
+      filename: s => `${s}.json`,
+      language: 'json',
+      oses: ['Windows'],
+      generate: c => JSON.stringify({
+        name: c.name,
+        background: `#${c.h00}`,
+        foreground: `#${c.h05}`,
+        black:        `#${c.h01}`,
+        brightBlack:  `#${c.h02}`,
+        red:          `#${c.h08}`,
+        brightRed:    `#${c.h12}`,
+        green:        `#${c.h0B}`,
+        brightGreen:  `#${c.h14}`,
+        yellow:       `#${c.h09}`,
+        brightYellow: `#${c.h13}`,
+        blue:         `#${c.h0D}`,
+        brightBlue:   `#${c.h16}`,
+        purple:       `#${c.h0E}`,
+        brightPurple: `#${c.h17}`,
+        cyan:         `#${c.h0C}`,
+        brightCyan:   `#${c.h15}`,
+        white:        `#${c.h06}`,
+        brightWhite:  `#${c.h07}`,
+      }, null, 2),
+      instructions: {
+        Windows: (slug, name) => `<ol>
+          <li>Open Windows Terminal and press <kbd>Ctrl+,</kbd> to open Settings</li>
+          <li>Click <strong>Open JSON file</strong> in the bottom-left corner</li>
+          <li>Find the <code>"schemes"</code> array and add the downloaded JSON object to it</li>
+          <li>In your profile, set <code>"colorScheme": "${name}"</code></li>
+          <li>Save and close — the theme applies immediately</li>
+        </ol>`,
+      },
+    },
+
+    iterm2: {
+      name: 'iTerm2',
+      filename: s => `${s}.itermcolors`,
+      language: 'markup',
+      oses: ['macOS'],
+      generate: c => {
+        const col = (key, r, g, b) =>
+          `\t<key>${key}</key>\n\t<dict>\n\t\t<key>Color Space</key>\n\t\t<string>sRGB</string>\n\t\t<key>Red Component</key>\n\t\t<real>${r}</real>\n\t\t<key>Green Component</key>\n\t\t<real>${g}</real>\n\t\t<key>Blue Component</key>\n\t\t<real>${b}</real>\n\t</dict>`;
+        const ansi = [
+          col('Ansi 0 Color',  c.d01r,c.d01g,c.d01b), col('Ansi 1 Color',  c.d08r,c.d08g,c.d08b),
+          col('Ansi 2 Color',  c.d0Br,c.d0Bg,c.d0Bb), col('Ansi 3 Color',  c.d09r,c.d09g,c.d09b),
+          col('Ansi 4 Color',  c.d0Dr,c.d0Dg,c.d0Db), col('Ansi 5 Color',  c.d0Er,c.d0Eg,c.d0Eb),
+          col('Ansi 6 Color',  c.d0Cr,c.d0Cg,c.d0Cb), col('Ansi 7 Color',  c.d06r,c.d06g,c.d06b),
+          col('Ansi 8 Color',  c.d02r,c.d02g,c.d02b), col('Ansi 9 Color',  c.d12r,c.d12g,c.d12b),
+          col('Ansi 10 Color', c.d14r,c.d14g,c.d14b), col('Ansi 11 Color', c.d13r,c.d13g,c.d13b),
+          col('Ansi 12 Color', c.d16r,c.d16g,c.d16b), col('Ansi 13 Color', c.d17r,c.d17g,c.d17b),
+          col('Ansi 14 Color', c.d15r,c.d15g,c.d15b), col('Ansi 15 Color', c.d07r,c.d07g,c.d07b),
+          col('Background Color',      c.d00r,c.d00g,c.d00b),
+          col('Bold Color',            c.d06r,c.d06g,c.d06b),
+          col('Cursor Color',          c.d05r,c.d05g,c.d05b),
+          col('Cursor Text Color',     c.d00r,c.d00g,c.d00b),
+          col('Foreground Color',      c.d05r,c.d05g,c.d05b),
+          col('Link Color',            c.d0Dr,c.d0Dg,c.d0Db),
+          col('Selected Text Color',   c.d05r,c.d05g,c.d05b),
+          col('Selection Color',       c.d02r,c.d02g,c.d02b),
+        ].join('\n');
+        return `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n<plist version="1.0">\n<dict>\n${ansi}\n</dict>\n</plist>`;
+      },
+      instructions: {
+        macOS: (slug, name) => `<ol>
+          <li>Open iTerm2 → <strong>Settings</strong> (<kbd>⌘,</kbd>) → <strong>Profiles</strong> → <strong>Colors</strong></li>
+          <li>Click <strong>Color Presets…</strong> → <strong>Import…</strong></li>
+          <li>Select the downloaded <code>${slug}.itermcolors</code> file</li>
+          <li>Click <strong>Color Presets…</strong> again and select <strong>${name}</strong></li>
+        </ol>`,
+      },
+    },
+
+    'vscode-terminal': {
+      name: 'VS Code Terminal',
+      filename: s => `${s}-vscode-terminal.json`,
+      language: 'json',
+      oses: ['macOS','Linux','Windows'],
+      generate: c => JSON.stringify({
+        'workbench.colorCustomizations': {
+          'terminal.background':         `#${c.h00}`,
+          'terminal.foreground':         `#${c.h05}`,
+          'terminalCursor.background':   `#${c.h05}`,
+          'terminalCursor.foreground':   `#${c.h05}`,
+          'terminal.ansiBlack':          `#${c.h01}`,
+          'terminal.ansiRed':            `#${c.h08}`,
+          'terminal.ansiGreen':          `#${c.h0B}`,
+          'terminal.ansiYellow':         `#${c.h09}`,
+          'terminal.ansiBlue':           `#${c.h0D}`,
+          'terminal.ansiMagenta':        `#${c.h0E}`,
+          'terminal.ansiCyan':           `#${c.h0C}`,
+          'terminal.ansiWhite':          `#${c.h06}`,
+          'terminal.ansiBrightBlack':    `#${c.h02}`,
+          'terminal.ansiBrightRed':      `#${c.h12}`,
+          'terminal.ansiBrightGreen':    `#${c.h14}`,
+          'terminal.ansiBrightYellow':   `#${c.h13}`,
+          'terminal.ansiBrightBlue':     `#${c.h16}`,
+          'terminal.ansiBrightMagenta':  `#${c.h17}`,
+          'terminal.ansiBrightCyan':     `#${c.h15}`,
+          'terminal.ansiBrightWhite':    `#${c.h07}`,
+        },
+      }, null, 2),
+      instructions: {
+        macOS:   () => `<ol><li>Open VS Code → <strong>Settings</strong> (<kbd>⌘,</kbd>) → click the <strong>Open Settings (JSON)</strong> icon (top-right)</li><li>Merge the contents into your <code>settings.json</code> (inside the top-level <code>{}</code>)</li><li>Save — terminal colors update immediately</li></ol>`,
+        Linux:   () => `<ol><li>Open VS Code → <strong>Settings</strong> (<kbd>Ctrl+,</kbd>) → click <strong>Open Settings (JSON)</strong></li><li>Merge the contents into your <code>settings.json</code></li><li>Save — terminal colors update immediately</li></ol>`,
+        Windows: () => `<ol><li>Open VS Code → <strong>Settings</strong> (<kbd>Ctrl+,</kbd>) → click <strong>Open Settings (JSON)</strong></li><li>Merge the contents into your <code>settings.json</code></li><li>Save — terminal colors update immediately</li></ol>`,
+      },
+    },
+
+    konsole: {
+      name: 'Konsole',
+      filename: s => `${s}.colorscheme`,
+      language: 'ini',
+      oses: ['Linux'],
+      generate: c => {
+        const rgb = (r,g,b) => `${r},${g},${b}`;
+        return [
+          `[Background]\nColor=${rgb(c.R00,c.G00,c.B00)}`,
+          `[BackgroundFaint]\nColor=${rgb(c.R10,c.G10,c.B10)}`,
+          `[BackgroundIntense]\nColor=${rgb(c.R01,c.G01,c.B01)}`,
+          `[Color0]\nColor=${rgb(c.R01,c.G01,c.B01)}`,
+          `[Color0Faint]\nColor=${rgb(c.R01,c.G01,c.B01)}`,
+          `[Color0Intense]\nColor=${rgb(c.R02,c.G02,c.B02)}`,
+          `[Color1]\nColor=${rgb(c.R08,c.G08,c.B08)}`,
+          `[Color1Faint]\nColor=${rgb(c.R08,c.G08,c.B08)}`,
+          `[Color1Intense]\nColor=${rgb(c.R12,c.G12,c.B12)}`,
+          `[Color2]\nColor=${rgb(c.R0B,c.G0B,c.B0B)}`,
+          `[Color2Faint]\nColor=${rgb(c.R0B,c.G0B,c.B0B)}`,
+          `[Color2Intense]\nColor=${rgb(c.R14,c.G14,c.B14)}`,
+          `[Color3]\nColor=${rgb(c.R09,c.G09,c.B09)}`,
+          `[Color3Faint]\nColor=${rgb(c.R09,c.G09,c.B09)}`,
+          `[Color3Intense]\nColor=${rgb(c.R13,c.G13,c.B13)}`,
+          `[Color4]\nColor=${rgb(c.R0D,c.G0D,c.B0D)}`,
+          `[Color4Faint]\nColor=${rgb(c.R0D,c.G0D,c.B0D)}`,
+          `[Color4Intense]\nColor=${rgb(c.R16,c.G16,c.B16)}`,
+          `[Color5]\nColor=${rgb(c.R0E,c.G0E,c.B0E)}`,
+          `[Color5Faint]\nColor=${rgb(c.R0E,c.G0E,c.B0E)}`,
+          `[Color5Intense]\nColor=${rgb(c.R17,c.G17,c.B17)}`,
+          `[Color6]\nColor=${rgb(c.R0C,c.G0C,c.B0C)}`,
+          `[Color6Faint]\nColor=${rgb(c.R0C,c.G0C,c.B0C)}`,
+          `[Color6Intense]\nColor=${rgb(c.R15,c.G15,c.B15)}`,
+          `[Color7]\nColor=${rgb(c.R06,c.G06,c.B06)}`,
+          `[Color7Faint]\nColor=${rgb(c.R06,c.G06,c.B06)}`,
+          `[Color7Intense]\nColor=${rgb(c.R07,c.G07,c.B07)}`,
+          `[Foreground]\nColor=${rgb(c.R05,c.G05,c.B05)}`,
+          `[ForegroundFaint]\nColor=${rgb(c.R04,c.G04,c.B04)}`,
+          `[ForegroundIntense]\nColor=${rgb(c.R06,c.G06,c.B06)}`,
+          `[General]\nDescription=${c.name}\nOpacity=1\nWallpaper=`,
+        ].join('\n\n');
+      },
+      instructions: {
+        Linux: (slug, name) => `<ol>
+          <li>Save <code>${slug}.colorscheme</code> to <code>~/.local/share/konsole/</code></li>
+          <li>Open Konsole → <strong>Settings</strong> → <strong>Edit Current Profile…</strong> → <strong>Appearance</strong></li>
+          <li>Select <strong>${name}</strong> from the color scheme list and click <strong>OK</strong></li>
+        </ol>`,
+      },
+    },
+
+    'gnome-terminal': {
+      name: 'GNOME Terminal',
+      filename: s => `${s}.sh`,
+      language: 'bash',
+      oses: ['Linux'],
+      generate: c => `#!/usr/bin/env bash
+# ${c.name} for GNOME Terminal
+# Generated by Which Theme?
+set -euo pipefail
+
+PROFILE_NAME="${c.name}"
+UUID=$(uuidgen 2>/dev/null || cat /proc/sys/kernel/random/uuid)
+PROFILE_PATH="/org/gnome/terminal/legacy/profiles:/:${'\${UUID}'}/"
+
+# Register the profile
+CURRENT_LIST=$(dconf read /org/gnome/terminal/legacy/profiles:/list 2>/dev/null || echo "@as []")
+if [ "$CURRENT_LIST" = "@as []" ] || [ -z "$CURRENT_LIST" ]; then
+  dconf write /org/gnome/terminal/legacy/profiles:/list "['${'\${UUID}'}']"
+else
+  TRIMMED="${'\${CURRENT_LIST%]}'}"; NEW="${'\${TRIMMED}'},'${'\${UUID}'}']"
+  dconf write /org/gnome/terminal/legacy/profiles:/list "$NEW"
+fi
+
+dconf write "${'\${PROFILE_PATH}'}visible-name"             "'${'\${PROFILE_NAME}'}'"
+dconf write "${'\${PROFILE_PATH}'}background-color"         "'#${c.h00}'"
+dconf write "${'\${PROFILE_PATH}'}foreground-color"         "'#${c.h05}'"
+dconf write "${'\${PROFILE_PATH}'}bold-color"               "'#${c.h06}'"
+dconf write "${'\${PROFILE_PATH}'}bold-color-same-as-fg"    "false"
+dconf write "${'\${PROFILE_PATH}'}cursor-colors-set"        "true"
+dconf write "${'\${PROFILE_PATH}'}cursor-background-color"  "'#${c.h05}'"
+dconf write "${'\${PROFILE_PATH}'}cursor-foreground-color"  "'#${c.h00}'"
+dconf write "${'\${PROFILE_PATH}'}highlight-colors-set"     "true"
+dconf write "${'\${PROFILE_PATH}'}highlight-background-color" "'#${c.h02}'"
+dconf write "${'\${PROFILE_PATH}'}highlight-foreground-color" "'#${c.h06}'"
+dconf write "${'\${PROFILE_PATH}'}use-theme-colors"         "false"
+dconf write "${'\${PROFILE_PATH}'}use-default-colors"       "false"
+dconf write "${'\${PROFILE_PATH}'}palette" "['#${c.h01}','#${c.h08}','#${c.h0B}','#${c.h09}','#${c.h0D}','#${c.h0E}','#${c.h0C}','#${c.h06}','#${c.h02}','#${c.h12}','#${c.h14}','#${c.h13}','#${c.h16}','#${c.h17}','#${c.h15}','#${c.h07}']"
+
+echo "✓ Installed '${'\${PROFILE_NAME}'}'"
+echo "  Restart GNOME Terminal and select the profile under Preferences → Profiles."`,
+      instructions: {
+        Linux: (slug) => `<ol>
+          <li>Make the script executable: <code>chmod +x ${slug}.sh</code></li>
+          <li>Run it: <code>bash ${slug}.sh</code></li>
+          <li>Restart GNOME Terminal and go to <strong>Preferences → Profiles</strong> to activate it</li>
+        </ol>`,
+      },
+    },
+
+    'xfce4-terminal': {
+      name: 'XFCE4 Terminal',
+      filename: s => `${s}.theme`,
+      language: 'ini',
+      oses: ['Linux'],
+      generate: c => `[Scheme]
+Name=${c.name}
+ColorForeground=#${c.h05}
+ColorBackground=#${c.h00}
+ColorCursor=#${c.h05}
+ColorBold=#${c.h06}
+ColorBoldUseDefault=FALSE
+ColorPalette=#${c.h01};#${c.h08};#${c.h0B};#${c.h09};#${c.h0D};#${c.h0E};#${c.h0C};#${c.h06};#${c.h02};#${c.h12};#${c.h14};#${c.h13};#${c.h16};#${c.h17};#${c.h15};#${c.h07}`,
+      instructions: {
+        Linux: (slug, name) => `<ol>
+          <li>Create the folder: <code>mkdir -p ~/.local/share/xfce4/terminal/colorschemes</code></li>
+          <li>Save <code>${slug}.theme</code> to that folder</li>
+          <li>Open XFCE4 Terminal → <strong>Edit → Preferences → Colors</strong></li>
+          <li>Under <strong>Load Presets</strong>, select <strong>${name}</strong></li>
+        </ol>`,
+      },
+    },
+
+    putty: {
+      name: 'PuTTY',
+      filename: s => `${s}.reg`,
+      language: 'ini',
+      oses: ['Windows'],
+      generate: c => `Windows Registry Editor Version 5.00\n\n[HKEY_CURRENT_USER\\SOFTWARE\\SimonTatham\\PuTTY\\Sessions\\${c.name.replace(/ /g,'%20')}]\n"Colour0"="${c.R05},${c.G05},${c.B05}"\n"Colour1"="${c.R05},${c.G05},${c.B05}"\n"Colour2"="${c.R00},${c.G00},${c.B00}"\n"Colour3"="${c.R01},${c.G01},${c.B01}"\n"Colour4"="${c.R00},${c.G00},${c.B00}"\n"Colour5"="${c.R05},${c.G05},${c.B05}"\n"Colour6"="${c.R01},${c.G01},${c.B01}"\n"Colour7"="${c.R02},${c.G02},${c.B02}"\n"Colour8"="${c.R08},${c.G08},${c.B08}"\n"Colour9"="${c.R12},${c.G12},${c.B12}"\n"Colour10"="${c.R0B},${c.G0B},${c.B0B}"\n"Colour11"="${c.R14},${c.G14},${c.B14}"\n"Colour12"="${c.R09},${c.G09},${c.B09}"\n"Colour13"="${c.R13},${c.G13},${c.B13}"\n"Colour14"="${c.R0D},${c.G0D},${c.B0D}"\n"Colour15"="${c.R16},${c.G16},${c.B16}"\n"Colour16"="${c.R0E},${c.G0E},${c.B0E}"\n"Colour17"="${c.R17},${c.G17},${c.B17}"\n"Colour18"="${c.R0C},${c.G0C},${c.B0C}"\n"Colour19"="${c.R15},${c.G15},${c.B15}"\n"Colour20"="${c.R06},${c.G06},${c.B06}"\n"Colour21"="${c.R07},${c.G07},${c.B07}"`,
+      instructions: {
+        Windows: (slug, name) => `<ol>
+          <li>Save <code>${slug}.reg</code> to your computer</li>
+          <li>Double-click the file to import the registry settings (confirm the UAC prompt)</li>
+          <li>Open PuTTY → under <strong>Saved Sessions</strong>, select <strong>${name}</strong> and click <strong>Load</strong></li>
+        </ol>`,
+      },
+    },
+
+    termux: {
+      name: 'Termux',
+      filename: () => `colors.properties`,
+      language: 'ini',
+      oses: ['Android'],
+      generate: c => `# ${c.name}\n# Generated by Which Theme?\n# Place this file at ~/.termux/colors.properties\n\nforeground=#${c.h05}\nbackground=#${c.h00}\ncursor=#${c.h05}\n\ncolor0=#${c.h01}\ncolor1=#${c.h08}\ncolor2=#${c.h0B}\ncolor3=#${c.h09}\ncolor4=#${c.h0D}\ncolor5=#${c.h0E}\ncolor6=#${c.h0C}\ncolor7=#${c.h06}\ncolor8=#${c.h02}\ncolor9=#${c.h12}\ncolor10=#${c.h14}\ncolor11=#${c.h13}\ncolor12=#${c.h16}\ncolor13=#${c.h17}\ncolor14=#${c.h15}\ncolor15=#${c.h07}`,
+      instructions: {
+        Android: (slug, name) => `<ol>
+          <li>In Termux, run: <code>mkdir -p ~/.termux</code></li>
+          <li>Copy the file to <code>~/.termux/colors.properties</code></li>
+          <li>Apply with: <code>termux-reload-settings</code></li>
+        </ol>`,
+      },
+    },
+
+    slack: {
+      name: 'Slack',
+      filename: s => `${s}-slack-theme.txt`,
+      language: 'none',
+      oses: ['All platforms'],
+      generate: c => `#${c.h00},#${c.h01},#${c.h08},#${c.h05},#${c.h01},#${c.h05},#${c.h0B},#${c.h08}`,
+      instructions: {
+        'All platforms': (slug, name) => `<ol>
+          <li>Open Slack → <strong>Preferences</strong> (<kbd>⌘,</kbd> / <kbd>Ctrl+,</kbd>) → <strong>Themes</strong></li>
+          <li>Scroll to the bottom and click <strong>Create a custom theme</strong></li>
+          <li>Paste the color string into the input field and press <kbd>Enter</kbd></li>
+        </ol>`,
+      },
+    },
+  };
+
+  // ─────────────────────────────────────────────
+  // Modal State & Logic
+  // ─────────────────────────────────────────────
+  let currentThemeId = null;
+  let currentPortId  = null;
+  let currentOs      = null;
+  let portTomSelect  = null;
+
+  function openPortModal(themeId) {
+    currentThemeId = themeId;
+    currentPortId  = null;
+    currentOs      = null;
+    document.getElementById('port-output').hidden = true;
+    document.getElementById('btn-download').hidden = true;
+
+    // Init Tom Select on port picker once
+    if (!portTomSelect) {
+      portTomSelect = new TomSelect('#port-picker', {
+        options: Object.entries(PORTS).map(([k, v]) => ({ value: k, text: v.name })),
+        placeholder: 'Search and select an application…',
+        maxItems: 1,
+        onChange(val) {
+          currentPortId = val || null;
+          currentOs = null;
+          renderPortOutput();
+        },
+      });
+    } else {
+      portTomSelect.clear();
+    }
+
+    document.getElementById('modal-backdrop').hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('modal-backdrop').hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  // Close on backdrop click
+  document.getElementById('modal-backdrop').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeModal();
+  });
+
+  function renderPortOutput() {
+    const out = document.getElementById('port-output');
+    const btn = document.getElementById('btn-download');
+    if (!currentPortId) { out.hidden = true; btn.hidden = true; return; }
+
+    const port = PORTS[currentPortId];
+    const ctx  = makeCtx(currentThemeId);
+
+    // OS tabs
+    const tabsEl = document.getElementById('os-tabs');
+    if (port.oses.length === 1) {
+      tabsEl.hidden = true;
+      currentOs = port.oses[0];
+    } else {
+      tabsEl.hidden = false;
+      if (!currentOs || !port.oses.includes(currentOs)) currentOs = port.oses[0];
+      tabsEl.innerHTML = port.oses.map(os =>
+        `<button class="os-tab ${os === currentOs ? 'active' : ''}" onclick="selectOs('${os}')">${os}</button>`
+      ).join('');
+    }
+
+    // Instructions
+    const instrFn = port.instructions[currentOs];
+    document.getElementById('instructions').innerHTML = instrFn
+      ? instrFn(ctx.slug, ctx.name) : '';
+
+    // Code block
+    const content = port.generate(ctx);
+    const filename = port.filename(ctx.slug);
+    document.getElementById('code-filename').textContent = filename;
+
+    const codeEl = document.getElementById('code-content');
+    codeEl.textContent = content;
+    codeEl.className = `language-${port.language}`;
+    const preEl = document.getElementById('code-pre');
+    preEl.className = `language-${port.language}`;
+
+    if (typeof Prism !== 'undefined') {
+      Prism.highlightElement(codeEl);
+    }
+
+    out.hidden = false;
+    btn.hidden = false;
+  }
+
+  function selectOs(os) {
+    currentOs = os;
+    renderPortOutput();
+  }
+
+  function copyPortCode(btn) {
+    const content = PORTS[currentPortId].generate(makeCtx(currentThemeId));
+    copyText(content).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => { btn.textContent = orig; }, 2000);
     });
   }
+
+  function downloadPort() {
+    if (!currentPortId || !currentThemeId) return;
+    const ctx      = makeCtx(currentThemeId);
+    const content  = PORTS[currentPortId].generate(ctx);
+    const filename = PORTS[currentPortId].filename(ctx.slug);
+    const blob     = new Blob([content], { type: 'text/plain' });
+    const a        = document.createElement('a');
+    a.href         = URL.createObjectURL(blob);
+    a.download     = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  // Escape key closes modal
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
 
   // Initial render
   renderCards();
