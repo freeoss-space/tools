@@ -106,15 +106,6 @@
     }
     .ts-wrapper.disabled .ts-control { opacity: 0.5 !important; cursor: not-allowed !important; }
 
-    #port-group { transition: opacity 0.2s; }
-    #port-group[hidden] { display: none; }
-
-    .port-hint {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
     /* Cards */
     #cards-container {
       display: grid;
@@ -348,13 +339,6 @@
         <select id="theme-select" multiple placeholder="Search and select themes…"></select>
       </div>
 
-      <div class="control-group" id="port-group" hidden>
-        <label>Port / Application</label>
-        <select id="port-select">
-          <option value="">— Select a port —</option>
-        </select>
-        <p class="port-hint" id="port-hint"></p>
-      </div>
     </div>
 
     <div id="cards-container">
@@ -375,19 +359,6 @@
   // ─────────────────────────────────────────────
   // Data
   // ─────────────────────────────────────────────
-
-  const ALL_PORTS = {
-    vscode:           { name: "VS Code" },
-    neovim:           { name: "Neovim" },
-    iterm2:           { name: "iTerm2" },
-    jetbrains:        { name: "JetBrains IDEs" },
-    obsidian:         { name: "Obsidian" },
-    "windows-terminal": { name: "Windows Terminal" },
-    alacritty:        { name: "Alacritty" },
-    zed:              { name: "Zed" },
-    helix:            { name: "Helix" },
-    slack:            { name: "Slack" },
-  };
 
   const THEMES = {
     catppuccin: {
@@ -426,18 +397,6 @@
         { name: "Mantle",    hex: "#181825" },
         { name: "Crust",     hex: "#11111b" },
       ],
-      ports: {
-        vscode:             { url: "https://github.com/catppuccin/vscode" },
-        neovim:             { url: "https://github.com/catppuccin/nvim" },
-        iterm2:             { url: "https://github.com/catppuccin/iterm" },
-        jetbrains:          { url: "https://github.com/catppuccin/jetbrains" },
-        obsidian:           { url: "https://github.com/catppuccin/obsidian" },
-        "windows-terminal": { url: "https://github.com/catppuccin/windows-terminal" },
-        alacritty:          { url: "https://github.com/catppuccin/alacritty" },
-        zed:                { url: "https://github.com/catppuccin/zed" },
-        helix:              { url: "https://github.com/catppuccin/helix" },
-        slack:              { url: "https://github.com/catppuccin/slack" },
-      },
     },
 
     rosepine: {
@@ -465,18 +424,6 @@
         { name: "Highlight Med",  hex: "#403d52" },
         { name: "Highlight High", hex: "#524f67" },
       ],
-      ports: {
-        vscode:             { url: "https://github.com/rose-pine/vscode" },
-        neovim:             { url: "https://github.com/rose-pine/neovim" },
-        iterm2:             { url: "https://github.com/rose-pine/iterm" },
-        jetbrains:          { url: "https://github.com/rose-pine/jetbrains" },
-        obsidian:           { url: "https://github.com/rose-pine/obsidian" },
-        "windows-terminal": { url: "https://github.com/rose-pine/windows-terminal" },
-        alacritty:          { url: "https://github.com/rose-pine/alacritty" },
-        zed:                { url: "https://github.com/rose-pine/zed" },
-        helix:              { url: "https://github.com/rose-pine/helix" },
-        slack:              { url: "https://github.com/rose-pine/slack" },
-      },
     },
 
     dracula: {
@@ -500,16 +447,6 @@
         { name: "Red",           hex: "#ff5555" },
         { name: "Yellow",        hex: "#f1fa8c" },
       ],
-      ports: {
-        vscode:             { url: "https://github.com/dracula/visual-studio-code" },
-        neovim:             { url: "https://github.com/dracula/vim" },
-        iterm2:             { url: "https://github.com/dracula/iterm" },
-        jetbrains:          { url: "https://github.com/dracula/jetbrains" },
-        obsidian:           { url: "https://github.com/dracula/obsidian" },
-        "windows-terminal": { url: "https://github.com/dracula/windows-terminal" },
-        alacritty:          { url: "https://github.com/dracula/alacritty" },
-        slack:              { url: "https://github.com/dracula/slack" },
-      },
     },
 
     nord: {
@@ -538,15 +475,6 @@
         { name: "Nord 14", hex: "#a3be8c" },
         { name: "Nord 15", hex: "#b48ead" },
       ],
-      ports: {
-        vscode:             { url: "https://github.com/nordtheme/visual-studio-code" },
-        neovim:             { url: "https://github.com/nordtheme/vim" },
-        iterm2:             { url: "https://github.com/nordtheme/iterm2" },
-        jetbrains:          { url: "https://github.com/nordtheme/jetbrains" },
-        "windows-terminal": { url: "https://github.com/nordtheme/windows-terminal" },
-        alacritty:          { url: "https://github.com/nordtheme/alacritty" },
-        slack:              { url: "https://github.com/nordtheme/slack" },
-      },
     },
 
     atomone: {
@@ -571,11 +499,6 @@
         { name: "Blue",          hex: "#61afef" },
         { name: "Purple",        hex: "#c678dd" },
       ],
-      ports: {
-        vscode:  { url: "https://github.com/Binaryify/OneDark-Pro" },
-        neovim:  { url: "https://github.com/navarasu/onedark.nvim" },
-        iterm2:  { url: "https://github.com/nathanbuchar/atom-one-dark-terminal" },
-      },
     },
 
     ayu: {
@@ -603,12 +526,6 @@
         { name: "Error",       hex: "#ff3333" },
         { name: "Accent",      hex: "#ffcc66" },
       ],
-      ports: {
-        vscode:    { url: "https://github.com/ayu-theme/vscode-ayu" },
-        neovim:    { url: "https://github.com/Shatur/neovim-ayu" },
-        iterm2:    { url: "https://github.com/ayu-theme/ayu-colors" },
-        jetbrains: { url: "https://github.com/ayu-theme/ayu-jetbrains" },
-      },
     },
 
     material: {
@@ -635,12 +552,6 @@
         { name: "Pale Blue",   hex: "#b0c9ff" },
         { name: "White",       hex: "#ffffff" },
       ],
-      ports: {
-        vscode:    { url: "https://github.com/material-theme/vsc-material-theme" },
-        neovim:    { url: "https://github.com/marko-cerovac/material.nvim" },
-        iterm2:    { url: "https://github.com/MartinSeeler/iterm2-material-design" },
-        jetbrains: { url: "https://plugins.jetbrains.com/plugin/8006-material-theme-ui" },
-      },
     },
 
     monokai: {
@@ -663,12 +574,6 @@
         { name: "Blue",         hex: "#66d9e8" },
         { name: "Purple",       hex: "#ae81ff" },
       ],
-      ports: {
-        vscode:    { url: "https://github.com/taniarascia/new-moon" },
-        neovim:    { url: "https://github.com/sickill/vim-monokai" },
-        iterm2:    { url: "https://github.com/stephenway/monokai.terminal" },
-        jetbrains: { url: "https://plugins.jetbrains.com/plugin/12255-monokai-theme" },
-      },
     },
 
     solarized: {
@@ -697,15 +602,6 @@
         { name: "Cyan",     hex: "#2aa198" },
         { name: "Green",    hex: "#859900" },
       ],
-      ports: {
-        vscode:             { url: "https://github.com/ryanolsonx/vscode-solarized-theme" },
-        neovim:             { url: "https://github.com/ishan9299/nvim-solarized-lua" },
-        iterm2:             { url: "https://github.com/altercation/solarized" },
-        jetbrains:          { url: "https://plugins.jetbrains.com/plugin/12153-solarized-themes" },
-        "windows-terminal": { url: "https://github.com/neilotoole/solarized-dark-for-windows-terminal" },
-        alacritty:          { url: "https://github.com/eendroroy/alacritty-theme" },
-        slack:              { url: "https://ethanschoonover.com/solarized" },
-      },
     },
   };
 
@@ -853,7 +749,6 @@
   // ─────────────────────────────────────────────
 
   let selectedThemes = [];
-  let selectedPort = '';
   let colorFormat = 'hex'; // 'hex' | 'rgb' | 'hsl' | 'oklch'
 
   // ─────────────────────────────────────────────
@@ -867,47 +762,9 @@
     maxItems: null,
     onChange(val) {
       selectedThemes = val;
-      updatePortSelect();
       renderCards();
     },
   });
-
-  const portSelectEl = document.getElementById('port-select');
-  const portGroup = document.getElementById('port-group');
-  const portHint = document.getElementById('port-hint');
-
-  portSelectEl.addEventListener('change', () => {
-    selectedPort = portSelectEl.value;
-    renderCards();
-  });
-
-  function updatePortSelect() {
-    portGroup.hidden = selectedThemes.length === 0;
-    portSelectEl.innerHTML = '<option value="">— Select a port —</option>';
-    selectedPort = '';
-
-    if (selectedThemes.length === 0) return;
-
-    // Find all ports from selected themes
-    const portSets = selectedThemes.map(t => new Set(Object.keys(THEMES[t].ports)));
-    const allPortsInAny = new Set(portSets.flatMap(s => [...s]));
-
-    portHint.textContent = '';
-
-    allPortsInAny.forEach(portId => {
-      if (!ALL_PORTS[portId]) return;
-      const missingIn = selectedThemes.filter(t => !THEMES[t].ports[portId]);
-      const opt = document.createElement('option');
-      opt.value = portId;
-      opt.textContent = ALL_PORTS[portId].name;
-      opt.disabled = missingIn.length > 0;
-      if (missingIn.length > 0) {
-        const names = missingIn.map(t => THEMES[t].name).join(', ');
-        opt.textContent += ` (missing: ${names})`;
-      }
-      portSelectEl.appendChild(opt);
-    });
-  }
 
   // ─────────────────────────────────────────────
   // Clipboard
@@ -936,11 +793,8 @@
     return `:root {\n${lines.join('\n')}\n}`;
   }
 
-  function renderCard(themeId, portId) {
+  function renderCard(themeId) {
     const theme = THEMES[themeId];
-    const portInfo = portId ? theme.ports[portId] : null;
-    const portName = portId ? ALL_PORTS[portId]?.name : '';
-
     const svgContent = generatePreviewSVG(theme.preview);
     const svgDataUri = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgContent)}`;
 
@@ -954,23 +808,19 @@
       </div>
     `).join('');
 
-    const portUrl = portInfo?.url;
-    const pageUrl = portUrl || theme.homepage;
-    const pageLinkText = portUrl ? `Open ${portName} page` : 'Open homepage';
-
     return `
       <div class="theme-card" data-theme-id="${themeId}">
         <div class="card-preview">
           <img src="${svgDataUri}" alt="${theme.name} preview" loading="lazy"/>
         </div>
         <div class="card-body">
-          <div class="card-title">${theme.name}${portName ? ` <span style="font-weight:400;font-size:14px;color:var(--text-muted)">· ${portName}</span>` : ''}</div>
+          <div class="card-title">${theme.name}</div>
 
           <div class="color-format-toggle" data-theme="${themeId}">
-            <button class="fmt-btn ${colorFormat==='hex'?'active':''}" data-fmt="hex" onclick="setFormat('${themeId}',this,'hex')">HEX</button>
-            <button class="fmt-btn ${colorFormat==='rgb'?'active':''}" data-fmt="rgb" onclick="setFormat('${themeId}',this,'rgb')">RGB</button>
-            <button class="fmt-btn ${colorFormat==='hsl'?'active':''}" data-fmt="hsl" onclick="setFormat('${themeId}',this,'hsl')">HSL</button>
-            <button class="fmt-btn ${colorFormat==='oklch'?'active':''}" data-fmt="oklch" onclick="setFormat('${themeId}',this,'oklch')">OKLCH</button>
+            <button class="fmt-btn ${colorFormat==='hex'?'active':''}" data-fmt="hex" onclick="setFormat(this,'hex')">HEX</button>
+            <button class="fmt-btn ${colorFormat==='rgb'?'active':''}" data-fmt="rgb" onclick="setFormat(this,'rgb')">RGB</button>
+            <button class="fmt-btn ${colorFormat==='hsl'?'active':''}" data-fmt="hsl" onclick="setFormat(this,'hsl')">HSL</button>
+            <button class="fmt-btn ${colorFormat==='oklch'?'active':''}" data-fmt="oklch" onclick="setFormat(this,'oklch')">OKLCH</button>
           </div>
 
           <div class="color-list">${colorItems}</div>
@@ -982,11 +832,11 @@
               </svg>
               Copy CSS vars
             </button>
-            <a class="btn btn-primary" href="${pageUrl}" target="_blank" rel="noopener">
+            <a class="btn btn-primary" href="${theme.homepage}" target="_blank" rel="noopener">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
               </svg>
-              ${pageLinkText}
+              Open homepage
             </a>
           </div>
         </div>
@@ -1009,19 +859,7 @@
       return;
     }
 
-    if (selectedThemes.length > 0 && !selectedPort) {
-      container.innerHTML = `
-        <div class="empty-state">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <polyline points="9 18 15 12 9 6"/>
-          </svg>
-          <h3>Now select a port</h3>
-          <p>Choose which application's theme you'd like to compare</p>
-        </div>`;
-      return;
-    }
-
-    container.innerHTML = selectedThemes.map(t => renderCard(t, selectedPort)).join('');
+    container.innerHTML = selectedThemes.map(t => renderCard(t)).join('');
   }
 
   // ─────────────────────────────────────────────
@@ -1042,8 +880,7 @@
     });
   }
 
-  function setFormat(themeId, btn, fmt) {
-    // Update global format and re-render all color values on all cards
+  function setFormat(btn, fmt) {
     colorFormat = fmt;
 
     // Update all cards' format toggles + values
