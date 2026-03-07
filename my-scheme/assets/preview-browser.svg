@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 375">
+  <!-- Page background -->
+  <rect width="600" height="375" fill="#1e1e2e"/>
+
+  <!-- ── Browser chrome ── -->
+  <!-- Tab bar -->
+  <rect width="600" height="30" fill="#181825"/>
+  <!-- Active tab -->
+  <rect x="0" y="4" width="160" height="26" rx="6" fill="#313244"/>
+  <!-- Tab favicon placeholder -->
+  <rect x="10" y="13" width="10" height="10" rx="2" fill="#89b4fa" opacity="0.7"/>
+  <rect x="26" y="16" width="80" height="7" rx="2" fill="#a6adc8" opacity="0.6"/>
+  <!-- Tab close -->
+  <text x="146" y="21" font-family="sans-serif" font-size="10" fill="#6c7086">✕</text>
+  <!-- Inactive tab -->
+  <rect x="166" y="8" width="120" height="20" rx="4" fill="#181825"/>
+  <rect x="174" y="14" width="70" height="6" rx="2" fill="#6c7086" opacity="0.5"/>
+  <!-- New tab button -->
+  <text x="294" y="21" font-family="sans-serif" font-size="14" fill="#6c7086">+</text>
+
+  <!-- Navigation bar -->
+  <rect width="600" height="36" y="30" fill="#313244"/>
+  <!-- Back / Forward / Refresh -->
+  <text x="12" y="53" font-family="sans-serif" font-size="14" fill="#6c7086">←</text>
+  <text x="30" y="53" font-family="sans-serif" font-size="14" fill="#45475a">→</text>
+  <text x="50" y="53" font-family="sans-serif" font-size="14" fill="#6c7086">↻</text>
+  <!-- URL bar -->
+  <rect x="72" y="37" width="420" height="22" rx="11" fill="#1e1e2e"/>
+  <!-- Lock icon -->
+  <rect x="84" y="44" width="6" height="6" rx="1" fill="#a6e3a1" opacity="0.7"/>
+  <text x="96" y="53" font-family="monospace" font-size="10" fill="#6c7086">localhost:5173/my-scheme</text>
+  <!-- Extensions -->
+  <rect x="500" y="40" width="14" height="14" rx="3" fill="#45475a" opacity="0.6"/>
+  <rect x="520" y="40" width="14" height="14" rx="3" fill="#45475a" opacity="0.6"/>
+  <rect x="540" y="40" width="14" height="14" rx="3" fill="#45475a" opacity="0.6"/>
+  <!-- Menu -->
+  <rect x="563" y="42" width="4" height="4" rx="1" fill="#6c7086"/>
+  <rect x="570" y="42" width="4" height="4" rx="1" fill="#6c7086"/>
+  <rect x="577" y="42" width="4" height="4" rx="1" fill="#6c7086"/>
+
+  <!-- Bookmarks bar -->
+  <rect width="600" height="24" y="66" fill="#313244" opacity="0.7"/>
+  <rect x="10" y="72" width="55" height="10" rx="3" fill="#6c7086" opacity="0.4"/>
+  <rect x="73" y="72" width="70" height="10" rx="3" fill="#6c7086" opacity="0.4"/>
+  <rect x="151" y="72" width="45" height="10" rx="3" fill="#6c7086" opacity="0.4"/>
+  <rect x="204" y="72" width="80" height="10" rx="3" fill="#6c7086" opacity="0.4"/>
+
+  <!-- ── Webpage content ── -->
+  <!-- Nav bar -->
+  <rect x="0" y="90" width="600" height="44" fill="#313244"/>
+  <!-- Logo -->
+  <rect x="16" y="101" width="24" height="24" rx="4" fill="#89b4fa" opacity="0.8"/>
+  <rect x="48" y="107" width="60" height="10" rx="2" fill="#cdd6f4" opacity="0.7"/>
+  <!-- Nav links -->
+  <rect x="180" y="109" width="40" height="8" rx="2" fill="#a6adc8" opacity="0.5"/>
+  <rect x="230" y="109" width="50" height="8" rx="2" fill="#a6adc8" opacity="0.5"/>
+  <rect x="290" y="109" width="45" height="8" rx="2" fill="#a6adc8" opacity="0.5"/>
+  <rect x="345" y="109" width="40" height="8" rx="2" fill="#a6adc8" opacity="0.5"/>
+  <!-- CTA button -->
+  <rect x="500" y="101" width="84" height="26" rx="13" fill="#89b4fa"/>
+  <rect x="516" y="109" width="52" height="8" rx="2" fill="#1e1e2e" opacity="0.8"/>
+
+  <!-- Hero section -->
+  <rect x="0" y="134" width="600" height="106" fill="#1e1e2e"/>
+  <!-- Hero headline -->
+  <rect x="80" y="150" width="260" height="18" rx="4" fill="#cdd6f4" opacity="0.85"/>
+  <rect x="80" y="174" width="200" height="18" rx="4" fill="#cdd6f4" opacity="0.6"/>
+  <!-- Hero subtext -->
+  <rect x="80" y="200" width="280" height="8" rx="2" fill="#6c7086" opacity="0.7"/>
+  <rect x="80" y="213" width="240" height="8" rx="2" fill="#6c7086" opacity="0.5"/>
+  <!-- Hero buttons -->
+  <rect x="80" y="226" width="100" height="28" rx="14" fill="#89b4fa"/>
+  <rect x="91" y="234" width="80" height="10" rx="3" fill="#1e1e2e" opacity="0.8"/>
+  <rect x="192" y="226" width="100" height="28" rx="14" fill="none" stroke="#45475a" stroke-width="1.5"/>
+  <rect x="202" y="234" width="80" height="10" rx="3" fill="#cdd6f4" opacity="0.5"/>
+  <!-- Hero illustration -->
+  <rect x="380" y="140" width="180" height="94" rx="8" fill="#313244" opacity="0.6"/>
+  <rect x="396" y="154" width="80" height="8" rx="2" fill="#89b4fa" opacity="0.4"/>
+  <rect x="396" y="168" width="148" height="6" rx="2" fill="#6c7086" opacity="0.3"/>
+  <rect x="396" y="180" width="120" height="6" rx="2" fill="#6c7086" opacity="0.3"/>
+  <rect x="396" y="192" width="60" height="20" rx="4" fill="#cba6f7" opacity="0.4"/>
+  <rect x="462" y="192" width="60" height="20" rx="4" fill="#6c7086" opacity="0.3"/>
+
+  <!-- Cards section -->
+  <rect x="0" y="240" width="600" height="135" fill="#181825"/>
+  <!-- Section label -->
+  <rect x="24" y="252" width="120" height="10" rx="3" fill="#cdd6f4" opacity="0.5"/>
+  <!-- Card 1 -->
+  <rect x="24" y="270" width="168" height="90" rx="8" fill="#313244"/>
+  <rect x="24" y="270" width="168" height="32" rx="8" fill="#45475a" opacity="0.6"/>
+  <rect x="24" y="290" width="168" height="12" fill="#45475a" opacity="0.6"/>
+  <rect x="36" y="312" width="80" height="7" rx="2" fill="#cdd6f4" opacity="0.6"/>
+  <rect x="36" y="324" width="110" height="6" rx="2" fill="#6c7086" opacity="0.4"/>
+  <rect x="36" y="336" width="60" height="16" rx="8" fill="#89b4fa" opacity="0.7"/>
+  <!-- Card 2 -->
+  <rect x="208" y="270" width="168" height="90" rx="8" fill="#313244"/>
+  <rect x="208" y="270" width="168" height="32" rx="8" fill="#cba6f7" opacity="0.3"/>
+  <rect x="208" y="290" width="168" height="12" fill="#cba6f7" opacity="0.2"/>
+  <rect x="220" y="312" width="80" height="7" rx="2" fill="#cdd6f4" opacity="0.6"/>
+  <rect x="220" y="324" width="110" height="6" rx="2" fill="#6c7086" opacity="0.4"/>
+  <rect x="220" y="336" width="60" height="16" rx="8" fill="#cba6f7" opacity="0.7"/>
+  <!-- Card 3 -->
+  <rect x="392" y="270" width="184" height="90" rx="8" fill="#313244"/>
+  <rect x="392" y="270" width="184" height="32" rx="8" fill="#a6e3a1" opacity="0.2"/>
+  <rect x="392" y="290" width="184" height="12" fill="#a6e3a1" opacity="0.15"/>
+  <rect x="404" y="312" width="80" height="7" rx="2" fill="#cdd6f4" opacity="0.6"/>
+  <rect x="404" y="324" width="110" height="6" rx="2" fill="#6c7086" opacity="0.4"/>
+  <rect x="404" y="336" width="60" height="16" rx="8" fill="#a6e3a1" opacity="0.7"/>
+</svg>

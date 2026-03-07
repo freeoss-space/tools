@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 375">
+  <!-- Background -->
+  <rect width="600" height="375" fill="#1e1e2e"/>
+
+  <!-- ── Left ribbon (icon strip) ── -->
+  <rect width="36" height="375" fill="#181825"/>
+  <!-- Ribbon icons -->
+  <rect x="10" y="18" width="16" height="16" rx="3" fill="#6c7086" opacity="0.5"/>
+  <rect x="10" y="42" width="16" height="16" rx="3" fill="#6c7086" opacity="0.3"/>
+  <rect x="10" y="66" width="16" height="16" rx="3" fill="#6c7086" opacity="0.3"/>
+  <rect x="10" y="90" width="16" height="16" rx="3" fill="#6c7086" opacity="0.3"/>
+  <!-- Bottom ribbon icons -->
+  <rect x="10" y="313" width="16" height="16" rx="3" fill="#6c7086" opacity="0.3"/>
+  <rect x="10" y="337" width="16" height="16" rx="3" fill="#6c7086" opacity="0.3"/>
+  <rect x="10" y="355" width="16" height="16" rx="3" fill="#89b4fa" opacity="0.5"/>
+
+  <!-- ── File explorer sidebar ── -->
+  <rect x="36" y="0" width="160" height="375" fill="#313244" opacity="0.6"/>
+  <!-- Sidebar header -->
+  <rect x="36" y="0" width="160" height="34" fill="#313244"/>
+  <rect x="48" y="12" width="80" height="10" rx="3" fill="#cdd6f4" opacity="0.6"/>
+  <!-- Search bar -->
+  <rect x="44" y="42" width="144" height="22" rx="4" fill="#1e1e2e" opacity="0.6"/>
+  <rect x="54" y="49" width="70" height="7" rx="2" fill="#6c7086" opacity="0.4"/>
+
+  <!-- Folder tree -->
+  <!-- Vault root -->
+  <text x="48" y="86" font-family="sans-serif" font-size="10" fill="#a6adc8" opacity="0.9">▾ My Vault</text>
+  <!-- Folder: Notes -->
+  <text x="60" y="104" font-family="sans-serif" font-size="10" fill="#a6adc8" opacity="0.7">▾ Notes</text>
+  <rect x="72" y="110" width="1" height="56" fill="#45475a" opacity="0.4"/>
+  <!-- Active file highlight -->
+  <rect x="64" y="112" width="128" height="18" rx="3" fill="#89b4fa" opacity="0.15"/>
+  <text x="78" y="124" font-family="sans-serif" font-size="10" fill="#89b4fa" opacity="0.9">📝 Color Theory</text>
+  <text x="78" y="142" font-family="sans-serif" font-size="10" fill="#a6adc8" opacity="0.6">  Daily Note</text>
+  <text x="78" y="158" font-family="sans-serif" font-size="10" fill="#a6adc8" opacity="0.6">  Ideas</text>
+  <text x="78" y="174" font-family="sans-serif" font-size="10" fill="#a6adc8" opacity="0.6">  References</text>
+  <!-- Folder: Projects -->
+  <text x="60" y="194" font-family="sans-serif" font-size="10" fill="#a6adc8" opacity="0.7">▸ Projects</text>
+  <!-- Folder: Resources -->
+  <text x="60" y="212" font-family="sans-serif" font-size="10" fill="#a6adc8" opacity="0.7">▸ Resources</text>
+  <!-- Folder: Templates -->
+  <text x="60" y="230" font-family="sans-serif" font-size="10" fill="#a6adc8" opacity="0.7">▸ Templates</text>
+
+  <!-- ── Main editor area ── -->
+  <rect x="196" y="0" width="404" height="375" fill="#1e1e2e"/>
+  <!-- Tab bar -->
+  <rect x="196" y="0" width="404" height="34" fill="#313244"/>
+  <!-- Active tab -->
+  <rect x="196" y="0" width="150" height="34" fill="#1e1e2e"/>
+  <rect x="208" y="11" width="10" height="10" rx="2" fill="#89b4fa" opacity="0.6"/>
+  <rect x="224" y="14" width="80" height="8" rx="2" fill="#cdd6f4" opacity="0.7"/>
+  <!-- Inactive tab -->
+  <rect x="354" y="6" width="120" height="22" rx="4" fill="#313244"/>
+  <rect x="362" y="13" width="70" height="7" rx="2" fill="#6c7086" opacity="0.5"/>
+  <!-- Toolbar -->
+  <rect x="196" y="34" width="404" height="28" fill="#313244" opacity="0.6"/>
+  <rect x="206" y="42" width="10" height="10" rx="2" fill="#6c7086" opacity="0.4"/>
+  <rect x="222" y="44" width="8" height="8" rx="1" fill="#6c7086" opacity="0.4"/>
+  <rect x="236" y="44" width="8" height="8" rx="1" fill="#6c7086" opacity="0.4"/>
+  <rect x="250" y="44" width="8" height="8" rx="1" fill="#6c7086" opacity="0.4"/>
+  <line x1="268" y1="38" x2="268" y2="58" stroke="#45475a" stroke-width="1"/>
+  <rect x="276" y="44" width="8" height="8" rx="1" fill="#6c7086" opacity="0.4"/>
+  <rect x="290" y="44" width="8" height="8" rx="1" fill="#6c7086" opacity="0.4"/>
+
+  <!-- Editor content (markdown) -->
+  <!-- H1 heading -->
+  <rect x="218" y="80" width="220" height="16" rx="3" fill="#89b4fa" opacity="0.85"/>
+
+  <!-- Paragraph text -->
+  <rect x="218" y="108" width="360" height="8" rx="2" fill="#cdd6f4" opacity="0.55"/>
+  <rect x="218" y="122" width="340" height="8" rx="2" fill="#cdd6f4" opacity="0.55"/>
+  <rect x="218" y="136" width="280" height="8" rx="2" fill="#cdd6f4" opacity="0.55"/>
+
+  <!-- H2 subheading -->
+  <rect x="218" y="160" width="140" height="12" rx="3" fill="#cba6f7" opacity="0.8"/>
+
+  <!-- Bulleted list -->
+  <circle cx="226" cy="186" r="3" fill="#6c7086" opacity="0.6"/>
+  <rect x="238" y="182" width="200" height="8" rx="2" fill="#cdd6f4" opacity="0.5"/>
+  <circle cx="226" cy="202" r="3" fill="#6c7086" opacity="0.6"/>
+  <rect x="238" y="198" width="240" height="8" rx="2" fill="#cdd6f4" opacity="0.5"/>
+  <circle cx="226" cy="218" r="3" fill="#6c7086" opacity="0.6"/>
+  <rect x="238" y="214" width="180" height="8" rx="2" fill="#cdd6f4" opacity="0.5"/>
+
+  <!-- Callout / blockquote -->
+  <rect x="218" y="236" width="360" height="56" rx="6" fill="#89b4fa" opacity="0.06" stroke="#89b4fa" stroke-width="1.5" stroke-opacity="0.3"/>
+  <rect x="218" y="236" width="4" height="56" rx="2" fill="#89b4fa" opacity="0.6"/>
+  <rect x="230" y="246" width="80" height="8" rx="2" fill="#89b4fa" opacity="0.7"/>
+  <rect x="230" y="260" width="300" height="7" rx="2" fill="#cdd6f4" opacity="0.45"/>
+  <rect x="230" y="274" width="260" height="7" rx="2" fill="#cdd6f4" opacity="0.35"/>
+
+  <!-- Inline code block -->
+  <rect x="218" y="306" width="360" height="44" rx="6" fill="#313244"/>
+  <rect x="218" y="306" width="360" height="18" rx="6" fill="#45475a" opacity="0.6"/>
+  <rect x="218" y="312" width="360" height="6" fill="#45475a" opacity="0.6"/>
+  <rect x="234" y="308" width="60" height="8" rx="2" fill="#6c7086" opacity="0.6"/>
+  <!-- Code content -->
+  <rect x="230" y="328" width="36" height="8" rx="2" fill="#cba6f7" opacity="0.8"/>
+  <rect x="272" y="328" width="8" height="8" rx="2" fill="#cdd6f4" opacity="0.7"/>
+  <rect x="286" y="328" width="60" height="8" rx="2" fill="#a6e3a1" opacity="0.8"/>
+  <rect x="352" y="328" width="8" height="8" rx="2" fill="#cdd6f4" opacity="0.7"/>
+  <rect x="366" y="328" width="40" height="8" rx="2" fill="#89dceb" opacity="0.8"/>
+
+  <!-- Status bar -->
+  <rect x="196" y="355" width="404" height="20" fill="#313244"/>
+  <rect x="206" y="361" width="60" height="8" rx="2" fill="#6c7086" opacity="0.5"/>
+  <rect x="500" y="361" width="40" height="8" rx="2" fill="#6c7086" opacity="0.4"/>
+  <rect x="548" y="361" width="44" height="8" rx="2" fill="#89b4fa" opacity="0.5"/>
+</svg>

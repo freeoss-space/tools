@@ -1,28 +1,59 @@
 # My Scheme
 
-## Description
+Generate your own color scheme with a color picker, live previews across multiple applications, and export as CSS custom properties or ports for your favorite tools.
 
-Generate your own color scheme with color picker, references, live preview, and export as CSS custom properties.
+## Previews
 
-Use tools like Base16/Base24/Base46, NvChad, and Tinted Theming to create ports for your applications.
+The live preview renders your color scheme across multiple application types simultaneously. Below are the skeleton layouts for each preview mode.
+
+### Editor
+
+Code editor with syntax highlighting, sidebar, line numbers, active-line highlight, and a status bar.
+
+<img src="assets/preview-editor.svg" alt="Editor preview skeleton" width="600"/>
+
+### Terminal
+
+Interactive shell session with prompt coloring, command output, and a block cursor.
+
+<img src="assets/preview-terminal.svg" alt="Terminal preview skeleton" width="600"/>
+
+### Browser (Firefox / Chrome)
+
+Full browser chrome — tab bar, navigation bar with URL field, bookmarks bar — plus a themed webpage with navbar, hero section, and a card grid.
+
+<img src="assets/preview-browser.svg" alt="Browser preview skeleton" width="600"/>
+
+### HTML Components
+
+A component palette showing buttons, form inputs, badges, alerts, toggles, and progress bars styled with your scheme.
+
+<img src="assets/preview-html.svg" alt="HTML components preview skeleton" width="600"/>
+
+### Obsidian
+
+Obsidian-style layout: icon ribbon, file explorer tree, tabbed editor with markdown headings, bulleted lists, a callout block, and an inline code block.
+
+<img src="assets/preview-obsidian.svg" alt="Obsidian preview skeleton" width="600"/>
+
+---
 
 ## Interface
 
 ### Left Sidebar
 
-- Color picker
+- **Color picker**
     - By default, 16 color blocks are displayed in a list-style card
-    - When clicking the color, a color picker dialog opens where you can select a new color
-    - On the left side of the list item, the color block
-    - On the right side of the list item, the color name and hex/rgb/hsl/oklch values
-    - At the bottom of the list, a "Add color" button to add a custom color
-- Preview
-    - Shows a live preview of the color scheme in a simulated interface
-    - Simulates a code editor, a terminal, and a web page with components from Daisy UI
-    - At the top, a selector to choose between different preview modes
-    - In the main panel, the preview interface shows the color scheme applied to the simulated components
-- Export
-    - At the bottom of the page, a button to export the color scheme as multiple different formats:
-        - CSS variables
-        - Generate ports with Base16/Base24/Base46, NvChad or Tinted Theming
-        - Export as a hash URL to be shared, and when opened, the color scheme is automatically applied
+    - Click a color block to open a color picker dialog
+    - Each list item shows the color swatch on the left and the name + hex/rgb/hsl/oklch values on the right
+    - A **"Add color"** button at the bottom lets you add custom colors
+- **Preview**
+    - Live preview of your color scheme applied to simulated interfaces
+    - Switch between preview modes: Editor · Terminal · Browser · HTML Components · Obsidian
+- **Export**
+    - Export your scheme in multiple formats:
+        - CSS custom properties
+        - Base16 / Base24 / Base46 ports
+        - NvChad theme
+        - Tinted Theming port
+        - Shareable hash URL — when opened, the color scheme is automatically restored

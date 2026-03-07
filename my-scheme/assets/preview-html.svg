@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 375">
+  <!-- Background -->
+  <rect width="600" height="375" fill="#1e1e2e"/>
+
+  <!-- Section label: Buttons -->
+  <text x="24" y="36" font-family="sans-serif" font-size="11" fill="#6c7086" letter-spacing="1.5">BUTTONS</text>
+  <line x1="24" y1="40" x2="576" y2="40" stroke="#313244" stroke-width="1"/>
+
+  <!-- Primary button -->
+  <rect x="24" y="52" width="100" height="34" rx="6" fill="#89b4fa"/>
+  <rect x="38" y="63" width="72" height="10" rx="3" fill="#1e1e2e" opacity="0.8"/>
+  <!-- Secondary button -->
+  <rect x="136" y="52" width="100" height="34" rx="6" fill="#cba6f7" opacity="0.85"/>
+  <rect x="150" y="63" width="72" height="10" rx="3" fill="#1e1e2e" opacity="0.8"/>
+  <!-- Outlined button -->
+  <rect x="248" y="52" width="100" height="34" rx="6" fill="none" stroke="#89b4fa" stroke-width="1.5"/>
+  <rect x="262" y="63" width="72" height="10" rx="3" fill="#89b4fa" opacity="0.8"/>
+  <!-- Ghost button -->
+  <rect x="360" y="52" width="100" height="34" rx="6" fill="#313244"/>
+  <rect x="374" y="63" width="72" height="10" rx="3" fill="#cdd6f4" opacity="0.7"/>
+  <!-- Danger button -->
+  <rect x="472" y="52" width="100" height="34" rx="6" fill="#f38ba8" opacity="0.85"/>
+  <rect x="486" y="63" width="72" height="10" rx="3" fill="#1e1e2e" opacity="0.8"/>
+
+  <!-- Section label: Form Inputs -->
+  <text x="24" y="114" font-family="sans-serif" font-size="11" fill="#6c7086" letter-spacing="1.5">FORM INPUTS</text>
+  <line x1="24" y1="118" x2="576" y2="118" stroke="#313244" stroke-width="1"/>
+
+  <!-- Text input with label -->
+  <text x="24" y="138" font-family="sans-serif" font-size="10" fill="#a6adc8">Email address</text>
+  <rect x="24" y="144" width="240" height="34" rx="6" fill="#313244" stroke="#45475a" stroke-width="1"/>
+  <rect x="38" y="157" width="100" height="8" rx="2" fill="#6c7086" opacity="0.5"/>
+  <!-- Password input -->
+  <text x="280" y="138" font-family="sans-serif" font-size="10" fill="#a6adc8">Password</text>
+  <rect x="280" y="144" width="240" height="34" rx="6" fill="#313244" stroke="#45475a" stroke-width="1"/>
+  <!-- Password dots -->
+  <circle cx="296" cy="162" r="3" fill="#6c7086" opacity="0.6"/>
+  <circle cx="308" cy="162" r="3" fill="#6c7086" opacity="0.6"/>
+  <circle cx="320" cy="162" r="3" fill="#6c7086" opacity="0.6"/>
+  <circle cx="332" cy="162" r="3" fill="#6c7086" opacity="0.6"/>
+  <circle cx="344" cy="162" r="3" fill="#6c7086" opacity="0.6"/>
+  <!-- Eye icon -->
+  <rect x="494" y="153" width="18" height="12" rx="3" fill="#6c7086" opacity="0.4"/>
+
+  <!-- Select dropdown -->
+  <text x="24" y="200" font-family="sans-serif" font-size="10" fill="#a6adc8">Color scheme</text>
+  <rect x="24" y="206" width="240" height="34" rx="6" fill="#313244" stroke="#45475a" stroke-width="1"/>
+  <rect x="38" y="219" width="130" height="8" rx="2" fill="#cdd6f4" opacity="0.6"/>
+  <text x="242" y="226" font-family="sans-serif" font-size="12" fill="#6c7086">▾</text>
+
+  <!-- Focused input (with accent ring) -->
+  <text x="280" y="200" font-family="sans-serif" font-size="10" fill="#a6adc8">Search</text>
+  <rect x="280" y="206" width="240" height="34" rx="6" fill="#313244" stroke="#89b4fa" stroke-width="2"/>
+  <rect x="294" y="219" width="2" height="11" fill="#89b4fa" opacity="0.85"/>
+
+  <!-- Section label: Badges & Alerts -->
+  <text x="24" y="264" font-family="sans-serif" font-size="11" fill="#6c7086" letter-spacing="1.5">BADGES &amp; ALERTS</text>
+  <line x1="24" y1="268" x2="576" y2="268" stroke="#313244" stroke-width="1"/>
+
+  <!-- Badges -->
+  <rect x="24" y="278" width="52" height="20" rx="10" fill="#89b4fa" opacity="0.2"/>
+  <rect x="30" y="285" width="40" height="6" rx="2" fill="#89b4fa" opacity="0.8"/>
+  <rect x="84" y="278" width="60" height="20" rx="10" fill="#a6e3a1" opacity="0.2"/>
+  <rect x="90" y="285" width="48" height="6" rx="2" fill="#a6e3a1" opacity="0.8"/>
+  <rect x="152" y="278" width="52" height="20" rx="10" fill="#f38ba8" opacity="0.2"/>
+  <rect x="158" y="285" width="40" height="6" rx="2" fill="#f38ba8" opacity="0.8"/>
+  <rect x="212" y="278" width="64" height="20" rx="10" fill="#f9e2af" opacity="0.2"/>
+  <rect x="218" y="285" width="52" height="6" rx="2" fill="#f9e2af" opacity="0.8"/>
+  <rect x="284" y="278" width="60" height="20" rx="10" fill="#cba6f7" opacity="0.2"/>
+  <rect x="290" y="285" width="48" height="6" rx="2" fill="#cba6f7" opacity="0.8"/>
+
+  <!-- Alert / Info box -->
+  <rect x="24" y="308" width="552" height="46" rx="8" fill="#89b4fa" opacity="0.08" stroke="#89b4fa" stroke-width="1" stroke-opacity="0.3"/>
+  <rect x="40" y="322" width="10" height="10" rx="2" fill="#89b4fa" opacity="0.7"/>
+  <rect x="58" y="323" width="120" height="8" rx="2" fill="#cdd6f4" opacity="0.7"/>
+  <rect x="58" y="337" width="280" height="7" rx="2" fill="#6c7086" opacity="0.5"/>
+
+  <!-- Toggle switches -->
+  <rect x="460" y="310" width="40" height="20" rx="10" fill="#89b4fa"/>
+  <circle cx="490" cy="320" r="8" fill="#1e1e2e"/>
+  <rect x="460" y="338" width="40" height="20" rx="10" fill="#45475a"/>
+  <circle cx="470" cy="348" r="8" fill="#cdd6f4" opacity="0.7"/>
+  <!-- Progress bar -->
+  <rect x="510" y="316" width="60" height="8" rx="4" fill="#313244"/>
+  <rect x="510" y="316" width="38" height="8" rx="4" fill="#89b4fa"/>
+  <rect x="510" y="342" width="60" height="8" rx="4" fill="#313244"/>
+  <rect x="510" y="342" width="15" height="8" rx="4" fill="#f38ba8"/>
+</svg>
