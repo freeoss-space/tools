@@ -1,0 +1,26 @@
+WhichTheme.register({
+  id: 'winter-is-coming-light',
+  name: 'WiC Light',
+  group: 'Winter is Coming',
+  homepage: 'https://github.com/johnpapa/vscode-winteriscoming',
+  preview: {
+    bg: '#ffffff', bg2: '#f3f3f3', text: '#236ebf', comment: '#357b42',
+    keyword: '#7c2cbd', func: '#1172c7', string: '#189b2c', number: '#df8618',
+    operator: '#7fdbca', type: '#ef5350', highlight: '#cee1f0',
+  },
+  colors: [
+    { name: 'Background',  hex: '#ffffff' },
+    { name: 'Bg Alt',      hex: '#f3f3f3' },
+    { name: 'Bg Hl',       hex: '#cee1f0' },
+    { name: 'Foreground',  hex: '#236ebf' },
+    { name: 'Comment',     hex: '#357b42' },
+    { name: 'Red',         hex: '#ef5350' },
+    { name: 'Orange',      hex: '#df8618' },
+    { name: 'Yellow',      hex: '#f7ecb5' },
+    { name: 'Green',       hex: '#189b2c' },
+    { name: 'Cyan',        hex: '#7fdbca' },
+    { name: 'Blue',        hex: '#1172c7' },
+    { name: 'Purple',      hex: '#7c2cbd' },
+    { name: 'Pink',        hex: '#c63ed3' },
+  ],
+});

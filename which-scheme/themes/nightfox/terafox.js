@@ -1,0 +1,28 @@
+WhichTheme.register({
+  id: 'terafox',
+  name: 'Terafox',
+  group: 'Nightfox',
+  homepage: 'https://github.com/EdenEast/nightfox.nvim',
+  preview: {
+    bg: '#152528', bg2: '#0f1c1e', text: '#e6eaea', comment: '#6d7f8b',
+    keyword: '#ad5c7c', func: '#5a93aa', string: '#7aa4a1', number: '#fda47f',
+    operator: '#a1cdd8', type: '#e85c51', highlight: '#293e40',
+  },
+  colors: [
+    { name: 'Background',  hex: '#152528' },
+    { name: 'Bg Dark',     hex: '#0f1c1e' },
+    { name: 'Bg Hl',       hex: '#1d3337' },
+    { name: 'Bg Sel',      hex: '#293e40' },
+    { name: 'Foreground',  hex: '#e6eaea' },
+    { name: 'Comment',     hex: '#6d7f8b' },
+    { name: 'Red',         hex: '#e85c51' },
+    { name: 'Orange',      hex: '#ff8349' },
+    { name: 'Yellow',      hex: '#fda47f' },
+    { name: 'Green',       hex: '#7aa4a1' },
+    { name: 'Cyan',        hex: '#a1cdd8' },
+    { name: 'Blue',        hex: '#5a93aa' },
+    { name: 'Purple',      hex: '#ad5c7c' },
+    { name: 'Pink',        hex: '#cb7985' },
+    { name: 'White',       hex: '#ebebeb' },
+  ],
+});

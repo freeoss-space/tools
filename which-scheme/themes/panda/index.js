@@ -1,0 +1,26 @@
+WhichTheme.register({
+  id: 'panda',
+  name: 'Panda',
+  group: 'Panda',
+  homepage: 'https://github.com/tinkertrain/panda-syntax-vscode',
+  preview: {
+    bg: '#292a2b', bg2: '#242526', text: '#e6e6e6', comment: '#676b79',
+    keyword: '#ff75b5', func: '#6fe7d2', string: '#19f9d8', number: '#ffb86c',
+    operator: '#45a9f9', type: '#b084eb', highlight: '#3e4250',
+  },
+  colors: [
+    { name: 'Background',  hex: '#292a2b' },
+    { name: 'Bg Dark',     hex: '#242526' },
+    { name: 'Bg Hl',       hex: '#3e4250' },
+    { name: 'Foreground',  hex: '#e6e6e6' },
+    { name: 'Comment',     hex: '#676b79' },
+    { name: 'Red',         hex: '#ff2c6d' },
+    { name: 'Orange',      hex: '#ffb86c' },
+    { name: 'Yellow',      hex: '#ffcc95' },
+    { name: 'Green',       hex: '#19f9d8' },
+    { name: 'Cyan',        hex: '#6fe7d2' },
+    { name: 'Blue',        hex: '#45a9f9' },
+    { name: 'Purple',      hex: '#b084eb' },
+    { name: 'Pink',        hex: '#ff75b5' },
+  ],
+});

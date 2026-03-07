@@ -1,0 +1,26 @@
+WhichTheme.register({
+  id: 'horizon',
+  name: 'Horizon',
+  group: 'Horizon',
+  homepage: 'https://github.com/jolaleye/horizon-theme-vscode',
+  preview: {
+    bg: '#1c1e26', bg2: '#1a1c23', text: '#d5d8da', comment: '#bbbbbb',
+    keyword: '#b877db', func: '#26bbd9', string: '#29d398', number: '#fab795',
+    operator: '#59e1e3', type: '#e95678', highlight: '#2e303e',
+  },
+  colors: [
+    { name: 'Background',  hex: '#1c1e26' },
+    { name: 'Bg Dark',     hex: '#1a1c23' },
+    { name: 'Bg Hl',       hex: '#2e303e' },
+    { name: 'Foreground',  hex: '#d5d8da' },
+    { name: 'Comment',     hex: '#bbbbbb' },
+    { name: 'Red',         hex: '#e95678' },
+    { name: 'Orange',      hex: '#f09483' },
+    { name: 'Yellow',      hex: '#fab795' },
+    { name: 'Green',       hex: '#29d398' },
+    { name: 'Cyan',        hex: '#59e1e3' },
+    { name: 'Blue',        hex: '#26bbd9' },
+    { name: 'Purple',      hex: '#b877db' },
+    { name: 'Pink',        hex: '#ee64ac' },
+  ],
+});

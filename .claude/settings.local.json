@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:tinted-theming.github.io)",
+      "WebFetch(domain:dotfyle.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
+    ]
+  }
+}

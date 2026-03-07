@@ -1,0 +1,28 @@
+WhichTheme.register({
+  id: 'nordfox',
+  name: 'Nordfox',
+  group: 'Nightfox',
+  homepage: 'https://github.com/EdenEast/nightfox.nvim',
+  preview: {
+    bg: '#2e3440', bg2: '#222730', text: '#cdcecf', comment: '#60728a',
+    keyword: '#bf616a', func: '#81a1c1', string: '#a3be8c', number: '#b48ead',
+    operator: '#88c0d0', type: '#ebcb8b', highlight: '#3b4252',
+  },
+  colors: [
+    { name: 'Background',  hex: '#2e3440' },
+    { name: 'Bg Dark',     hex: '#222730' },
+    { name: 'Bg Hl',       hex: '#3b4252' },
+    { name: 'Bg Sel',      hex: '#434c5e' },
+    { name: 'Foreground',  hex: '#cdcecf' },
+    { name: 'Comment',     hex: '#60728a' },
+    { name: 'Red',         hex: '#bf616a' },
+    { name: 'Orange',      hex: '#c9826b' },
+    { name: 'Yellow',      hex: '#ebcb8b' },
+    { name: 'Green',       hex: '#a3be8c' },
+    { name: 'Cyan',        hex: '#88c0d0' },
+    { name: 'Blue',        hex: '#81a1c1' },
+    { name: 'Purple',      hex: '#b48ead' },
+    { name: 'Pink',        hex: '#bf88bc' },
+    { name: 'White',       hex: '#e5e9f0' },
+  ],
+});

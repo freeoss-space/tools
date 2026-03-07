@@ -1,0 +1,28 @@
+WhichTheme.register({
+  id: 'rose-pine-moon',
+  name: 'Rosé Pine Moon',
+  group: 'Rosé Pine',
+  homepage: 'https://rosepinetheme.com',
+  preview: {
+    bg: '#232136', bg2: '#2a273f', text: '#e0def4', comment: '#6e6a86',
+    keyword: '#eb6f92', func: '#9ccfd8', string: '#f6c177', number: '#ea9a97',
+    operator: '#3e8fb0', type: '#c4a7e7', highlight: '#393552',
+  },
+  colors: [
+    { name: 'Base',           hex: '#232136' },
+    { name: 'Surface',        hex: '#2a273f' },
+    { name: 'Overlay',        hex: '#393552' },
+    { name: 'Muted',          hex: '#6e6a86' },
+    { name: 'Subtle',         hex: '#908caa' },
+    { name: 'Text',           hex: '#e0def4' },
+    { name: 'Love',           hex: '#eb6f92' },
+    { name: 'Gold',           hex: '#f6c177' },
+    { name: 'Rose',           hex: '#ea9a97' },
+    { name: 'Pine',           hex: '#3e8fb0' },
+    { name: 'Foam',           hex: '#9ccfd8' },
+    { name: 'Iris',           hex: '#c4a7e7' },
+    { name: 'Highlight Low',  hex: '#2a2837' },
+    { name: 'Highlight Med',  hex: '#44415a' },
+    { name: 'Highlight High', hex: '#56526e' },
+  ],
+});

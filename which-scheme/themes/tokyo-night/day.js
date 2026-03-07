@@ -1,0 +1,26 @@
+WhichTheme.register({
+  id: 'tokyo-night-day',
+  name: 'Tokyo Night Day',
+  group: 'Tokyo Night',
+  homepage: 'https://github.com/folke/tokyonight.nvim',
+  preview: {
+    bg: '#e1e2e7', bg2: '#d0d5e3', text: '#3760bf', comment: '#848cb5',
+    keyword: '#9854f1', func: '#2e7de9', string: '#587539', number: '#8c6c3e',
+    operator: '#007197', type: '#f52a65', highlight: '#b7c1e3',
+  },
+  colors: [
+    { name: 'Background',  hex: '#e1e2e7' },
+    { name: 'Bg Dark',     hex: '#d0d5e3' },
+    { name: 'Bg Hl',       hex: '#b7c1e3' },
+    { name: 'Foreground',  hex: '#3760bf' },
+    { name: 'Comment',     hex: '#848cb5' },
+    { name: 'Red',         hex: '#f52a65' },
+    { name: 'Orange',      hex: '#b15c00' },
+    { name: 'Yellow',      hex: '#8c6c3e' },
+    { name: 'Green',       hex: '#587539' },
+    { name: 'Teal',        hex: '#387068' },
+    { name: 'Cyan',        hex: '#007197' },
+    { name: 'Blue',        hex: '#2e7de9' },
+    { name: 'Purple',      hex: '#9854f1' },
+  ],
+});

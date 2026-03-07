@@ -1,0 +1,25 @@
+WhichTheme.register({
+  id: 'one-dark',
+  name: 'One Dark',
+  group: 'Atom One',
+  homepage: 'https://github.com/atom/atom/tree/master/packages/one-dark-syntax',
+  preview: {
+    bg: '#282c34', bg2: '#21252b', text: '#abb2bf', comment: '#5c6370',
+    keyword: '#c678dd', func: '#61afef', string: '#98c379', number: '#d19a66',
+    operator: '#56b6c2', type: '#e06c75', highlight: '#2c323c',
+  },
+  colors: [
+    { name: 'Background',   hex: '#282c34' },
+    { name: 'Current Line', hex: '#2c323c' },
+    { name: 'Selection',    hex: '#3e4451' },
+    { name: 'Foreground',   hex: '#abb2bf' },
+    { name: 'Comment',      hex: '#5c6370' },
+    { name: 'Red',          hex: '#e06c75' },
+    { name: 'Orange',       hex: '#d19a66' },
+    { name: 'Yellow',       hex: '#e5c07b' },
+    { name: 'Green',        hex: '#98c379' },
+    { name: 'Cyan',         hex: '#56b6c2' },
+    { name: 'Blue',         hex: '#61afef' },
+    { name: 'Purple',       hex: '#c678dd' },
+  ],
+});

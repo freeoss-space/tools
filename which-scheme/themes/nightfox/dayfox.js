@@ -1,0 +1,28 @@
+WhichTheme.register({
+  id: 'dayfox',
+  name: 'Dayfox',
+  group: 'Nightfox',
+  homepage: 'https://github.com/EdenEast/nightfox.nvim',
+  preview: {
+    bg: '#f6f2ee', bg2: '#e4dcd4', text: '#3d2b5a', comment: '#837a72',
+    keyword: '#6e33ce', func: '#2848a9', string: '#396847', number: '#ac5402',
+    operator: '#287980', type: '#a5222f', highlight: '#e7d2be',
+  },
+  colors: [
+    { name: 'Background',  hex: '#f6f2ee' },
+    { name: 'Bg Dark',     hex: '#e4dcd4' },
+    { name: 'Bg Hl',       hex: '#dbd1dd' },
+    { name: 'Bg Sel',      hex: '#e7d2be' },
+    { name: 'Foreground',  hex: '#3d2b5a' },
+    { name: 'Comment',     hex: '#837a72' },
+    { name: 'Red',         hex: '#a5222f' },
+    { name: 'Orange',      hex: '#955f61' },
+    { name: 'Yellow',      hex: '#ac5402' },
+    { name: 'Green',       hex: '#396847' },
+    { name: 'Cyan',        hex: '#287980' },
+    { name: 'Blue',        hex: '#2848a9' },
+    { name: 'Purple',      hex: '#6e33ce' },
+    { name: 'Pink',        hex: '#a440b5' },
+    { name: 'White',       hex: '#f2e9e1' },
+  ],
+});

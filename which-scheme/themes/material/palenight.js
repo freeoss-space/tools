@@ -1,0 +1,27 @@
+WhichTheme.register({
+  id: 'material-palenight',
+  name: 'Material Palenight',
+  group: 'Material',
+  homepage: 'https://material-theme.com',
+  preview: {
+    bg: '#292d3e', bg2: '#1b1e2b', text: '#a6accd', comment: '#676e95',
+    keyword: '#c792ea', func: '#82aaff', string: '#c3e88d', number: '#f78c6c',
+    operator: '#89ddff', type: '#ffcb6b', highlight: '#3c435e',
+  },
+  colors: [
+    { name: 'Background', hex: '#292d3e' },
+    { name: 'Foreground', hex: '#a6accd' },
+    { name: 'Comments',   hex: '#676e95' },
+    { name: 'Caret',      hex: '#ffcc00' },
+    { name: 'Red',        hex: '#f07178' },
+    { name: 'Orange',     hex: '#f78c6c' },
+    { name: 'Yellow',     hex: '#ffcb6b' },
+    { name: 'Green',      hex: '#c3e88d' },
+    { name: 'Cyan',       hex: '#89ddff' },
+    { name: 'Blue',       hex: '#82aaff' },
+    { name: 'Purple',     hex: '#c792ea' },
+    { name: 'Violet',     hex: '#bb80b3' },
+    { name: 'Pale Blue',  hex: '#b0c9ff' },
+    { name: 'White',      hex: '#ffffff' },
+  ],
+});

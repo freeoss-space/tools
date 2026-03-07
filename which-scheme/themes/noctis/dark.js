@@ -1,0 +1,26 @@
+WhichTheme.register({
+  id: 'noctis',
+  name: 'Noctis',
+  group: 'Noctis',
+  homepage: 'https://github.com/liviuschera/noctis',
+  preview: {
+    bg: '#052529', bg2: '#041d20', text: '#b2cacd', comment: '#5b858b',
+    keyword: '#7060eb', func: '#49ace9', string: '#49e9a6', number: '#e4b781',
+    operator: '#40d4e7', type: '#e34e1c', highlight: '#0e596a',
+  },
+  colors: [
+    { name: 'Background',  hex: '#052529' },
+    { name: 'Bg Dark',     hex: '#041d20' },
+    { name: 'Bg Hl',       hex: '#0e596a' },
+    { name: 'Foreground',  hex: '#b2cacd' },
+    { name: 'Comment',     hex: '#5b858b' },
+    { name: 'Red',         hex: '#e34e1c' },
+    { name: 'Orange',      hex: '#e66533' },
+    { name: 'Yellow',      hex: '#e4b781' },
+    { name: 'Green',       hex: '#49e9a6' },
+    { name: 'Cyan',        hex: '#40d4e7' },
+    { name: 'Blue',        hex: '#49ace9' },
+    { name: 'Purple',      hex: '#7060eb' },
+    { name: 'Pink',        hex: '#df769b' },
+  ],
+});

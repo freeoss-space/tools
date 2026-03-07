@@ -1,0 +1,25 @@
+WhichTheme.register({
+  id: 'synthwave',
+  name: "Synthwave '84",
+  group: "Synthwave",
+  homepage: 'https://github.com/robb0wen/synthwave-vscode',
+  preview: {
+    bg: '#262335', bg2: '#1b1a23', text: '#ffffff', comment: '#848bbd',
+    keyword: '#ff7edb', func: '#36f9f6', string: '#fede5d', number: '#f97e72',
+    operator: '#ff7edb', type: '#72f1b8', highlight: '#3b3a53',
+  },
+  colors: [
+    { name: 'Background',  hex: '#262335' },
+    { name: 'Bg Alt',      hex: '#1b1a23' },
+    { name: 'Hl',          hex: '#3b3a53' },
+    { name: 'Foreground',  hex: '#ffffff' },
+    { name: 'Comment',     hex: '#848bbd' },
+    { name: 'Red',         hex: '#fe4450' },
+    { name: 'Orange',      hex: '#ff9d00' },
+    { name: 'Yellow',      hex: '#fede5d' },
+    { name: 'Green',       hex: '#72f1b8' },
+    { name: 'Cyan',        hex: '#36f9f6' },
+    { name: 'Pink',        hex: '#ff7edb' },
+    { name: 'Coral',       hex: '#f97e72' },
+  ],
+});

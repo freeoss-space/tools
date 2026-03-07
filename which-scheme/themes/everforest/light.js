@@ -1,0 +1,27 @@
+WhichTheme.register({
+  id: 'everforest-light',
+  name: 'Everforest Light',
+  group: 'Everforest',
+  homepage: 'https://github.com/sainnhe/everforest',
+  preview: {
+    bg: '#fdf6e3', bg2: '#f4f0d9', text: '#5c6a72', comment: '#939f91',
+    keyword: '#df69ba', func: '#3a94c5', string: '#8da101', number: '#dfa000',
+    operator: '#35a77c', type: '#f85552', highlight: '#e6e2cc',
+  },
+  colors: [
+    { name: 'Background',  hex: '#fdf6e3' },
+    { name: 'Bg 1',        hex: '#f4f0d9' },
+    { name: 'Bg 2',        hex: '#efebd4' },
+    { name: 'Bg 3',        hex: '#e6e2cc' },
+    { name: 'Bg 4',        hex: '#e0dcc7' },
+    { name: 'Foreground',  hex: '#5c6a72' },
+    { name: 'Grey',        hex: '#939f91' },
+    { name: 'Red',         hex: '#f85552' },
+    { name: 'Orange',      hex: '#f57d26' },
+    { name: 'Yellow',      hex: '#dfa000' },
+    { name: 'Green',       hex: '#8da101' },
+    { name: 'Aqua',        hex: '#35a77c' },
+    { name: 'Blue',        hex: '#3a94c5' },
+    { name: 'Purple',      hex: '#df69ba' },
+  ],
+});

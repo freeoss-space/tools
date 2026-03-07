@@ -1,0 +1,28 @@
+WhichTheme.register({
+  id: 'ayu-mirage',
+  name: 'Ayu Mirage',
+  group: 'Ayu',
+  homepage: 'https://github.com/ayu-theme/ayu-colors',
+  preview: {
+    bg: '#1f2430', bg2: '#191e2a', text: '#cbccc6', comment: '#5c6773',
+    keyword: '#ffa759', func: '#ffd580', string: '#bae67e', number: '#d4bfff',
+    operator: '#f29e74', type: '#5ccfe6', highlight: '#262c3a',
+  },
+  colors: [
+    { name: 'Background', hex: '#1f2430' },
+    { name: 'Foreground', hex: '#cbccc6' },
+    { name: 'Comment',    hex: '#5c6773' },
+    { name: 'Tag',        hex: '#5ccfe6' },
+    { name: 'Func',       hex: '#ffd580' },
+    { name: 'Entity',     hex: '#73d0ff' },
+    { name: 'String',     hex: '#bae67e' },
+    { name: 'Regexp',     hex: '#95e6cb' },
+    { name: 'Markup',     hex: '#f28779' },
+    { name: 'Keyword',    hex: '#ffa759' },
+    { name: 'Special',    hex: '#ffe6b3' },
+    { name: 'Constant',   hex: '#d4bfff' },
+    { name: 'Operator',   hex: '#f29e74' },
+    { name: 'Error',      hex: '#ff3333' },
+    { name: 'Accent',     hex: '#ffcc66' },
+  ],
+});

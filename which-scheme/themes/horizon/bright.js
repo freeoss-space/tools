@@ -1,0 +1,26 @@
+WhichTheme.register({
+  id: 'horizon-bright',
+  name: 'Horizon Bright',
+  group: 'Horizon',
+  homepage: 'https://github.com/jolaleye/horizon-theme-vscode',
+  preview: {
+    bg: '#fdf0ed', bg2: '#fadad1', text: '#16161c', comment: '#6c6f93',
+    keyword: '#8931b9', func: '#1d8991', string: '#07da8c', number: '#f6661e',
+    operator: '#1eaeae', type: '#da103f', highlight: '#f9cec3',
+  },
+  colors: [
+    { name: 'Background',  hex: '#fdf0ed' },
+    { name: 'Bg Alt',      hex: '#fadad1' },
+    { name: 'Bg Hl',       hex: '#f9cec3' },
+    { name: 'Foreground',  hex: '#16161c' },
+    { name: 'Comment',     hex: '#6c6f93' },
+    { name: 'Red',         hex: '#da103f' },
+    { name: 'Orange',      hex: '#dc3318' },
+    { name: 'Yellow',      hex: '#f6661e' },
+    { name: 'Green',       hex: '#07da8c' },
+    { name: 'Cyan',        hex: '#1eaeae' },
+    { name: 'Blue',        hex: '#1d8991' },
+    { name: 'Purple',      hex: '#8931b9' },
+    { name: 'Pink',        hex: '#e73665' },
+  ],
+});

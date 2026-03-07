@@ -1,0 +1,25 @@
+WhichTheme.register({
+  id: 'one-light',
+  name: 'One Light',
+  group: 'Atom One',
+  homepage: 'https://github.com/atom/atom/tree/master/packages/one-light-syntax',
+  preview: {
+    bg: '#fafafa', bg2: '#f0f0f0', text: '#383a42', comment: '#a0a1a7',
+    keyword: '#a626a4', func: '#4078f2', string: '#50a14f', number: '#986801',
+    operator: '#0184bc', type: '#c18401', highlight: '#e5e5e6',
+  },
+  colors: [
+    { name: 'Background',   hex: '#fafafa' },
+    { name: 'Current Line', hex: '#e5e5e6' },
+    { name: 'Selection',    hex: '#d0d1d3' },
+    { name: 'Foreground',   hex: '#383a42' },
+    { name: 'Comment',      hex: '#a0a1a7' },
+    { name: 'Red',          hex: '#e45649' },
+    { name: 'Orange',       hex: '#986801' },
+    { name: 'Yellow',       hex: '#c18401' },
+    { name: 'Green',        hex: '#50a14f' },
+    { name: 'Cyan',         hex: '#0184bc' },
+    { name: 'Blue',         hex: '#4078f2' },
+    { name: 'Purple',       hex: '#a626a4' },
+  ],
+});

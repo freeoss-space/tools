@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Which Theme? — Color Scheme Comparison</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a class="header-back" href="../index.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        All tools
+      </a>
+      <h1>Which Theme?</h1>
+      <p>Compare color schemes side by side across your favorite apps</p>
+    </header>
+
+    <div id="cards-container"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="themes/index.js"></script>
+  <script src="assets/color-utils.js"></script>
+  <script src="assets/preview.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>

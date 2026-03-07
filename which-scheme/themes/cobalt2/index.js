@@ -1,0 +1,26 @@
+WhichTheme.register({
+  id: 'cobalt2',
+  name: 'Cobalt2',
+  group: 'Cobalt2',
+  homepage: 'https://github.com/wesbos/cobalt2-vscode',
+  preview: {
+    bg: '#193549', bg2: '#122738', text: '#ffffff', comment: '#0088ff',
+    keyword: '#fb94ff', func: '#ffc600', string: '#3ad900', number: '#ff9d00',
+    operator: '#9effff', type: '#ff628c', highlight: '#0050a4',
+  },
+  colors: [
+    { name: 'Background',  hex: '#193549' },
+    { name: 'Bg Dark',     hex: '#122738' },
+    { name: 'Bg Hl',       hex: '#0050a4' },
+    { name: 'Foreground',  hex: '#ffffff' },
+    { name: 'Comment',     hex: '#0088ff' },
+    { name: 'Red',         hex: '#ff628c' },
+    { name: 'Orange',      hex: '#ff9d00' },
+    { name: 'Yellow',      hex: '#ffc600' },
+    { name: 'Green',       hex: '#3ad900' },
+    { name: 'Cyan',        hex: '#9effff' },
+    { name: 'Blue',        hex: '#0088ff' },
+    { name: 'Purple',      hex: '#fb94ff' },
+    { name: 'Pink',        hex: '#ff68b8' },
+  ],
+});

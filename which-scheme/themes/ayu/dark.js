@@ -1,0 +1,28 @@
+WhichTheme.register({
+  id: 'ayu-dark',
+  name: 'Ayu Dark',
+  group: 'Ayu',
+  homepage: 'https://github.com/ayu-theme/ayu-colors',
+  preview: {
+    bg: '#0a0e14', bg2: '#0d1017', text: '#b3b1ad', comment: '#626a73',
+    keyword: '#ff8f40', func: '#ffb454', string: '#c2d94c', number: '#d2a6ff',
+    operator: '#f29668', type: '#39bae6', highlight: '#0d1319',
+  },
+  colors: [
+    { name: 'Background', hex: '#0a0e14' },
+    { name: 'Foreground', hex: '#b3b1ad' },
+    { name: 'Comment',    hex: '#626a73' },
+    { name: 'Tag',        hex: '#39bae6' },
+    { name: 'Func',       hex: '#ffb454' },
+    { name: 'Entity',     hex: '#59c2ff' },
+    { name: 'String',     hex: '#c2d94c' },
+    { name: 'Regexp',     hex: '#95e6cb' },
+    { name: 'Markup',     hex: '#f07178' },
+    { name: 'Keyword',    hex: '#ff8f40' },
+    { name: 'Special',    hex: '#e6b673' },
+    { name: 'Constant',   hex: '#d2a6ff' },
+    { name: 'Operator',   hex: '#f29668' },
+    { name: 'Error',      hex: '#ff3333' },
+    { name: 'Accent',     hex: '#e6b450' },
+  ],
+});

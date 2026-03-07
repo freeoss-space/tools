@@ -1,0 +1,26 @@
+WhichTheme.register({
+  id: 'shades-of-purple',
+  name: 'Shades of Purple',
+  group: 'Shades of Purple',
+  homepage: 'https://github.com/ahmadawais/shades-of-purple-vscode',
+  preview: {
+    bg: '#2d2b55', bg2: '#222244', text: '#ffffff', comment: '#b362ff',
+    keyword: '#6943ff', func: '#fad000', string: '#3ad900', number: '#ff9d00',
+    operator: '#9effff', type: '#ff628c', highlight: '#3b3770',
+  },
+  colors: [
+    { name: 'Background',  hex: '#2d2b55' },
+    { name: 'Bg Dark',     hex: '#222244' },
+    { name: 'Bg Hl',       hex: '#3b3770' },
+    { name: 'Foreground',  hex: '#ffffff' },
+    { name: 'Comment',     hex: '#b362ff' },
+    { name: 'Red',         hex: '#ec3a37' },
+    { name: 'Orange',      hex: '#ff9d00' },
+    { name: 'Yellow',      hex: '#fad000' },
+    { name: 'Green',       hex: '#3ad900' },
+    { name: 'Cyan',        hex: '#9effff' },
+    { name: 'Blue',        hex: '#7857fe' },
+    { name: 'Purple',      hex: '#6943ff' },
+    { name: 'Pink',        hex: '#ff628c' },
+  ],
+});

@@ -1,0 +1,27 @@
+WhichTheme.register({
+  id: 'material-ocean',
+  name: 'Material Ocean',
+  group: 'Material',
+  homepage: 'https://material-theme.com',
+  preview: {
+    bg: '#0f111a', bg2: '#090b10', text: '#8f93a2', comment: '#464b5d',
+    keyword: '#c792ea', func: '#82aaff', string: '#c3e88d', number: '#f78c6c',
+    operator: '#89ddff', type: '#ffcb6b', highlight: '#1a1c25',
+  },
+  colors: [
+    { name: 'Background', hex: '#0f111a' },
+    { name: 'Foreground', hex: '#8f93a2' },
+    { name: 'Comments',   hex: '#464b5d' },
+    { name: 'Caret',      hex: '#ffcc00' },
+    { name: 'Red',        hex: '#f07178' },
+    { name: 'Orange',     hex: '#f78c6c' },
+    { name: 'Yellow',     hex: '#ffcb6b' },
+    { name: 'Green',      hex: '#c3e88d' },
+    { name: 'Cyan',       hex: '#89ddff' },
+    { name: 'Blue',       hex: '#82aaff' },
+    { name: 'Purple',     hex: '#c792ea' },
+    { name: 'Violet',     hex: '#bb80b3' },
+    { name: 'Pale Blue',  hex: '#b0c9ff' },
+    { name: 'White',      hex: '#ffffff' },
+  ],
+});

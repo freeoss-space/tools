@@ -1,0 +1,28 @@
+WhichTheme.register({
+  id: 'rose-pine',
+  name: 'Rosé Pine',
+  group: 'Rosé Pine',
+  homepage: 'https://rosepinetheme.com',
+  preview: {
+    bg: '#191724', bg2: '#1f1d2e', text: '#e0def4', comment: '#6e6a86',
+    keyword: '#eb6f92', func: '#9ccfd8', string: '#f6c177', number: '#ebbcba',
+    operator: '#31748f', type: '#c4a7e7', highlight: '#26233a',
+  },
+  colors: [
+    { name: 'Base',           hex: '#191724' },
+    { name: 'Surface',        hex: '#1f1d2e' },
+    { name: 'Overlay',        hex: '#26233a' },
+    { name: 'Muted',          hex: '#6e6a86' },
+    { name: 'Subtle',         hex: '#908caa' },
+    { name: 'Text',           hex: '#e0def4' },
+    { name: 'Love',           hex: '#eb6f92' },
+    { name: 'Gold',           hex: '#f6c177' },
+    { name: 'Rose',           hex: '#ebbcba' },
+    { name: 'Pine',           hex: '#31748f' },
+    { name: 'Foam',           hex: '#9ccfd8' },
+    { name: 'Iris',           hex: '#c4a7e7' },
+    { name: 'Highlight Low',  hex: '#21202e' },
+    { name: 'Highlight Med',  hex: '#403d52' },
+    { name: 'Highlight High', hex: '#524f67' },
+  ],
+});

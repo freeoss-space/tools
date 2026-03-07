@@ -1,0 +1,26 @@
+WhichTheme.register({
+  id: 'night-owl',
+  name: 'Night Owl',
+  group: 'Night Owl',
+  homepage: 'https://github.com/sdras/night-owl-vscode-theme',
+  preview: {
+    bg: '#011627', bg2: '#010b14', text: '#d6deeb', comment: '#637777',
+    keyword: '#c792ea', func: '#82aaff', string: '#22da6e', number: '#f78c6c',
+    operator: '#7fdbca', type: '#ff5874', highlight: '#1d3b53',
+  },
+  colors: [
+    { name: 'Background',  hex: '#011627' },
+    { name: 'Bg Dark',     hex: '#010b14' },
+    { name: 'Bg Hl',       hex: '#1d3b53' },
+    { name: 'Foreground',  hex: '#d6deeb' },
+    { name: 'Comment',     hex: '#637777' },
+    { name: 'Red',         hex: '#ff5874' },
+    { name: 'Orange',      hex: '#f78c6c' },
+    { name: 'Yellow',      hex: '#ffeb95' },
+    { name: 'Green',       hex: '#22da6e' },
+    { name: 'Cyan',        hex: '#7fdbca' },
+    { name: 'Blue',        hex: '#82aaff' },
+    { name: 'Purple',      hex: '#c792ea' },
+    { name: 'Pink',        hex: '#ff2c83' },
+  ],
+});

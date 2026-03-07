@@ -1,0 +1,26 @@
+WhichTheme.register({
+  id: 'iceberg-dark',
+  name: 'Iceberg',
+  group: 'Iceberg',
+  homepage: 'https://cocopon.github.io/iceberg.vim/',
+  preview: {
+    bg: '#161821', bg2: '#1e2132', text: '#c6c8d1', comment: '#444b71',
+    keyword: '#84a0c6', func: '#89b8c2', string: '#b4be82', number: '#a093c7',
+    operator: '#84a0c6', type: '#89b8c2', highlight: '#1e2132',
+  },
+  colors: [
+    { name: 'Background',  hex: '#161821' },
+    { name: 'Bg Light',    hex: '#1e2132' },
+    { name: 'Foreground',  hex: '#c6c8d1' },
+    { name: 'Fg Dark',     hex: '#6b7089' },
+    { name: 'Comment',     hex: '#444b71' },
+    { name: 'Red',         hex: '#e27878' },
+    { name: 'Green',       hex: '#b4be82' },
+    { name: 'Yellow',      hex: '#e2d478' },
+    { name: 'Blue',        hex: '#84a0c6' },
+    { name: 'Purple',      hex: '#a093c7' },
+    { name: 'Cyan',        hex: '#89b8c2' },
+    { name: 'Orange',      hex: '#e2a478' },
+    { name: 'Dark Red',    hex: '#cc6666' },
+  ],
+});

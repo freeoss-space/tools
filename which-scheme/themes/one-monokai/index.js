@@ -1,0 +1,25 @@
+WhichTheme.register({
+  id: 'one-monokai',
+  name: 'One Monokai',
+  group: 'One Monokai',
+  homepage: 'https://github.com/azemoh/vscode-one-monokai',
+  preview: {
+    bg: '#282c34', bg2: '#21252b', text: '#abb2bf', comment: '#676f7d',
+    keyword: '#c678dd', func: '#61afef', string: '#98c379', number: '#e5c07b',
+    operator: '#56b6c2', type: '#e06c75', highlight: '#3e4451',
+  },
+  colors: [
+    { name: 'Background',  hex: '#282c34' },
+    { name: 'Bg Dark',     hex: '#21252b' },
+    { name: 'Bg Hl',       hex: '#3e4451' },
+    { name: 'Foreground',  hex: '#abb2bf' },
+    { name: 'Comment',     hex: '#676f7d' },
+    { name: 'Red',         hex: '#e06c75' },
+    { name: 'Orange',      hex: '#d19a66' },
+    { name: 'Yellow',      hex: '#e5c07b' },
+    { name: 'Green',       hex: '#98c379' },
+    { name: 'Cyan',        hex: '#56b6c2' },
+    { name: 'Blue',        hex: '#61afef' },
+    { name: 'Purple',      hex: '#c678dd' },
+  ],
+});
