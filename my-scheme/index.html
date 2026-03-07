@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Scheme — Color Scheme Builder</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml"/>
+  <link rel="stylesheet" href="assets/style.css"/>
+</head>
+<body>
+  <div class="app">
+
+    <header class="app-header">
+      <a class="header-back" href="../index.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        All tools
+      </a>
+      <div class="header-center">
+        <h1>My Scheme</h1>
+        <p>Build your own color scheme with live previews</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-ghost" id="reset-btn" title="Reset to defaults">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+          </svg>
+          Reset
+        </button>
+        <button class="btn btn-ghost" id="share-btn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+          Share
+        </button>
+      </div>
+    </header>
+
+    <div class="layout">
+
+      <!-- ── Left sidebar ── -->
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <input type="text" class="scheme-name-input" id="scheme-name" value="My Scheme" placeholder="Scheme name" spellcheck="false"/>
+          <div class="fmt-toggle" id="fmt-toggle">
+            <button class="fmt-btn active" data-fmt="hex">HEX</button>
+            <button class="fmt-btn" data-fmt="rgb">RGB</button>
+            <button class="fmt-btn" data-fmt="hsl">HSL</button>
+            <button class="fmt-btn" data-fmt="oklch">OKLCH</button>
+          </div>
+        </div>
+
+        <div class="color-list" id="color-list"></div>
+
+        <div class="sidebar-bottom">
+          <button class="add-color-btn" id="add-color-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Add color
+          </button>
+        </div>
+      </aside>
+
+      <!-- ── Main content ── -->
+      <main class="main">
+
+        <!-- Preview -->
+        <section class="panel preview-panel">
+          <div class="panel-header">
+            <span class="panel-label">Preview</span>
+            <div class="tab-group" id="preview-tabs">
+              <button class="tab active" data-mode="editor">Editor</button>
+              <button class="tab" data-mode="terminal">Terminal</button>
+              <button class="tab" data-mode="browser">Browser</button>
+              <button class="tab" data-mode="html">HTML</button>
+              <button class="tab" data-mode="obsidian">Obsidian</button>
+            </div>
+          </div>
+          <div class="preview-frame">
+            <img class="preview-img" id="preview-img" alt="Color scheme preview"/>
+          </div>
+        </section>
+
+        <!-- Export -->
+        <section class="panel export-panel">
+          <div class="panel-header">
+            <span class="panel-label">Export</span>
+            <div class="tab-group" id="export-tabs">
+              <button class="tab active" data-efmt="css">CSS vars</button>
+              <button class="tab" data-efmt="base16">Base16</button>
+              <button class="tab" data-efmt="json">JSON</button>
+            </div>
+          </div>
+          <div class="export-code-wrap">
+            <pre class="export-code" id="export-code"></pre>
+          </div>
+          <div class="export-actions">
+            <button class="btn btn-secondary" id="copy-export-btn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              Copy
+            </button>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="assets/color-utils.js"></script>
+  <script src="assets/previews.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
