@@ -1,0 +1,25 @@
+WhichTheme.register({
+  id: 'vesper',
+  name: 'Vesper',
+  group: 'Vesper',
+  homepage: 'https://github.com/raunofreiberg/vesper',
+  preview: {
+    bg: '#101010', bg2: '#1a1a1a', text: '#ffffff', comment: '#515151',
+    keyword: '#ff9966', func: '#ffcc00', string: '#99ffaf', number: '#ff9966',
+    operator: '#5ccfe6', type: '#5ccfe6', highlight: '#252525',
+  },
+  colors: [
+    { name: 'Background',  hex: '#101010' },
+    { name: 'Surface',     hex: '#1a1a1a' },
+    { name: 'Overlay',     hex: '#252525' },
+    { name: 'Comment',     hex: '#515151' },
+    { name: 'Muted',       hex: '#8b8b8b' },
+    { name: 'Foreground',  hex: '#ffffff' },
+    { name: 'Orange',      hex: '#ff9966' },
+    { name: 'Mint',        hex: '#99ffaf' },
+    { name: 'Yellow',      hex: '#ffcc00' },
+    { name: 'Cyan',        hex: '#5ccfe6' },
+    { name: 'Purple',      hex: '#c8a0f0' },
+    { name: 'Red',         hex: '#ff5c57' },
+  ],
+});

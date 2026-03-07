@@ -108,4 +108,30 @@ const THEME_MANIFEST = [
   // ── Horizon ──────────────────────────────────────────────────────────────
   { id: 'horizon',        name: 'Horizon',        group: 'Horizon', src: 'themes/horizon/dark.js' },
   { id: 'horizon-bright', name: 'Horizon Bright', group: 'Horizon', src: 'themes/horizon/bright.js' },
+
+  // ── Oxocarbon ────────────────────────────────────────────────────────────
+  { id: 'oxocarbon-dark',  name: 'Oxocarbon Dark',  group: 'Oxocarbon', src: 'themes/oxocarbon/dark.js' },
+  { id: 'oxocarbon-light', name: 'Oxocarbon Light', group: 'Oxocarbon', src: 'themes/oxocarbon/light.js' },
+
+  // ── Poimandres ───────────────────────────────────────────────────────────
+  { id: 'poimandres', name: 'Poimandres', group: 'Poimandres', src: 'themes/poimandres/index.js' },
+
+  // ── Vesper ───────────────────────────────────────────────────────────────
+  { id: 'vesper', name: 'Vesper', group: 'Vesper', src: 'themes/vesper/index.js' },
+
+  // ── Moonfly ──────────────────────────────────────────────────────────────
+  { id: 'moonfly', name: 'Moonfly', group: 'Moonfly', src: 'themes/moonfly/index.js' },
+
+  // ── Nightfly ─────────────────────────────────────────────────────────────
+  { id: 'nightfly', name: 'Nightfly', group: 'Nightfly', src: 'themes/nightfly/index.js' },
+
+  // ── Gruvbox Material ─────────────────────────────────────────────────────
+  { id: 'gruvbox-material-dark',  name: 'Gruvbox Material Dark',  group: 'Gruvbox Material', src: 'themes/gruvbox-material/dark.js' },
+  { id: 'gruvbox-material-light', name: 'Gruvbox Material Light', group: 'Gruvbox Material', src: 'themes/gruvbox-material/light.js' },
+
+  // ── Modus ────────────────────────────────────────────────────────────────
+  { id: 'modus-vivendi',         name: 'Modus Vivendi',         group: 'Modus', src: 'themes/modus/vivendi.js' },
+  { id: 'modus-vivendi-tinted',  name: 'Modus Vivendi Tinted',  group: 'Modus', src: 'themes/modus/vivendi-tinted.js' },
+  { id: 'modus-operandi',        name: 'Modus Operandi',        group: 'Modus', src: 'themes/modus/operandi.js' },
+  { id: 'modus-operandi-tinted', name: 'Modus Operandi Tinted', group: 'Modus', src: 'themes/modus/operandi-tinted.js' },
 ];

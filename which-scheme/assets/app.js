@@ -3,7 +3,20 @@
 // ─────────────────────────────────────────────
 
 const themeCache = new Map();
+const editedThemes = new Map();
 let colorFormat = 'hex';
+
+function getEditedTheme(themeId) {
+  if (!editedThemes.has(themeId)) {
+    const orig = themeCache.get(themeId);
+    editedThemes.set(themeId, {
+      ...orig,
+      colors: orig.colors.map(c => ({ ...c })),
+      preview: { ...orig.preview },
+    });
+  }
+  return editedThemes.get(themeId);
+}
 
 // Global registry — theme files call WhichTheme.register({...})
 window.WhichTheme = { register: theme => themeCache.set(theme.id, theme) };
@@ -69,6 +82,14 @@ function renderCard(theme, themeId) {
           <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
         </svg>
       </button>
+      <button class="edit-icon" onclick="openColorEdit('${themeId}', ${idx})" title="Edit color">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+      </button>
+      <input type="color" class="color-picker" id="picker-${themeId}-${idx}" value="${c.hex}"
+             oninput="applyColorEdit('${themeId}', ${idx}, this.value)">
       <span class="color-copied" id="copied-${themeId}-${idx}">Copied!</span>
     </div>
   `).join('');
@@ -99,6 +120,13 @@ function renderCard(theme, themeId) {
               <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
             </svg>
             Copy CSS vars
+          </button>
+          <button class="btn btn-ghost" id="reset-${themeId}" onclick="resetTheme('${themeId}')" style="display:none" title="Discard edits">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <path d="M3 3v5h5"/>
+            </svg>
+            Reset
           </button>
         </div>
       </div>
@@ -180,7 +208,7 @@ window.setFormat = function(fmt) {
 };
 
 window.copyAllCss = function(themeId, btn) {
-  const theme = themeCache.get(themeId);
+  const theme = editedThemes.has(themeId) ? editedThemes.get(themeId) : themeCache.get(themeId);
   if (!theme) return;
   const css = buildCssVariables(theme, colorFormat);
   navigator.clipboard.writeText(css).then(() => {
@@ -192,4 +220,64 @@ window.copyAllCss = function(themeId, btn) {
       btn.classList.remove('btn-copied');
     }, 2000);
   });
+};
+
+window.openColorEdit = function(themeId, idx) {
+  document.getElementById(`picker-${themeId}-${idx}`).click();
+};
+
+window.applyColorEdit = function(themeId, idx, newHex) {
+  const theme = getEditedTheme(themeId);
+  const oldHex = theme.colors[idx].hex;
+  theme.colors[idx].hex = newHex;
+
+  // Sync any preview colors that matched the old hex
+  for (const key of Object.keys(theme.preview)) {
+    if (theme.preview[key] && theme.preview[key].toLowerCase() === oldHex.toLowerCase()) {
+      theme.preview[key] = newHex;
+    }
+  }
+
+  // Update DOM
+  const card = document.querySelector(`.theme-card[data-theme-id="${themeId}"]`);
+  const colorValue = card.querySelector(`.color-value[data-idx="${idx}"]`);
+  const squircle = colorValue.closest('.color-item').querySelector('.squircle');
+  colorValue.dataset.hex = newHex;
+  colorValue.textContent = formatColor(newHex, colorFormat);
+  squircle.style.background = newHex;
+
+  // Live-update preview SVG
+  const svgContent = generatePreviewSVG(theme.preview);
+  card.querySelector('.card-preview img').src =
+    `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgContent)}`;
+
+  // Show reset button
+  const resetBtn = document.getElementById(`reset-${themeId}`);
+  if (resetBtn) resetBtn.style.display = '';
+};
+
+window.resetTheme = function(themeId) {
+  editedThemes.delete(themeId);
+  const orig = themeCache.get(themeId);
+  const card = document.querySelector(`.theme-card[data-theme-id="${themeId}"]`);
+
+  orig.colors.forEach((c, idx) => {
+    const colorValue = card.querySelector(`.color-value[data-idx="${idx}"]`);
+    if (!colorValue) return;
+    const squircle = colorValue.closest('.color-item').querySelector('.squircle');
+    const picker = document.getElementById(`picker-${themeId}-${idx}`);
+    colorValue.dataset.hex = c.hex;
+    colorValue.textContent = formatColor(c.hex, colorFormat);
+    squircle.style.background = c.hex;
+    if (picker) picker.value = c.hex;
+  });
+
+  // Restore preview
+  const svgContent = generatePreviewSVG(orig.preview);
+  card.querySelector('.card-preview img').src =
+    `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgContent)}`;
+
+  // Hide reset button
+  const resetBtn = document.getElementById(`reset-${themeId}`);
+  if (resetBtn) resetBtn.style.display = 'none';
 };

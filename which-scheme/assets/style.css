@@ -217,6 +217,7 @@ details[open] .chevron { transform: rotate(180deg); }
 .color-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
 .color-item {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -255,7 +256,8 @@ details[open] .chevron { transform: rotate(180deg); }
 
 .color-value:hover { background: var(--bg3); }
 
-.copy-icon {
+.copy-icon,
+.edit-icon {
   display: flex;
   align-items: center;
   padding: 2px 4px;
@@ -269,8 +271,20 @@ details[open] .chevron { transform: rotate(180deg); }
   flex-shrink: 0;
 }
 
-.color-item:hover .copy-icon { opacity: 1; }
-.copy-icon:hover { color: var(--text); background: var(--bg3); }
+.color-item:hover .copy-icon,
+.color-item:hover .edit-icon { opacity: 1; }
+.copy-icon:hover,
+.edit-icon:hover { color: var(--text); background: var(--bg3); }
+
+.color-picker {
+  position: absolute;
+  width: 0;
+  height: 0;
+  padding: 0;
+  border: none;
+  opacity: 0;
+  pointer-events: none;
+}
 
 .color-copied {
   font-size: 10px;
@@ -313,6 +327,15 @@ details[open] .chevron { transform: rotate(180deg); }
 
 .btn-secondary:hover { border-color: #58a6ff88; color: var(--accent-hover); }
 .btn-copied { background: #238636 !important; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  flex: 0 0 auto;
+}
+
+.btn-ghost:hover { color: var(--text); border-color: #ff7b7b88; }
 
 /* Loading state */
 .loading-card {
