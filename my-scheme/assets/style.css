@@ -349,6 +349,30 @@ body {
   background: transparent;
 }
 
+/* Export tab groups */
+.export-tabs-groups {
+  padding: 0 18px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.export-tab-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.export-row-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  width: 36px;
+  flex-shrink: 0;
+}
+
 /* Export */
 .export-code-wrap {
   margin: 0 18px;

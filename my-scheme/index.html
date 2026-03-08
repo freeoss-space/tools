@@ -91,10 +91,28 @@
         <section class="panel export-panel">
           <div class="panel-header">
             <span class="panel-label">Export</span>
-            <div class="tab-group" id="export-tabs">
-              <button class="tab active" data-efmt="css">CSS vars</button>
-              <button class="tab" data-efmt="base16">Base16</button>
-              <button class="tab" data-efmt="json">JSON</button>
+          </div>
+          <div class="export-tabs-groups" id="export-tabs-groups">
+            <div class="export-tab-row">
+              <span class="export-row-label">Scheme</span>
+              <div class="tab-group">
+                <button class="tab active" data-efmt="css">CSS vars</button>
+                <button class="tab" data-efmt="base16">Base16</button>
+                <button class="tab" data-efmt="base24">Base24</button>
+                <button class="tab" data-efmt="nvchad">NvChad</button>
+                <button class="tab" data-efmt="json">JSON</button>
+              </div>
+            </div>
+            <div class="export-tab-row">
+              <span class="export-row-label">Ports</span>
+              <div class="tab-group">
+                <button class="tab" data-efmt="alacritty">Alacritty</button>
+                <button class="tab" data-efmt="kitty">Kitty</button>
+                <button class="tab" data-efmt="wezterm">WezTerm</button>
+                <button class="tab" data-efmt="ghostty">Ghostty</button>
+                <button class="tab" data-efmt="vim">Vim</button>
+                <button class="tab" data-efmt="tmux">tmux</button>
+              </div>
             </div>
           </div>
           <div class="export-code-wrap">
@@ -107,6 +125,14 @@
                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
               </svg>
               Copy
+            </button>
+            <button class="btn btn-ghost" id="download-export-btn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Download
             </button>
           </div>
         </section>

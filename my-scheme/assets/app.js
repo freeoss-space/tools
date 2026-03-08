@@ -156,9 +156,34 @@ function renderPreview() {
 function renderExport() {
   const el = document.getElementById('export-code');
   switch (state.exportFormat) {
-    case 'base16': el.textContent = buildBase16(state.colors, state.name); break;
-    case 'json':   el.textContent = buildJson(state.colors, state.name); break;
-    default:       el.textContent = buildCssVars(state.colors, state.name);
+    case 'base16':    el.textContent = buildBase16Yaml(state.colors, state.name);  break;
+    case 'base24':    el.textContent = buildBase24Yaml(state.colors, state.name);  break;
+    case 'nvchad':    el.textContent = buildNvChad(state.colors, state.name);      break;
+    case 'json':      el.textContent = buildJson(state.colors, state.name);        break;
+    case 'alacritty': el.textContent = buildAlacritty(state.colors, state.name);  break;
+    case 'kitty':     el.textContent = buildKitty(state.colors, state.name);      break;
+    case 'wezterm':   el.textContent = buildWezTerm(state.colors, state.name);    break;
+    case 'ghostty':   el.textContent = buildGhostty(state.colors, state.name);    break;
+    case 'vim':       el.textContent = buildVim(state.colors, state.name);        break;
+    case 'tmux':      el.textContent = buildTmux(state.colors, state.name);       break;
+    default:          el.textContent = buildCssVars(state.colors, state.name);
+  }
+}
+
+function exportFilename() {
+  const slug = (state.name || 'my-scheme').toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  switch (state.exportFormat) {
+    case 'base16':    return `${slug}.yaml`;
+    case 'base24':    return `${slug}-base24.yaml`;
+    case 'nvchad':    return `${slug}.lua`;
+    case 'json':      return `${slug}.json`;
+    case 'alacritty': return `${slug}.toml`;
+    case 'kitty':     return `${slug}.conf`;
+    case 'wezterm':   return `${slug}.lua`;
+    case 'ghostty':   return slug;
+    case 'vim':       return `${slug}.vim`;
+    case 'tmux':      return `${slug}-tmux.conf`;
+    default:          return `${slug}.css`;
   }
 }
 
@@ -234,11 +259,11 @@ document.getElementById('preview-tabs').addEventListener('click', e => {
 
 // ── Event: export tabs ────────────────────────────────────────────
 
-document.getElementById('export-tabs').addEventListener('click', e => {
+document.getElementById('export-tabs-groups').addEventListener('click', e => {
   const btn = e.target.closest('.tab');
   if (!btn) return;
   state.exportFormat = btn.dataset.efmt;
-  document.querySelectorAll('#export-tabs .tab')
+  document.querySelectorAll('#export-tabs-groups .tab')
     .forEach(b => b.classList.toggle('active', b === btn));
   renderExport();
 });
@@ -301,4 +326,17 @@ document.getElementById('copy-export-btn').addEventListener('click', e => {
     btn.classList.add('btn-copied');
     setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('btn-copied'); }, 2000);
   }).catch(() => showToast('Copy failed', true));
+});
+
+// ── Event: download export ────────────────────────────────────────
+
+document.getElementById('download-export-btn').addEventListener('click', () => {
+  const code = document.getElementById('export-code').textContent;
+  const blob = new Blob([code], { type: 'text/plain' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = exportFilename();
+  a.click();
+  URL.revokeObjectURL(url);
 });
