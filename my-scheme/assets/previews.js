@@ -767,61 +767,10 @@ function previewUi(p, colors, allVariants) {
     return `rgba(${r},${g},${b},${a})`;
   };
 
-  // ── Cycling card content templates ───────────────────────────────
-  const CARDS = [
-    {
-      title: 'Schedule a Wash',
-      badge: '&#11044; Confirmed', badgeType: 'succ',
-      btns: ['Book Now', 'View History', 'Cancel'],
-      rows: [
-        { lbl: 'Payment', txt: '&#10005; Declined',   type: 'err'  },
-        { lbl: 'Status',  txt: '&#8987; In Progress', type: 'warn' },
-        { lbl: 'Wash',    txt: '&#10003; Complete',   type: 'succ' },
-      ],
-    },
-    {
-      title: 'Provider Dashboard',
-      badge: '&#11044; 3 Incoming', badgeType: 'info',
-      btns: ['Accept Job', 'View Earnings', 'Decline'],
-      rows: [
-        { lbl: 'Alert',  txt: '&#10005; No-show',  type: 'err'  },
-        { lbl: 'ETA',    txt: '&#8987; 12 min',    type: 'warn' },
-        { lbl: 'Payout', txt: '&#10003; $34.00',   type: 'succ' },
-      ],
-    },
-    {
-      title: 'Analytics Overview',
-      badge: '&#11044; Live Data', badgeType: 'info',
-      btns: ['View Report', 'Export', 'Filter'],
-      rows: [
-        { lbl: 'Revenue', txt: '&#10005; -12%',       type: 'err'  },
-        { lbl: 'Traffic', txt: '&#8987; Loading',     type: 'warn' },
-        { lbl: 'Goals',   txt: '&#10003; On Track',   type: 'succ' },
-      ],
-    },
-    {
-      title: 'Team Settings',
-      badge: '&#11044; 2 Pending', badgeType: 'warn',
-      btns: ['Save Changes', 'Preview', 'Discard'],
-      rows: [
-        { lbl: 'Auth',   txt: '&#10005; 2FA Off',  type: 'err'  },
-        { lbl: 'Roles',  txt: '&#8987; Updating',  type: 'warn' },
-        { lbl: 'Backup', txt: '&#10003; Synced',   type: 'succ' },
-      ],
-    },
-  ];
-
   // ── Per-variant data (run deriveAll on each variant's colors) ─────
-  const variants = allVariants.map((v, vi) => {
+  const variants = allVariants.map(v => {
     const vp = deriveAll(v.colors);
-    return {
-      name:   v.name,
-      vp,
-      card:   CARDS[vi % CARDS.length],
-      errBg:  rgba(vp.red,    0.14),
-      warnBg: rgba(vp.yellow, 0.14),
-      succBg: rgba(vp.green,  0.14),
-    };
+    return { name: v.name, vp };
   });
 
   // ── Token row: swatch + name + value ─────────────────────────────
@@ -849,37 +798,126 @@ function previewUi(p, colors, allVariants) {
   };
 
   // ── UI preview card for one variant ──────────────────────────────
-  const uiCard = ({ vp, card, errBg, warnBg, succBg }) => {
-    const onBtn      = hex => relativeLuminance(hex) > 0.18 ? vp.bg : vp.text;
-    const statusBg   = { err: errBg,   warn: warnBg,    succ: succBg   };
-    const statusText = { err: vp.red,  warn: vp.yellow, succ: vp.green };
-    const badgeBg    = card.badgeType === 'succ' ? succBg
-                     : card.badgeType === 'warn' ? warnBg
-                     : rgba(vp.blue, 0.18);
-    const badgeText  = card.badgeType === 'succ' ? vp.green
-                     : card.badgeType === 'warn' ? vp.yellow
-                     : vp.blue;
-    const rows = card.rows.map(row =>
-      `<div style="border-radius:12px;padding:13px 15px;font-size:13px;font-weight:700;` +
-      `background:${statusBg[row.type]};color:${statusText[row.type]};"><div style="font-family:'DM Mono',` +
-      `monospace;font-size:9px;letter-spacing:.12em;opacity:.7;margin-bottom:5px;font-weight:400;` +
-      `text-transform:uppercase;">${row.lbl}</div>${row.txt}</div>`
-    ).join('');
-    return `<div style="border-radius:18px;padding:20px 22px;border:1px solid ${vp.border};background:${vp.bg2};">` +
-      `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">` +
-      `<div style="font-size:18px;font-weight:700;color:${vp.text};">${card.title}</div>` +
-      `<span style="font-size:10px;font-family:'DM Mono',monospace;padding:4px 12px;border-radius:100px;` +
-      `font-weight:500;letter-spacing:.04em;background:${badgeBg};color:${badgeText};">${card.badge}</span>` +
+  const uiCard = ({ name, vp }) => {
+    const errBg  = rgba(vp.red,    0.14);
+    const warnBg = rgba(vp.yellow, 0.14);
+    const succBg = rgba(vp.green,  0.14);
+    const infoBg = rgba(vp.blue,   0.14);
+    const onBtn  = hex => relativeLuminance(hex) > 0.18 ? vp.bg : vp.text;
+    const mono   = `font-family:'DM Mono',monospace;`;
+    const sans   = `font-family:'Syne',sans-serif;`;
+    const sec    = `margin-bottom:16px;`;
+
+    const slabel = t =>
+      `<div style="${mono}font-size:9px;letter-spacing:.18em;text-transform:uppercase;` +
+      `color:${vp.muted};margin-bottom:8px;">${t}</div>`;
+
+    const badge = (txt, bg, col) =>
+      `<span style="font-size:10px;${mono}padding:3px 10px;border-radius:100px;font-weight:500;` +
+      `background:${bg};color:${col};letter-spacing:.03em;">${txt}</span>`;
+
+    const btn = (txt, bg, col, bdr) =>
+      `<button style="${sans}font-size:12px;font-weight:600;padding:8px 16px;border-radius:9px;` +
+      `border:${bdr || 'none'};cursor:default;background:${bg};color:${col};">${txt}</button>`;
+
+    const field = (lbl, val, bdCol, msg, icon) =>
+      `<div style="${sec}">` +
+      `<div style="font-size:11px;font-weight:600;color:${vp.muted};margin-bottom:4px;">${lbl}</div>` +
+      `<div style="display:flex;align-items:center;gap:6px;padding:8px 11px;border-radius:9px;` +
+      `border:1.5px solid ${bdCol};background:${vp.bg};">` +
+      `<span style="flex:1;font-size:12px;color:${vp.text};${mono}">${val}</span>` +
+      (icon ? `<span style="font-size:11px;color:${icon.col};">${icon.sym}</span>` : '') +
       `</div>` +
-      `<div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px;">` +
-      `<button style="font-family:'Syne',sans-serif;font-size:13px;font-weight:600;padding:9px 18px;` +
-      `border-radius:10px;border:none;cursor:default;background:${vp.blue};color:${onBtn(vp.blue)};">${card.btns[0]}</button>` +
-      `<button style="font-family:'Syne',sans-serif;font-size:13px;font-weight:600;padding:9px 18px;` +
-      `border-radius:10px;border:none;cursor:default;background:${rgba(vp.blue, 0.16)};color:${vp.blue};">${card.btns[1]}</button>` +
-      `<button style="font-family:'Syne',sans-serif;font-size:13px;font-weight:600;padding:9px 18px;` +
-      `border-radius:10px;border:1px solid ${vp.border};cursor:default;background:${vp.bg};color:${vp.muted};">${card.btns[2]}</button>` +
+      (msg ? `<div style="font-size:10px;color:${msg.col};margin-top:3px;">&#9679; ${msg.txt}</div>` : '') +
+      `</div>`;
+
+    const alert = (icon, txt, bdCol, bg) =>
+      `<div style="border-radius:9px;border-left:3px solid ${bdCol};padding:9px 12px;background:${bg};` +
+      `margin-bottom:8px;display:flex;align-items:flex-start;gap:8px;">` +
+      `<span style="font-size:11px;color:${bdCol};flex-shrink:0;">${icon}</span>` +
+      `<span style="font-size:11px;color:${vp.text};line-height:1.4;">${txt}</span>` +
+      `</div>`;
+
+    const progress = (lbl, pct, fillCol) =>
+      `<div style="${sec}">` +
+      `<div style="display:flex;justify-content:space-between;margin-bottom:4px;">` +
+      `<span style="font-size:11px;color:${vp.text};font-weight:600;">${lbl}</span>` +
+      `<span style="font-size:10px;${mono}color:${vp.muted};">${pct}%</span>` +
       `</div>` +
-      `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">${rows}</div>` +
+      `<div style="height:6px;border-radius:100px;background:${rgba(fillCol, 0.18)};">` +
+      `<div style="height:6px;border-radius:100px;width:${pct}%;background:${fillCol};"></div>` +
+      `</div></div>`;
+
+    const toggle = (lbl, on, fillCol) =>
+      `<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;` +
+      `border-bottom:1px solid ${rgba(vp.border, 0.5)};">` +
+      `<span style="font-size:12px;color:${vp.text};font-weight:600;">${lbl}</span>` +
+      `<div style="position:relative;width:36px;height:20px;border-radius:100px;` +
+      `background:${on ? fillCol : rgba(vp.text, 0.15)};flex-shrink:0;">` +
+      `<div style="position:absolute;top:2px;left:${on ? '18px' : '2px'};width:16px;height:16px;` +
+      `border-radius:50%;background:${on ? vp.bg : rgba(vp.text, 0.5)};"></div>` +
+      `</div></div>`;
+
+    return `<div style="border-radius:18px;padding:22px;border:1px solid ${vp.border};background:${vp.bg2};">` +
+
+      // Typography + Badges
+      `<div style="${sec}">` +
+      slabel('Typography &amp; Badges') +
+      `<div style="font-size:22px;font-weight:800;color:${vp.text};line-height:1.1;margin-bottom:2px;">${name}</div>` +
+      `<div style="font-size:13px;font-weight:600;color:${vp.keyword};margin-bottom:4px;">Color Scheme Preview</div>` +
+      `<div style="font-size:12px;color:${vp.muted};margin-bottom:12px;">` +
+      `Explore typography, components, and interactive elements in this palette.</div>` +
+      `<div style="display:flex;gap:6px;flex-wrap:wrap;">` +
+      badge('&#11044; Active',  succBg,                       vp.green)   +
+      badge('Beta',             infoBg,                       vp.blue)    +
+      badge('New',              rgba(vp.keyword, 0.16),       vp.keyword) +
+      badge('&#9888; Warning',  warnBg,                       vp.yellow)  +
+      badge('&#10005; Error',   errBg,                        vp.red)     +
+      `</div></div>` +
+
+      // Buttons
+      `<div style="${sec}">` +
+      slabel('Buttons') +
+      `<div style="display:flex;gap:8px;flex-wrap:wrap;">` +
+      btn('Primary',   vp.blue,              onBtn(vp.blue))                   +
+      btn('Secondary', rgba(vp.blue, 0.16),  vp.blue)                          +
+      btn('Ghost',     'transparent',        vp.muted, `1px solid ${vp.border}`) +
+      btn('Danger',    errBg,                vp.red)                            +
+      `</div></div>` +
+
+      // Two-col: Form inputs + Alerts
+      `<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;${sec}">` +
+      `<div>` +
+      slabel('Form Inputs') +
+      field('Email',    'user@example.com',              vp.green,  null,
+            { sym: '&#10003;', col: vp.green }) +
+      field('Password', '&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;', vp.red,
+            { txt: 'Password too short', col: vp.red }) +
+      field('Message',  'Type your message&#8230;',      vp.blue) +
+      `</div>` +
+      `<div>` +
+      slabel('Alerts') +
+      alert('&#8505;',  'Your session will expire in 15 minutes.', vp.blue,   infoBg) +
+      alert('&#9888;',  'Low disk space detected on drive C.',     vp.yellow, warnBg) +
+      alert('&#10005;', 'Failed to connect. Check your network.', vp.red,    errBg)  +
+      alert('&#10003;', 'Settings saved successfully.',            vp.green,  succBg) +
+      `</div></div>` +
+
+      // Two-col: Progress + Toggles
+      `<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">` +
+      `<div>` +
+      slabel('Progress') +
+      progress('Storage', 68, vp.blue)  +
+      progress('CPU',     24, vp.green) +
+      progress('Errors',   5, vp.red)   +
+      `</div>` +
+      `<div>` +
+      slabel('Toggles') +
+      toggle('Dark Mode',     true,  vp.blue)  +
+      toggle('Notifications', false, vp.muted) +
+      toggle('Auto-save',     true,  vp.green) +
+      `</div></div>` +
+
       `</div>`;
   };
 
