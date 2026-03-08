@@ -754,11 +754,12 @@ function previewObsidian(p) {
 }
 
 // ── UI Showcase ───────────────────────────────────────────────────
-// Semantic token panels (light & dark) + two UI component previews,
-// matching the AquaDrive color system reference design.
+// One semantic-token panel + one UI component card per variant.
+// Card templates cycle so each variant shows different content.
 
-function previewUi(p, colors) {
-  // rgba helper
+function previewUi(p, colors, allVariants) {
+  allVariants = allVariants && allVariants.length ? allVariants : [{ name: 'Dark', colors }];
+
   const rgba = (hex, a) => {
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
@@ -766,174 +767,148 @@ function previewUi(p, colors) {
     return `rgba(${r},${g},${b},${a})`;
   };
 
-  // Re-sort the palette by luminance so we can derive positional tokens
-  const sorted = [...colors].sort((a, b) => relativeLuminance(a.hex) - relativeLuminance(b.hex));
-  const n      = sorted.length;
-  const at     = f => sorted[Math.min(Math.floor(f * n), n - 1)].hex;
-  const idx    = i => sorted[Math.min(Math.max(0, i), n - 1)].hex;
+  // ── Cycling card content templates ───────────────────────────────
+  const CARDS = [
+    {
+      title: 'Schedule a Wash',
+      badge: '&#11044; Confirmed', badgeType: 'succ',
+      btns: ['Book Now', 'View History', 'Cancel'],
+      rows: [
+        { lbl: 'Payment', txt: '&#10005; Declined',   type: 'err'  },
+        { lbl: 'Status',  txt: '&#8987; In Progress', type: 'warn' },
+        { lbl: 'Wash',    txt: '&#10003; Complete',   type: 'succ' },
+      ],
+    },
+    {
+      title: 'Provider Dashboard',
+      badge: '&#11044; 3 Incoming', badgeType: 'info',
+      btns: ['Accept Job', 'View Earnings', 'Decline'],
+      rows: [
+        { lbl: 'Alert',  txt: '&#10005; No-show',  type: 'err'  },
+        { lbl: 'ETA',    txt: '&#8987; 12 min',    type: 'warn' },
+        { lbl: 'Payout', txt: '&#10003; $34.00',   type: 'succ' },
+      ],
+    },
+    {
+      title: 'Analytics Overview',
+      badge: '&#11044; Live Data', badgeType: 'info',
+      btns: ['View Report', 'Export', 'Filter'],
+      rows: [
+        { lbl: 'Revenue', txt: '&#10005; -12%',       type: 'err'  },
+        { lbl: 'Traffic', txt: '&#8987; Loading',     type: 'warn' },
+        { lbl: 'Goals',   txt: '&#10003; On Track',   type: 'succ' },
+      ],
+    },
+    {
+      title: 'Team Settings',
+      badge: '&#11044; 2 Pending', badgeType: 'warn',
+      btns: ['Save Changes', 'Preview', 'Discard'],
+      rows: [
+        { lbl: 'Auth',   txt: '&#10005; 2FA Off',  type: 'err'  },
+        { lbl: 'Roles',  txt: '&#8987; Updating',  type: 'warn' },
+        { lbl: 'Backup', txt: '&#10003; Synced',   type: 'succ' },
+      ],
+    },
+  ];
 
-  // Determine readable text color on a given background
-  const onBg = hex => relativeLuminance(hex) > 0.18 ? idx(0) : idx(n - 1);
+  // ── Per-variant data (run deriveAll on each variant's colors) ─────
+  const variants = allVariants.map((v, vi) => {
+    const vp = deriveAll(v.colors);
+    return {
+      name:   v.name,
+      vp,
+      card:   CARDS[vi % CARDS.length],
+      errBg:  rgba(vp.red,    0.14),
+      warnBg: rgba(vp.yellow, 0.14),
+      succBg: rgba(vp.green,  0.14),
+    };
+  });
 
-  const accent = at(0.60);  // primary interactive color
+  // ── Token row: swatch + name + value ─────────────────────────────
+  const tok = (dot, name, val, textCol, bdr) =>
+    `<div style="display:flex;align-items:center;gap:12px;padding:7px 10px;border-radius:9px;">` +
+    `<div style="width:28px;height:28px;border-radius:7px;flex-shrink:0;background:${dot};border:1px solid ${bdr};"></div>` +
+    `<span style="font-size:11.5px;font-weight:600;flex:1;font-family:'DM Mono',monospace;color:${textCol};">${name}</span>` +
+    `<span style="font-family:'DM Mono',monospace;font-size:10px;opacity:.45;color:${textCol};">${val}</span>` +
+    `</div>`;
 
-  // ── Dark-end semantic tokens ──────────────────────────────────────
-  const dk = {
-    bg:                 idx(0),
-    surface:            idx(Math.min(1, n - 1)),
-    border:             at(0.25),
-    textPrimary:        idx(n - 1),
-    textSecondary:      at(0.42),
-    interactivePrimary: accent,
-    interactiveHover:   at(0.70),
-    interactiveSubtle:  rgba(accent, 0.20),
+  // ── Semantic token panel for one variant ──────────────────────────
+  const tokenPanel = ({ name, vp }) => {
+    const bdr = rgba(vp.text, 0.15);  // swatch border visible on any bg
+    return `<div style="border-radius:18px;padding:20px 18px 12px;border:1px solid ${vp.border};background:${vp.bg2};">` +
+      `<div style="font-size:13px;font-weight:700;margin-bottom:10px;color:${vp.text};">${name}</div>` +
+      tok(vp.bg,        'background',          vp.bg,        vp.text, bdr) +
+      tok(vp.bg2,       'surface',             vp.bg2,       vp.text, bdr) +
+      tok(vp.border,    'border',              vp.border,    vp.text, bdr) +
+      tok(vp.text,      'text.primary',        vp.text,      vp.text, bdr) +
+      tok(vp.muted,     'text.secondary',      vp.muted,     vp.text, bdr) +
+      tok(vp.blue,      'interactive.primary', vp.blue,      vp.text, bdr) +
+      tok(vp.keyword,   'interactive.hover',   vp.keyword,   vp.text, bdr) +
+      tok(vp.highlight, 'interactive.subtle',  vp.highlight, vp.text, bdr) +
+      `</div>`;
   };
 
-  // ── Light-end semantic tokens (bright side of the palette) ────────
-  const lt = {
-    bg:                 idx(n - 1),
-    surface:            idx(Math.max(0, n - 2)),
-    border:             at(0.80),
-    textPrimary:        idx(0),
-    textSecondary:      at(0.45),
-    interactivePrimary: accent,
-    interactiveHover:   at(0.52),
-    interactiveSubtle:  rgba(accent, 0.12),
+  // ── UI preview card for one variant ──────────────────────────────
+  const uiCard = ({ vp, card, errBg, warnBg, succBg }) => {
+    const onBtn      = hex => relativeLuminance(hex) > 0.18 ? vp.bg : vp.text;
+    const statusBg   = { err: errBg,   warn: warnBg,    succ: succBg   };
+    const statusText = { err: vp.red,  warn: vp.yellow, succ: vp.green };
+    const badgeBg    = card.badgeType === 'succ' ? succBg
+                     : card.badgeType === 'warn' ? warnBg
+                     : rgba(vp.blue, 0.18);
+    const badgeText  = card.badgeType === 'succ' ? vp.green
+                     : card.badgeType === 'warn' ? vp.yellow
+                     : vp.blue;
+    const rows = card.rows.map(row =>
+      `<div style="border-radius:12px;padding:13px 15px;font-size:13px;font-weight:700;` +
+      `background:${statusBg[row.type]};color:${statusText[row.type]};"><div style="font-family:'DM Mono',` +
+      `monospace;font-size:9px;letter-spacing:.12em;opacity:.7;margin-bottom:5px;font-weight:400;` +
+      `text-transform:uppercase;">${row.lbl}</div>${row.txt}</div>`
+    ).join('');
+    return `<div style="border-radius:18px;padding:20px 22px;border:1px solid ${vp.border};background:${vp.bg2};">` +
+      `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">` +
+      `<div style="font-size:18px;font-weight:700;color:${vp.text};">${card.title}</div>` +
+      `<span style="font-size:10px;font-family:'DM Mono',monospace;padding:4px 12px;border-radius:100px;` +
+      `font-weight:500;letter-spacing:.04em;background:${badgeBg};color:${badgeText};">${card.badge}</span>` +
+      `</div>` +
+      `<div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px;">` +
+      `<button style="font-family:'Syne',sans-serif;font-size:13px;font-weight:600;padding:9px 18px;` +
+      `border-radius:10px;border:none;cursor:default;background:${vp.blue};color:${onBtn(vp.blue)};">${card.btns[0]}</button>` +
+      `<button style="font-family:'Syne',sans-serif;font-size:13px;font-weight:600;padding:9px 18px;` +
+      `border-radius:10px;border:none;cursor:default;background:${rgba(vp.blue, 0.16)};color:${vp.blue};">${card.btns[1]}</button>` +
+      `<button style="font-family:'Syne',sans-serif;font-size:13px;font-weight:600;padding:9px 18px;` +
+      `border-radius:10px;border:1px solid ${vp.border};cursor:default;background:${vp.bg};color:${vp.muted};">${card.btns[2]}</button>` +
+      `</div>` +
+      `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">${rows}</div>` +
+      `</div>`;
   };
 
-  // ── Semantic status colors ────────────────────────────────────────
-  const errBg  = rgba(p.red,    0.12);
-  const warnBg = rgba(p.yellow, 0.13);
-  const succBg = rgba(p.green,  0.13);
-  const errDk  = rgba(p.red,    0.20);
-  const warnDk = rgba(p.yellow, 0.16);
-  const succDk = rgba(p.green,  0.15);
-
-  // Token row: round swatch + name + value
-  const tok = (dot, name, val, textCol, dotBorder = 'rgba(0,0,0,0.07)') => `
-    <div style="display:flex;align-items:center;gap:12px;padding:7px 10px;border-radius:9px;">
-      <div style="width:28px;height:28px;border-radius:7px;flex-shrink:0;background:${dot};border:1px solid ${dotBorder};"></div>
-      <span style="font-size:11.5px;font-weight:600;flex:1;font-family:'DM Mono',monospace;color:${textCol};">${name}</span>
-      <span style="font-family:'DM Mono',monospace;font-size:10px;opacity:.45;color:${textCol};">${val}</span>
-    </div>`;
-
-  // Page uses the brightest palette color as its background
-  const pageBg   = lt.bg;
-  const labelCol = lt.textSecondary;
-  const lineCol  = rgba(idx(0), 0.14);
-  const ltBorder = rgba(idx(0), 0.11);
+  // ── Layout ────────────────────────────────────────────────────────
+  const nCols    = Math.min(allVariants.length, 2);
+  const pageBg   = '#F4EDED';
+  const labelCol = rgba(p.bg, 0.55);
+  const lineCol  = rgba(p.bg, 0.12);
+  const tokTitle = allVariants.length === 2
+    ? `Semantic Tokens &#8212; ${allVariants[0].name} &amp; ${allVariants[1].name}`
+    : 'Semantic Tokens';
 
   return `<!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Syne',sans-serif;background:${pageBg};padding:22px 26px 30px;min-height:100vh;}
 .sl{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.25em;text-transform:uppercase;color:${labelCol};margin-bottom:14px;display:flex;align-items:center;gap:10px;}
 .sl::after{content:'';flex:1;height:1px;background:${lineCol};}
 .s{margin-bottom:24px;}
-.panels{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.panel{border-radius:18px;padding:20px 18px 12px;border:1px solid;}
-.pt{font-size:13px;font-weight:700;margin-bottom:10px;}
-.pbox{border-radius:18px;padding:20px 22px;border:1px solid;}
-.ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
-.pt2{font-size:18px;font-weight:700;}
-.bdg{font-size:10px;font-family:'DM Mono',monospace;padding:4px 12px;border-radius:100px;font-weight:500;letter-spacing:.04em;}
-.btns{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px;}
-.btn{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;padding:9px 18px;border-radius:10px;border:none;cursor:default;}
-.cg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.mc{border-radius:12px;padding:13px 15px;font-size:13px;font-weight:700;}
-.ml{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;opacity:.7;margin-bottom:5px;font-weight:400;text-transform:uppercase;}
-</style>
-</head>
+.panels{display:grid;grid-template-columns:repeat(${nCols},1fr);gap:14px;}
+</style></head>
 <body>
-
-<!-- ── Semantic Tokens ── -->
 <div class="s">
-  <div class="sl">Semantic Tokens — Light &amp; Dark</div>
-  <div class="panels">
-    <div class="panel" style="background:${lt.surface};border-color:${ltBorder};">
-      <div class="pt" style="color:${lt.textPrimary};">&#9728;&#65039; Light Theme</div>
-      ${tok(lt.bg,                 'background',          lt.bg,                 lt.textPrimary, ltBorder)}
-      ${tok(lt.surface,            'surface',             lt.surface,            lt.textPrimary, ltBorder)}
-      ${tok(lt.border,             'border',              lt.border,             lt.textPrimary)}
-      ${tok(lt.textPrimary,        'text.primary',        lt.textPrimary,        lt.textPrimary)}
-      ${tok(lt.textSecondary,      'text.secondary',      lt.textSecondary,      lt.textPrimary)}
-      ${tok(lt.interactivePrimary, 'interactive.primary', lt.interactivePrimary, lt.textPrimary)}
-      ${tok(lt.interactiveHover,   'interactive.hover',   lt.interactiveHover,   lt.textPrimary)}
-      ${tok(lt.interactiveSubtle,  'interactive.subtle',  lt.interactiveSubtle,  lt.textPrimary, ltBorder)}
-    </div>
-    <div class="panel" style="background:${dk.bg};border-color:${dk.border};">
-      <div class="pt" style="color:${dk.textPrimary};">&#127769; Dark Theme</div>
-      ${tok(dk.bg,                 'background',          dk.bg,                 dk.textPrimary, dk.border)}
-      ${tok(dk.surface,            'surface',             dk.surface,            dk.textPrimary, dk.border)}
-      ${tok(dk.border,             'border',              dk.border,             dk.textPrimary)}
-      ${tok(dk.textPrimary,        'text.primary',        dk.textPrimary,        dk.textPrimary)}
-      ${tok(dk.textSecondary,      'text.secondary',      dk.textSecondary,      dk.textPrimary)}
-      ${tok(dk.interactivePrimary, 'interactive.primary', dk.interactivePrimary, dk.textPrimary)}
-      ${tok(dk.interactiveHover,   'interactive.hover',   dk.interactiveHover,   dk.textPrimary)}
-      ${tok(dk.interactiveSubtle,  'interactive.subtle',  dk.interactiveSubtle,  dk.textPrimary)}
-    </div>
-  </div>
+  <div class="sl">${tokTitle}</div>
+  <div class="panels">${variants.map(tokenPanel).join('')}</div>
 </div>
-
-<!-- ── UI Preview Light ── -->
-<div class="s">
-  <div class="sl">UI Preview — Light</div>
-  <div class="pbox" style="background:${lt.surface};border-color:${ltBorder};">
-    <div class="ph">
-      <div class="pt2" style="color:${lt.textPrimary};">Schedule a Wash</div>
-      <span class="bdg" style="background:${succBg};color:${p.green};">&#11044; Confirmed</span>
-    </div>
-    <div class="btns">
-      <button class="btn" style="background:${lt.interactivePrimary};color:${onBg(lt.interactivePrimary)};">Book Now</button>
-      <button class="btn" style="background:${rgba(accent, 0.12)};color:${lt.interactiveHover};">View History</button>
-      <button class="btn" style="background:${lt.bg};color:${lt.textSecondary};border:1px solid ${rgba(idx(0), 0.14)};">Cancel</button>
-    </div>
-    <div class="cg">
-      <div class="mc" style="background:${errBg};color:${p.red};">
-        <div class="ml" style="color:${p.red};">Payment</div>&#10005; Declined
-      </div>
-      <div class="mc" style="background:${warnBg};color:${p.yellow};">
-        <div class="ml" style="color:${p.yellow};">Status</div>&#8987; In Progress
-      </div>
-      <div class="mc" style="background:${succBg};color:${p.green};">
-        <div class="ml" style="color:${p.green};">Wash</div>&#10003; Complete
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ── UI Preview Dark ── -->
-<div class="s">
-  <div class="sl">UI Preview — Dark</div>
-  <div class="pbox" style="background:${dk.surface};border-color:${dk.border};">
-    <div class="ph">
-      <div class="pt2" style="color:${dk.textPrimary};">Provider Dashboard</div>
-      <span class="bdg" style="background:${rgba(accent, 0.22)};color:${dk.interactiveHover};">&#11044; 3 Incoming</span>
-    </div>
-    <div class="btns">
-      <button class="btn" style="background:${dk.interactivePrimary};color:${onBg(dk.interactivePrimary)};">Accept Job</button>
-      <button class="btn" style="background:${rgba(accent, 0.22)};color:${dk.interactiveHover};">View Earnings</button>
-      <button class="btn" style="background:${dk.bg};color:${dk.textSecondary};border:1px solid ${dk.border};">Decline</button>
-    </div>
-    <div class="cg">
-      <div class="mc" style="background:${errDk};color:${p.red};">
-        <div class="ml" style="color:${p.red};">Alert</div>&#10005; No-show
-      </div>
-      <div class="mc" style="background:${warnDk};color:${p.yellow};">
-        <div class="ml" style="color:${p.yellow};">ETA</div>&#8987; 12 min
-      </div>
-      <div class="mc" style="background:${succDk};color:${p.green};">
-        <div class="ml" style="color:${p.green};">Payout</div>&#10003; $34.00
-      </div>
-    </div>
-  </div>
-</div>
-
+${variants.map(v => `<div class="s"><div class="sl">UI Preview &#8212; ${v.name}</div>${uiCard(v)}</div>`).join('')}
 </body>
 </html>`;
 }
@@ -941,14 +916,14 @@ body{font-family:'Syne',sans-serif;background:${pageBg};padding:22px 26px 30px;m
 // ── Entry point ───────────────────────────────────────────────────
 
 // Returns { type: 'svg'|'html', content: string }
-function generatePreview(mode, colors) {
+function generatePreview(mode, colors, allVariants) {
   const p = deriveAll(colors);
   switch (mode) {
     case 'terminal': return { type: 'svg',  content: previewTerminal(p, colors) };
     case 'browser':  return { type: 'svg',  content: previewBrowser(p) };
     case 'html':     return { type: 'html', content: previewHtml(p) };
     case 'obsidian': return { type: 'svg',  content: previewObsidian(p) };
-    case 'ui':       return { type: 'html', content: previewUi(p, colors) };
+    case 'ui':       return { type: 'html', content: previewUi(p, colors, allVariants) };
     default:         return { type: 'svg',  content: previewEditor(p) };
   }
 }

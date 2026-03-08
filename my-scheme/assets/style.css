@@ -594,6 +594,78 @@ h1 span { color: var(--accent); }
 }
 .share-url-input:focus { border-color: var(--accent); }
 
+/* ── Variant tabs ──────────────────────────────────────── */
+
+.variant-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.variant-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: 'Syne', sans-serif;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+.variant-tab:hover:not(.active) { color: var(--text); border-color: var(--accent-soft); }
+.variant-tab.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  box-shadow: 0 1px 4px rgba(101,110,164,0.3);
+}
+
+.variant-tab-name { cursor: pointer; }
+
+.variant-del {
+  background: none;
+  border: none;
+  padding: 0 0 0 2px;
+  color: rgba(255,255,255,0.6);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  line-height: 1;
+  transition: color 0.15s;
+}
+.variant-del:hover { color: #fff; }
+.variant-tab:not(.active) .variant-del { color: var(--text-muted); }
+.variant-tab:not(.active) .variant-del:hover { color: var(--error); }
+
+.variant-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  background: transparent;
+  border: 1.5px dashed var(--border);
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: 'Syne', sans-serif;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.variant-add:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-subtle);
+}
+
 /* ── Responsive ────────────────────────────────────────── */
 
 @media (max-width: 640px) {
