@@ -340,6 +340,15 @@ body {
   border: 1px solid var(--border);
 }
 
+.preview-iframe {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: none;
+  background: transparent;
+}
+
 /* Export */
 .export-code-wrap {
   margin: 0 18px;

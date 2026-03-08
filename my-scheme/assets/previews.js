@@ -64,63 +64,113 @@ function previewEditor(p) {
 }
 
 // ── Terminal ──────────────────────────────────────────────────────
+// PS1: user @ hostname ~/myfolder [main]*
+//      >
 
-function previewTerminal(p) {
+function previewTerminal(p, colors) {
   const W = 600, H = 375;
   const e = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const t = (x, y, fill, content, extra='') =>
-    `<text x="${x}" y="${y}" font-family="'SF Mono','Fira Code',monospace" font-size="12" fill="${fill}" ${extra}>${e(content)}</text>`;
-  const s = (x, y, fill, content, extra='') =>
-    `<text x="${x}" y="${y}" font-family="'SF Mono','Fira Code',monospace" font-size="11" fill="${fill}" ${extra}>${e(content)}</text>`;
+  // Monospace text at given size, ≈6.5px/char at size 11
+  const m = (x, y, fill, text, size=11) =>
+    `<text x="${x}" y="${y}" font-family="'SF Mono','Fira Code',monospace" font-size="${size}" fill="${fill}">${e(text)}</text>`;
+
+  // Approximate char width at a given font-size for position computation
+  const cw = (size=11) => size * 0.605;
+
+  // PS1 line: "user @ hostname ~/myfolder [main]*"
+  // Returns SVG fragments; x advances per segment
+  const ps1 = (baseY) => {
+    const fs = 11;
+    const segments = [
+      ['user',        p.green],
+      [' @ ',         p.muted],
+      ['hostname',    p.blue],
+      [' ~/myfolder', p.purple],
+      [' [',          p.muted],
+      ['main',        p.yellow],
+      ['*',           p.red],
+      [']',           p.muted],
+    ];
+    let out = '', x = 16;
+    for (const [txt, col] of segments) {
+      out += m(x, baseY, col, txt, fs);
+      x += txt.length * cw(fs);
+    }
+    return out;
+  };
+
+  // Prompt: "> command"
+  const prompt = (y, cmd) =>
+    m(16, y, p.green, '>') + m(16 + cw(11) * 2, y, p.text, cmd);
+
+  // Color swatch grid — shows every palette color
+  const cols = 4;
+  const colW = (W - 32) / cols;  // ~142px
+  let swatches = '';
+  let colorRows = 0;
+  (colors || []).forEach((c, i) => {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    colorRows = row + 1;
+    const sx = 16 + col * colW;
+    const sy = row * 20;  // relative; caller adds base Y
+    swatches += `SWATCH|${sx}|${sy}|${c.hex}|${e(c.name)}`;
+  });
+
+  // Compute y layout
+  const TH = 34;      // titlebar height
+  const lh = 16;      // line height
+  let y = TH + 16;
+
+  const yPS1a  = y;  y += lh;
+  const yCmda  = y;  y += lh;
+  const yLs0   = y;  y += lh;
+  const yLs1   = y;  y += lh;
+  const yLs2   = y;  y += lh;
+  const yLs3   = y;  y += lh + 4;
+  const yPS1b  = y;  y += lh;
+  const yCmdb  = y;  y += lh + 8;
+  const ySwBase = y; // swatches start here
+  const nRows  = Math.ceil((colors||[]).length / cols);
+  y += nRows * 20 + 8;
+  const yPS1c  = y;  y += lh;
+  const yCursor = y;
+
+  // Build swatch SVG
+  let swatchSvg = '';
+  (colors || []).forEach((c, i) => {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    const sx = 16 + col * colW;
+    const sy = ySwBase + row * 20;
+    swatchSvg += `<rect x="${sx}" y="${sy - 10}" width="14" height="11" rx="2" fill="${c.hex}" stroke="${p.border}" stroke-width="0.5" stroke-opacity="0.5"/>`;
+    swatchSvg += m(sx + 18, sy, p.muted, c.name, 10);
+  });
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}">
     <rect width="${W}" height="${H}" fill="${p.bg}"/>
-    <rect width="${W}" height="34" fill="${p.bg2}"/>
+    <rect width="${W}" height="${TH}" fill="${p.bg2}"/>
     <circle cx="18" cy="17" r="5.5" fill="#ff5f57"/>
     <circle cx="34" cy="17" r="5.5" fill="#febc2e"/>
     <circle cx="50" cy="17" r="5.5" fill="#28c840"/>
-    <text x="${W/2}" y="22" text-anchor="middle" fill="${p.comment}" font-family="sans-serif" font-size="12" opacity="0.7">bash — terminal</text>
+    ${m(W/2, 22, p.muted, 'bash — terminal', 12)}
 
-    ${t(16, 66, p.green, 'user')}
-    ${t(55, 66, p.subtext, '@')}
-    ${t(64, 66, p.blue, 'hostname')}
-    ${t(138, 66, p.purple, '~/projects/my-scheme')}
-    ${t(16, 84, p.green, '$')}
-    ${t(28, 84, p.text, ' npm run dev')}
+    ${ps1(yPS1a)}
+    ${prompt(yCmda, 'ls --color=auto')}
 
-    ${s(16, 106, p.muted, '> my-scheme@1.0.0 dev')}
-    ${s(16, 121, p.muted, '> vite')}
-    ${s(16, 142, p.green, '  VITE v5.4.0')}
-    ${s(108, 142, p.text, '  ready in 187 ms')}
-    ${s(16, 157, p.muted, '  ➜  Local:   ')}
-    ${s(104, 157, p.cyan, 'http://localhost:5173/')}
-    ${s(16, 172, p.muted, '  ➜  Network: ')}
-    ${s(104, 172, p.muted, 'use --host to expose')}
-    ${s(16, 187, p.muted, '  ➜  press ')}
-    ${s(81, 187, p.yellow, 'h')}
-    ${s(89, 187, p.muted, ' + enter to show help')}
+    ${m(16, yLs0, p.blue,  'src/')}
+    ${m(16, yLs1, p.text,  'package.json')}
+    ${m(16, yLs2, p.green, 'build.sh*')}
+    ${m(16, yLs3, p.text,  'README.md')}
 
-    <line x1="16" y1="205" x2="${W-16}" y2="205" stroke="${p.border}" stroke-width="1" opacity="0.4"/>
+    ${ps1(yPS1b)}
+    ${prompt(yCmdb, 'theme --colors')}
 
-    ${t(16, 225, p.green, 'user')}
-    ${t(55, 225, p.subtext, '@')}
-    ${t(64, 225, p.blue, 'hostname')}
-    ${t(138, 225, p.purple, '~/projects/my-scheme')}
-    ${t(16, 243, p.green, '$')}
-    ${t(28, 243, p.text, ' git status')}
+    ${swatchSvg}
 
-    ${s(16, 263, p.text, 'On branch ')}
-    ${s(84, 263, p.green, 'main')}
-    ${s(16, 278, p.text, 'Changes not staged for commit:')}
-    ${s(24, 296, p.red, '  modified:   src/main.ts')}
-    ${s(24, 311, p.green, '  new file:   src/theme.ts')}
-    ${s(24, 326, p.red, '  deleted:    src/legacy.ts')}
-
-    ${t(16, 353, p.green, 'user')}
-    ${t(55, 353, p.subtext, '@')}
-    ${t(64, 353, p.blue, 'hostname')}
-    ${t(138, 353, p.purple, '~/projects/my-scheme')}
-    <rect x="16" y="359" width="9" height="13" fill="${p.text}" opacity="0.75"/>
+    ${ps1(yPS1c)}
+    ${m(16, yCursor, p.green, '>')}
+    <rect x="${16 + cw(11) * 2}" y="${yCursor - 11}" width="8" height="13" fill="${p.text}" opacity="0.75"/>
   </svg>`;
 }
 
@@ -129,23 +179,25 @@ function previewTerminal(p) {
 function previewBrowser(p) {
   const W = 600, H = 375;
 
-  // button helper: filled rect with centered text-rect
-  const btn = (x, y, w, h, fill, rx=6) =>
-    `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}"/>
-     <rect x="${x+(w-w*0.55)/2}" y="${y+(h-8)/2}" width="${w*0.55}" height="8" rx="2" fill="${p.bg}" opacity="0.7"/>`;
-
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}">
     <rect width="${W}" height="${H}" fill="${p.bg}"/>
 
     <!-- Tab bar -->
     <rect width="${W}" height="30" fill="${p.bg3}"/>
-    <rect x="0" y="4" width="155" height="26" rx="6" fill="${p.bg2}"/>
-    <rect x="10" y="12" width="10" height="10" rx="2" fill="${p.blue}" opacity="0.7"/>
-    <rect x="26" y="15" width="74" height="7" rx="2" fill="${p.subtext}" opacity="0.55"/>
-    <text x="146" y="21" font-family="sans-serif" font-size="10" fill="${p.muted}">✕</text>
-    <rect x="163" y="8" width="115" height="20" rx="4" fill="${p.bg3}"/>
-    <rect x="171" y="13" width="65" height="6" rx="2" fill="${p.muted}" opacity="0.45"/>
-    <text x="287" y="21" font-family="sans-serif" font-size="14" fill="${p.muted}">+</text>
+    <!-- Active tab: give it comfortable internal padding so close btn isn't cramped -->
+    <rect x="0" y="4" width="178" height="26" rx="6" fill="${p.bg2}"/>
+    <!-- Favicon -->
+    <rect x="12" y="11" width="10" height="10" rx="2" fill="${p.blue}" opacity="0.7"/>
+    <!-- Tab title -->
+    <rect x="28" y="15" width="102" height="7" rx="2" fill="${p.subtext}" opacity="0.55"/>
+    <!-- Close button: positioned with enough margin from right edge (178-22=18px from edge) -->
+    <text x="150" y="22" font-family="sans-serif" font-size="10" fill="${p.muted}">✕</text>
+    <!-- Inactive tab -->
+    <rect x="184" y="8" width="118" height="20" rx="4" fill="${p.bg3}"/>
+    <rect x="196" y="14" width="68" height="6" rx="2" fill="${p.muted}" opacity="0.4"/>
+    <text x="290" y="22" font-family="sans-serif" font-size="10" fill="${p.muted}">✕</text>
+    <!-- New tab -->
+    <text x="310" y="21" font-family="sans-serif" font-size="16" fill="${p.muted}" opacity="0.5">+</text>
 
     <!-- Toolbar -->
     <rect width="${W}" height="34" y="30" fill="${p.bg2}"/>
@@ -159,289 +211,558 @@ function previewBrowser(p) {
     <rect x="514" y="38" width="14" height="14" rx="3" fill="${p.border}" opacity="0.6"/>
     <rect x="534" y="38" width="14" height="14" rx="3" fill="${p.border}" opacity="0.6"/>
 
-    <!-- Bookmarks -->
+    <!-- Bookmarks bar -->
     <rect width="${W}" height="22" y="64" fill="${p.bg2}" opacity="0.6"/>
     <rect x="10" y="70" width="50" height="9" rx="3" fill="${p.muted}" opacity="0.35"/>
     <rect x="68" y="70" width="66" height="9" rx="3" fill="${p.muted}" opacity="0.35"/>
     <rect x="142" y="70" width="44" height="9" rx="3" fill="${p.muted}" opacity="0.35"/>
     <rect x="194" y="70" width="76" height="9" rx="3" fill="${p.muted}" opacity="0.35"/>
 
-    <!-- Webpage nav -->
+    <!-- Site navbar -->
     <rect x="0" y="86" width="${W}" height="42" fill="${p.bg2}"/>
-    <rect x="16" y="97" width="24" height="22" rx="5" fill="${p.blue}" opacity="0.75"/>
+    <rect x="16" y="97" width="24" height="22" rx="5" fill="${p.blue}" opacity="0.7"/>
     <rect x="48" y="103" width="56" height="9" rx="2" fill="${p.text}" opacity="0.65"/>
-    <rect x="175" y="105" width="38" height="8" rx="2" fill="${p.subtext}" opacity="0.45"/>
-    <rect x="223" y="105" width="46" height="8" rx="2" fill="${p.subtext}" opacity="0.45"/>
-    <rect x="279" y="105" width="42" height="8" rx="2" fill="${p.subtext}" opacity="0.45"/>
-    <rect x="331" y="105" width="38" height="8" rx="2" fill="${p.subtext}" opacity="0.45"/>
-    ${btn(498, 96, 84, 26, p.blue, 13)}
+    <rect x="178" y="105" width="38" height="8" rx="2" fill="${p.subtext}" opacity="0.45"/>
+    <rect x="226" y="105" width="46" height="8" rx="2" fill="${p.subtext}" opacity="0.45"/>
+    <rect x="282" y="105" width="42" height="8" rx="2" fill="${p.subtext}" opacity="0.45"/>
+    <rect x="334" y="105" width="38" height="8" rx="2" fill="${p.subtext}" opacity="0.45"/>
+    <!-- CTA button -->
+    <rect x="494" y="97" width="90" height="26" rx="13" fill="${p.blue}"/>
+    <rect x="512" y="106" width="54" height="8" rx="3" fill="${p.bg}" opacity="0.7"/>
 
-    <!-- Hero -->
-    <rect x="0" y="128" width="${W}" height="100" fill="${p.bg}"/>
-    <rect x="76" y="142" width="240" height="16" rx="4" fill="${p.text}" opacity="0.85"/>
-    <rect x="76" y="164" width="188" height="16" rx="4" fill="${p.text}" opacity="0.55"/>
-    <rect x="76" y="190" width="270" height="7" rx="2" fill="${p.muted}" opacity="0.6"/>
-    <rect x="76" y="202" width="230" height="7" rx="2" fill="${p.muted}" opacity="0.45"/>
-    <rect x="76" y="216" width="96" height="26" rx="13" fill="${p.blue}"/>
-    <rect x="83" y="224" width="82" height="9" rx="3" fill="${p.bg}" opacity="0.7"/>
-    <rect x="182" y="216" width="96" height="26" rx="13" fill="none" stroke="${p.border}" stroke-width="1.5"/>
-    <rect x="189" y="224" width="82" height="9" rx="3" fill="${p.subtext}" opacity="0.45"/>
-    <!-- Hero illustration -->
-    <rect x="376" y="134" width="192" height="88" rx="8" fill="${p.bg2}" opacity="0.7"/>
-    <rect x="392" y="146" width="76" height="8" rx="2" fill="${p.blue}" opacity="0.4"/>
-    <rect x="392" y="160" width="144" height="6" rx="2" fill="${p.muted}" opacity="0.3"/>
-    <rect x="392" y="172" width="118" height="6" rx="2" fill="${p.muted}" opacity="0.3"/>
-    <rect x="392" y="185" width="56" height="20" rx="4" fill="${p.purple}" opacity="0.45"/>
-    <rect x="456" y="185" width="56" height="20" rx="4" fill="${p.border}" opacity="0.4"/>
+    <!-- Hero section -->
+    <rect x="0" y="128" width="${W}" height="102" fill="${p.bg}"/>
+    <rect x="76" y="140" width="248" height="16" rx="4" fill="${p.text}" opacity="0.85"/>
+    <rect x="76" y="162" width="192" height="14" rx="4" fill="${p.text}" opacity="0.52"/>
+    <rect x="76" y="190" width="274" height="7" rx="2" fill="${p.muted}" opacity="0.55"/>
+    <rect x="76" y="203" width="234" height="7" rx="2" fill="${p.muted}" opacity="0.42"/>
+    <rect x="76" y="218" width="100" height="26" rx="13" fill="${p.blue}"/>
+    <rect x="84" y="227" width="84" height="8" rx="3" fill="${p.bg}" opacity="0.7"/>
+    <rect x="186" y="218" width="100" height="26" rx="13" fill="none" stroke="${p.border}" stroke-width="1.5"/>
+    <rect x="194" y="227" width="84" height="8" rx="3" fill="${p.subtext}" opacity="0.4"/>
+    <!-- Hero card -->
+    <rect x="378" y="134" width="196" height="92" rx="8" fill="${p.bg2}"/>
+    <rect x="378" y="134" width="196" height="36" rx="8" fill="${p.blue}" opacity="0.18"/>
+    <rect x="378" y="152" width="196" height="18" fill="${p.blue}" opacity="0.07"/>
+    <rect x="394" y="145" width="80" height="8" rx="2" fill="${p.blue}" opacity="0.5"/>
+    <rect x="394" y="181" width="148" height="6" rx="2" fill="${p.muted}" opacity="0.35"/>
+    <rect x="394" y="193" width="112" height="6" rx="2" fill="${p.muted}" opacity="0.28"/>
+    <rect x="394" y="207" width="52" height="18" rx="5" fill="${p.purple}" opacity="0.5"/>
+    <rect x="452" y="207" width="52" height="18" rx="5" fill="${p.border}" opacity="0.4"/>
 
-    <!-- Cards -->
-    <rect x="0" y="228" width="${W}" height="147" fill="${p.bg3}" opacity="0.3"/>
-    <rect x="16" y="240" width="116" height="8" rx="2" fill="${p.text}" opacity="0.45"/>
-
-    <rect x="16" y="256" width="174" height="104" rx="8" fill="${p.bg2}"/>
-    <rect x="16" y="256" width="174" height="44" rx="8" fill="${p.blue}" opacity="0.25"/>
-    <rect x="16" y="278" width="174" height="22" fill="${p.blue}" opacity="0.12"/>
-    <rect x="28" y="310" width="80" height="7" rx="2" fill="${p.text}" opacity="0.55"/>
-    <rect x="28" y="322" width="110" height="6" rx="2" fill="${p.muted}" opacity="0.4"/>
-    <rect x="28" y="338" width="58" height="16" rx="8" fill="${p.blue}" opacity="0.65"/>
-
-    <rect x="208" y="256" width="174" height="104" rx="8" fill="${p.bg2}"/>
-    <rect x="208" y="256" width="174" height="44" rx="8" fill="${p.purple}" opacity="0.22"/>
-    <rect x="208" y="278" width="174" height="22" fill="${p.purple}" opacity="0.10"/>
-    <rect x="220" y="310" width="80" height="7" rx="2" fill="${p.text}" opacity="0.55"/>
-    <rect x="220" y="322" width="110" height="6" rx="2" fill="${p.muted}" opacity="0.4"/>
-    <rect x="220" y="338" width="58" height="16" rx="8" fill="${p.purple}" opacity="0.65"/>
-
-    <rect x="400" y="256" width="184" height="104" rx="8" fill="${p.bg2}"/>
-    <rect x="400" y="256" width="184" height="44" rx="8" fill="${p.green}" opacity="0.18"/>
-    <rect x="400" y="278" width="184" height="22" fill="${p.green}" opacity="0.09"/>
-    <rect x="412" y="310" width="80" height="7" rx="2" fill="${p.text}" opacity="0.55"/>
-    <rect x="412" y="322" width="110" height="6" rx="2" fill="${p.muted}" opacity="0.4"/>
-    <rect x="412" y="338" width="58" height="16" rx="8" fill="${p.green}" opacity="0.65"/>
+    <!-- Cards row -->
+    <rect x="0" y="230" width="${W}" height="145" fill="${p.bg3}" opacity="0.25"/>
+    <rect x="16" y="240" width="120" height="8" rx="2" fill="${p.text}" opacity="0.45"/>
+    <!-- Card 1 -->
+    <rect x="16"  y="256" width="178" height="106" rx="8" fill="${p.bg2}"/>
+    <rect x="16"  y="256" width="178" height="44"  rx="8" fill="${p.blue}"   opacity="0.22"/>
+    <rect x="16"  y="278" width="178" height="22"        fill="${p.blue}"   opacity="0.08"/>
+    <rect x="28"  y="312" width="84"  height="7"   rx="2" fill="${p.text}"   opacity="0.55"/>
+    <rect x="28"  y="324" width="116" height="6"   rx="2" fill="${p.muted}"  opacity="0.38"/>
+    <rect x="28"  y="340" width="62"  height="16"  rx="8" fill="${p.blue}"   opacity="0.65"/>
+    <!-- Card 2 -->
+    <rect x="212" y="256" width="178" height="106" rx="8" fill="${p.bg2}"/>
+    <rect x="212" y="256" width="178" height="44"  rx="8" fill="${p.purple}" opacity="0.2"/>
+    <rect x="212" y="278" width="178" height="22"        fill="${p.purple}" opacity="0.07"/>
+    <rect x="224" y="312" width="84"  height="7"   rx="2" fill="${p.text}"   opacity="0.55"/>
+    <rect x="224" y="324" width="116" height="6"   rx="2" fill="${p.muted}"  opacity="0.38"/>
+    <rect x="224" y="340" width="62"  height="16"  rx="8" fill="${p.purple}" opacity="0.65"/>
+    <!-- Card 3 -->
+    <rect x="408" y="256" width="176" height="106" rx="8" fill="${p.bg2}"/>
+    <rect x="408" y="256" width="176" height="44"  rx="8" fill="${p.green}"  opacity="0.16"/>
+    <rect x="408" y="278" width="176" height="22"        fill="${p.green}"  opacity="0.06"/>
+    <rect x="420" y="312" width="84"  height="7"   rx="2" fill="${p.text}"   opacity="0.55"/>
+    <rect x="420" y="324" width="116" height="6"   rx="2" fill="${p.muted}"  opacity="0.38"/>
+    <rect x="420" y="340" width="62"  height="16"  rx="8" fill="${p.green}"  opacity="0.65"/>
   </svg>`;
 }
 
 // ── HTML Components ───────────────────────────────────────────────
+// Returns a full HTML document string — rendered in an <iframe>.
 
 function previewHtml(p) {
-  const W = 600, H = 375;
-  const lbl = (x, y, text) =>
-    `<text x="${x}" y="${y}" font-family="sans-serif" font-size="10" fill="${p.muted}" letter-spacing="1.4" opacity="0.9">${text}</text>`;
-  const divider = y =>
-    `<line x1="22" y1="${y}" x2="${W-22}" y2="${y}" stroke="${p.bg3}" stroke-width="1"/>`;
+  // rgba helper for tinted backgrounds/shadows
+  const rgba = (hex, a) => {
+    const r = parseInt(hex.slice(1,3), 16);
+    const g = parseInt(hex.slice(3,5), 16);
+    const b = parseInt(hex.slice(5,7), 16);
+    return `rgba(${r},${g},${b},${a})`;
+  };
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}">
-    <rect width="${W}" height="${H}" fill="${p.bg}"/>
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    ${lbl(22, 30, 'BUTTONS')}
-    ${divider(34)}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: ${p.bg};
+  color: ${p.text};
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 14px 16px;
+  overflow: hidden;
+  height: 100vh;
+}
 
-    <!-- Primary -->
-    <rect x="22" y="44" width="96" height="32" rx="6" fill="${p.blue}"/>
-    <rect x="34" y="55" width="72" height="9" rx="3" fill="${p.bg}" opacity="0.7"/>
-    <!-- Secondary -->
-    <rect x="128" y="44" width="96" height="32" rx="6" fill="${p.purple}" opacity="0.85"/>
-    <rect x="140" y="55" width="72" height="9" rx="3" fill="${p.bg}" opacity="0.7"/>
-    <!-- Outlined -->
-    <rect x="234" y="44" width="96" height="32" rx="6" fill="none" stroke="${p.blue}" stroke-width="1.5"/>
-    <rect x="248" y="55" width="68" height="9" rx="3" fill="${p.blue}" opacity="0.8"/>
-    <!-- Ghost -->
-    <rect x="340" y="44" width="96" height="32" rx="6" fill="${p.bg2}"/>
-    <rect x="354" y="55" width="68" height="9" rx="3" fill="${p.subtext}" opacity="0.65"/>
-    <!-- Danger -->
-    <rect x="446" y="44" width="96" height="32" rx="6" fill="${p.red}" opacity="0.85"/>
-    <rect x="460" y="55" width="68" height="9" rx="3" fill="${p.bg}" opacity="0.7"/>
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 20px;
+}
 
-    ${lbl(22, 104, 'FORM INPUTS')}
-    ${divider(108)}
+section { margin-bottom: 13px; }
 
-    <!-- Text input -->
-    <text x="22" y="126" font-family="sans-serif" font-size="10" fill="${p.subtext}">Email address</text>
-    <rect x="22" y="130" width="236" height="32" rx="6" fill="${p.bg2}" stroke="${p.border}" stroke-width="1"/>
-    <rect x="36" y="142" width="100" height="8" rx="2" fill="${p.muted}" opacity="0.5"/>
-    <!-- Password input -->
-    <text x="274" y="126" font-family="sans-serif" font-size="10" fill="${p.subtext}">Password</text>
-    <rect x="274" y="130" width="236" height="32" rx="6" fill="${p.bg2}" stroke="${p.border}" stroke-width="1"/>
-    <circle cx="290" cy="147" r="3" fill="${p.muted}" opacity="0.5"/>
-    <circle cx="302" cy="147" r="3" fill="${p.muted}" opacity="0.5"/>
-    <circle cx="314" cy="147" r="3" fill="${p.muted}" opacity="0.5"/>
-    <circle cx="326" cy="147" r="3" fill="${p.muted}" opacity="0.5"/>
-    <circle cx="338" cy="147" r="3" fill="${p.muted}" opacity="0.5"/>
-    <rect x="486" y="139" width="16" height="12" rx="3" fill="${p.muted}" opacity="0.35"/>
+.section-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: ${p.muted};
+  margin-bottom: 7px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid ${p.border};
+}
 
-    <!-- Select -->
-    <text x="22" y="182" font-family="sans-serif" font-size="10" fill="${p.subtext}">Color scheme</text>
-    <rect x="22" y="186" width="236" height="32" rx="6" fill="${p.bg2}" stroke="${p.border}" stroke-width="1"/>
-    <rect x="36" y="197" width="126" height="8" rx="2" fill="${p.text}" opacity="0.6"/>
-    <text x="238" y="207" font-family="sans-serif" font-size="12" fill="${p.muted}">▾</text>
-    <!-- Focused input (accent ring) -->
-    <text x="274" y="182" font-family="sans-serif" font-size="10" fill="${p.subtext}">Search</text>
-    <rect x="274" y="186" width="236" height="32" rx="6" fill="${p.bg2}" stroke="${p.blue}" stroke-width="2"/>
-    <rect x="290" y="197" width="2" height="11" fill="${p.blue}" opacity="0.85"/>
+/* ── Typography ── */
+h1 { font-size: 20px; font-weight: 700; color: ${p.text}; line-height: 1.2; margin-bottom: 3px; }
+h2 { font-size: 14px; font-weight: 600; color: ${p.subtext}; margin-bottom: 3px; }
+h3 { font-size: 12px; font-weight: 600; color: ${p.muted}; margin-bottom: 5px; }
+p  { font-size: 11.5px; color: ${p.text}; opacity: 0.78; margin-bottom: 7px; }
+strong { font-weight: 700; }
+em     { font-style: italic; color: ${p.subtext}; }
+a      { color: ${p.blue}; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code {
+  background: ${p.bg2};
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 10.5px;
+  color: ${p.cyan};
+  border: 1px solid ${p.border};
+}
 
-    ${lbl(22, 240, 'BADGES & STATUS')}
-    ${divider(244)}
+/* ── Inputs ── */
+.form-group { margin-bottom: 8px; }
+label { font-size: 10.5px; color: ${p.subtext}; display: block; margin-bottom: 3px; }
+input[type="text"], input[type="email"], textarea, select {
+  width: 100%;
+  background: ${p.bg2};
+  border: 1px solid ${p.border};
+  border-radius: 5px;
+  color: ${p.text};
+  padding: 5px 9px;
+  font-size: 11.5px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: ${p.blue};
+  box-shadow: 0 0 0 2.5px ${rgba(p.blue, 0.22)};
+}
+textarea { resize: none; height: 50px; }
+.input-row { display: flex; gap: 6px; }
+.input-row > * { flex: 1; }
 
-    <!-- Badges -->
-    <rect x="22" y="252" width="50" height="18" rx="9" fill="${p.blue}" opacity="0.18"/>
-    <rect x="28" y="258" width="38" height="6" rx="2" fill="${p.blue}" opacity="0.75"/>
-    <rect x="80" y="252" width="56" height="18" rx="9" fill="${p.green}" opacity="0.18"/>
-    <rect x="86" y="258" width="44" height="6" rx="2" fill="${p.green}" opacity="0.75"/>
-    <rect x="144" y="252" width="50" height="18" rx="9" fill="${p.red}" opacity="0.18"/>
-    <rect x="150" y="258" width="38" height="6" rx="2" fill="${p.red}" opacity="0.75"/>
-    <rect x="202" y="252" width="62" height="18" rx="9" fill="${p.yellow}" opacity="0.18"/>
-    <rect x="208" y="258" width="50" height="6" rx="2" fill="${p.yellow}" opacity="0.75"/>
-    <rect x="272" y="252" width="56" height="18" rx="9" fill="${p.purple}" opacity="0.18"/>
-    <rect x="278" y="258" width="44" height="6" rx="2" fill="${p.purple}" opacity="0.75"/>
+.check-row { display: flex; gap: 14px; margin-top: 2px; }
+.check { display: flex; align-items: center; gap: 5px; font-size: 11px; color: ${p.subtext}; cursor: pointer; }
+input[type="checkbox"], input[type="radio"] { accent-color: ${p.blue}; width: 13px; height: 13px; cursor: pointer; }
 
-    <!-- Alert info -->
-    <rect x="22" y="280" width="398" height="44" rx="7" fill="${p.blue}" opacity="0.07" stroke="${p.blue}" stroke-width="1" stroke-opacity="0.3"/>
-    <rect x="22" y="280" width="4" height="44" rx="2" fill="${p.blue}" opacity="0.55"/>
-    <rect x="34" y="290" width="9" height="9" rx="2" fill="${p.blue}" opacity="0.6"/>
-    <rect x="50" y="291" width="114" height="7" rx="2" fill="${p.text}" opacity="0.65"/>
-    <rect x="50" y="305" width="264" height="6" rx="2" fill="${p.muted}" opacity="0.45"/>
+/* ── Buttons ── */
+.btn-row { display: flex; flex-wrap: wrap; gap: 5px; }
+.btn {
+  padding: 5px 11px;
+  border-radius: 5px;
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  font-family: inherit;
+  line-height: 1.4;
+  transition: opacity 0.15s, box-shadow 0.15s;
+}
+.btn:hover { opacity: 0.88; }
+.btn:active { opacity: 0.75; }
+.btn.primary   { background: ${p.blue};   color: ${p.bg}; }
+.btn.secondary { background: ${p.purple}; color: ${p.bg}; }
+.btn.success   { background: ${p.green};  color: ${p.bg}; }
+.btn.outline   { background: transparent; border-color: ${p.blue}; color: ${p.blue}; }
+.btn.ghost     { background: ${p.bg2}; color: ${p.subtext}; border-color: ${p.border}; }
+.btn.danger    { background: ${p.red};    color: ${p.bg}; }
+.btn-sm        { padding: 3px 9px; font-size: 10.5px; }
 
-    <!-- Toggles -->
-    <rect x="438" y="282" width="38" height="18" rx="9" fill="${p.blue}"/>
-    <circle cx="467" cy="291" r="7" fill="${p.bg}"/>
-    <rect x="438" y="308" width="38" height="18" rx="9" fill="${p.border}"/>
-    <circle cx="447" cy="317" r="7" fill="${p.subtext}" opacity="0.6"/>
+/* ── Badges ── */
+.badge-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.badge {
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10.5px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.badge.blue   { background: ${rgba(p.blue,   0.18)}; color: ${p.blue};   }
+.badge.green  { background: ${rgba(p.green,  0.18)}; color: ${p.green};  }
+.badge.red    { background: ${rgba(p.red,    0.18)}; color: ${p.red};    }
+.badge.yellow { background: ${rgba(p.yellow, 0.18)}; color: ${p.yellow}; }
+.badge.purple { background: ${rgba(p.purple, 0.18)}; color: ${p.purple}; }
+.badge.orange { background: ${rgba(p.orange, 0.18)}; color: ${p.orange}; }
 
-    <!-- Progress bars -->
-    <rect x="486" y="286" width="88" height="7" rx="3.5" fill="${p.bg2}"/>
-    <rect x="486" y="286" width="56" height="7" rx="3.5" fill="${p.blue}"/>
-    <rect x="486" y="312" width="88" height="7" rx="3.5" fill="${p.bg2}"/>
-    <rect x="486" y="312" width="22" height="7" rx="3.5" fill="${p.red}"/>
+/* ── Alerts ── */
+.alert {
+  padding: 7px 10px;
+  border-radius: 5px;
+  font-size: 11px;
+  margin-bottom: 5px;
+  border-left: 3px solid;
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+}
+.alert .icon { flex-shrink: 0; margin-top: 1px; }
+.alert.info    { background: ${rgba(p.blue,  0.1)}; border-color: ${p.blue};  color: ${p.text}; }
+.alert.success { background: ${rgba(p.green, 0.1)}; border-color: ${p.green}; color: ${p.text}; }
+.alert.warning { background: ${rgba(p.yellow,0.1)}; border-color: ${p.yellow};color: ${p.text}; }
+.alert.error   { background: ${rgba(p.red,   0.1)}; border-color: ${p.red};   color: ${p.text}; }
 
-    ${lbl(22, 346, 'CARD')}
-    ${divider(350)}
-    <rect x="22" y="358" width="80" height="10" rx="2" fill="${p.text}" opacity="0.7"/>
-    <rect x="22" y="358" width="4" height="10" rx="2" fill="${p.blue}"/>
-    <rect x="110" y="358" width="120" height="10" rx="2" fill="${p.muted}" opacity="0.4"/>
-  </svg>`;
+/* ── Card ── */
+.card {
+  background: ${p.bg2};
+  border: 1px solid ${p.border};
+  border-radius: 8px;
+  overflow: hidden;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border-bottom: 1px solid ${p.border};
+  background: ${rgba(p.blue, 0.05)};
+}
+.card-title { font-size: 12px; font-weight: 600; }
+.card-body  { padding: 9px 12px; font-size: 11px; color: ${p.subtext}; }
+.card-footer {
+  display: flex;
+  gap: 6px;
+  padding: 7px 12px;
+  border-top: 1px solid ${p.border};
+  background: ${rgba(p.bg3, 0.5)};
+}
+
+/* ── Progress ── */
+.progress-wrap { margin-bottom: 7px; }
+.progress-label { display: flex; justify-content: space-between; font-size: 10.5px; color: ${p.subtext}; margin-bottom: 4px; }
+.progress-bar { height: 6px; background: ${p.bg3}; border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+
+/* ── Toggle ── */
+.toggle-row { display: flex; flex-direction: column; gap: 6px; }
+.toggle { display: flex; align-items: center; gap: 8px; font-size: 11px; color: ${p.subtext}; cursor: pointer; }
+.toggle-switch {
+  width: 32px; height: 17px;
+  background: ${p.border};
+  border-radius: 10px;
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 13px; height: 13px;
+  background: ${p.subtext};
+  border-radius: 50%;
+  transition: left 0.2s, background 0.2s;
+}
+.toggle.on .toggle-switch { background: ${p.blue}; }
+.toggle.on .toggle-switch::after { left: 17px; background: ${p.bg}; }
+</style>
+</head>
+<body>
+<div class="grid">
+
+  <!-- Left column -->
+  <div>
+    <section>
+      <div class="section-label">Typography</div>
+      <h1>Display Title</h1>
+      <h2>Section Heading</h2>
+      <h3>Subsection label</h3>
+      <p>Body text with <strong>bold emphasis</strong>, <em>italics</em>, and <a href="#">hyperlinks</a>. Also inline <code>code</code> for technical terms.</p>
+    </section>
+
+    <section>
+      <div class="section-label">Inputs</div>
+      <div class="form-group">
+        <label>Email address</label>
+        <input type="email" placeholder="user@example.com">
+      </div>
+      <div class="form-group">
+        <label>Message <span style="color:${p.blue}">·</span> focused</label>
+        <textarea style="border-color:${p.blue}; box-shadow: 0 0 0 2.5px ${rgba(p.blue,0.22)}">Hello from My Scheme!</textarea>
+      </div>
+      <div class="check-row">
+        <label class="check"><input type="checkbox" checked> Remember me</label>
+        <label class="check"><input type="checkbox"> Newsletter</label>
+        <label class="check"><input type="radio" name="r" checked> Option A</label>
+        <label class="check"><input type="radio" name="r"> Option B</label>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Progress</div>
+      <div class="progress-wrap">
+        <div class="progress-label"><span>Storage used</span><span>68%</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:68%; background:${p.blue}"></div></div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-label"><span>CPU load</span><span>24%</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:24%; background:${p.green}"></div></div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-label"><span>Errors</span><span>5%</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:5%;  background:${p.red}"></div></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Right column -->
+  <div>
+    <section>
+      <div class="section-label">Buttons</div>
+      <div class="btn-row">
+        <button class="btn primary">Primary</button>
+        <button class="btn secondary">Secondary</button>
+        <button class="btn success">Success</button>
+        <button class="btn outline">Outline</button>
+        <button class="btn ghost">Ghost</button>
+        <button class="btn danger">Danger</button>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Badges</div>
+      <div class="badge-row">
+        <span class="badge blue">Info</span>
+        <span class="badge green">Success</span>
+        <span class="badge red">Error</span>
+        <span class="badge yellow">Warning</span>
+        <span class="badge purple">New</span>
+        <span class="badge orange">Beta</span>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Alerts</div>
+      <div class="alert info">   <span class="icon">ℹ</span> Your session expires in 15 minutes.</div>
+      <div class="alert success"><span class="icon">✓</span> Theme exported successfully.</div>
+      <div class="alert warning"><span class="icon">⚠</span> Some colors have low contrast.</div>
+      <div class="alert error">  <span class="icon">✕</span> Failed to load palette file.</div>
+    </section>
+
+    <section>
+      <div class="section-label">Card</div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Color Scheme</span>
+          <span class="badge blue">v1.0</span>
+        </div>
+        <div class="card-body">
+          A custom palette with ${'{n}'} colors. Preview across editor, terminal, browser, and more.
+        </div>
+        <div class="card-footer">
+          <button class="btn primary btn-sm">Export</button>
+          <button class="btn ghost btn-sm">Share</button>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Toggles</div>
+      <div class="toggle-row">
+        <label class="toggle on">  <div class="toggle-switch"></div> Dark mode enabled</label>
+        <label class="toggle">     <div class="toggle-switch"></div> Auto-contrast</label>
+        <label class="toggle on">  <div class="toggle-switch"></div> Show hex values</label>
+      </div>
+    </section>
+  </div>
+
+</div>
+</body>
+</html>`;
 }
 
 // ── Obsidian ──────────────────────────────────────────────────────
+// Shows a realistic Obsidian vault with actual rendered markdown content.
 
 function previewObsidian(p) {
   const W = 600, H = 375;
   const e = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const tx = (x, y, fill, content, size=11, extra='') =>
+
+  // Text helpers
+  const sans = (x, y, fill, content, size=11, extra='') =>
     `<text x="${x}" y="${y}" font-family="sans-serif" font-size="${size}" fill="${fill}" ${extra}>${e(content)}</text>`;
-  const mono = (x, y, fill, content, size=11) =>
+  const mono = (x, y, fill, content, size=10.5) =>
     `<text x="${x}" y="${y}" font-family="'SF Mono','Fira Code',monospace" font-size="${size}" fill="${fill}">${e(content)}</text>`;
+
+  // Content area starts at x=206, y=62 (after ribbon + sidebar + tab bar + toolbar)
+  const cx = 206;  // content left
+  const cxEnd = W - 10; // content right (slight right padding)
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}">
     <rect width="${W}" height="${H}" fill="${p.bg}"/>
 
-    <!-- Ribbon -->
-    <rect width="34" height="${H}" fill="${p.bg3}" opacity="0.7"/>
-    <rect x="9" y="16" width="16" height="16" rx="3" fill="${p.blue}" opacity="0.55"/>
-    <rect x="9" y="40" width="16" height="16" rx="3" fill="${p.muted}" opacity="0.3"/>
-    <rect x="9" y="64" width="16" height="16" rx="3" fill="${p.muted}" opacity="0.3"/>
-    <rect x="9" y="88" width="16" height="16" rx="3" fill="${p.muted}" opacity="0.3"/>
-    <rect x="9" y="${H-38}" width="16" height="16" rx="3" fill="${p.muted}" opacity="0.3"/>
-    <rect x="9" y="${H-18}" width="16" height="16" rx="3" fill="${p.purple}" opacity="0.45"/>
+    <!-- ── Ribbon ── -->
+    <rect width="34" height="${H}" fill="${p.bg3}" opacity="0.65"/>
+    <!-- Vault icon (active) -->
+    <rect x="9" y="16" width="16" height="16" rx="3" fill="${p.purple}" opacity="0.6"/>
+    <rect x="9" y="40" width="16" height="16" rx="3" fill="${p.muted}" opacity="0.25"/>
+    <rect x="9" y="64" width="16" height="16" rx="3" fill="${p.muted}" opacity="0.25"/>
+    <rect x="9" y="88" width="16" height="16" rx="3" fill="${p.muted}" opacity="0.25"/>
+    <rect x="9" y="${H-38}" width="16" height="16" rx="3" fill="${p.muted}" opacity="0.25"/>
+    <rect x="9" y="${H-18}" width="16" height="16" rx="3" fill="${p.blue}" opacity="0.4"/>
 
-    <!-- File explorer -->
-    <rect x="34" y="0" width="156" height="${H}" fill="${p.bg2}" opacity="0.7"/>
+    <!-- ── File explorer ── -->
+    <rect x="34" y="0" width="156" height="${H}" fill="${p.bg2}" opacity="0.65"/>
     <!-- Explorer header -->
-    <rect x="34" y="0" width="156" height="32" fill="${p.bg2}"/>
-    ${tx(46, 20, p.text, 'My Vault', 12, 'font-weight="600"')}
-    <!-- Search -->
-    <rect x="42" y="38" width="140" height="20" rx="4" fill="${p.bg3}" opacity="0.6"/>
-    <rect x="52" y="45" width="68" height="6" rx="2" fill="${p.muted}" opacity="0.4"/>
+    <rect x="34" y="0" width="156" height="30" fill="${p.bg2}"/>
+    ${sans(48, 20, p.text, 'My Vault', 12, 'font-weight="600"')}
+    <text x="172" y="20" font-family="sans-serif" font-size="14" fill="${p.muted}" opacity="0.5">+</text>
+    <!-- Search box -->
+    <rect x="42" y="36" width="140" height="18" rx="4" fill="${p.bg3}" opacity="0.7"/>
+    <text x="54" y="49" font-family="sans-serif" font-size="10" fill="${p.muted}" opacity="0.45">🔍 Search...</text>
     <!-- File tree -->
-    ${tx(48, 78, p.subtext, '▾ Notes', 10)}
-    <rect x="56" y="84" width="1" height="56" fill="${p.border}" opacity="0.4"/>
-    <rect x="58" y="86" width="114" height="17" rx="3" fill="${p.blue}" opacity="0.15"/>
-    ${tx(68, 98, p.blue, '📝 Color Theory', 10)}
-    ${tx(68, 115, p.muted, '   Daily Note', 10)}
-    ${tx(68, 130, p.muted, '   Ideas', 10)}
-    ${tx(68, 145, p.muted, '   References', 10)}
-    ${tx(48, 162, p.subtext, '▸ Projects', 10)}
-    ${tx(48, 178, p.subtext, '▸ Resources', 10)}
-    ${tx(48, 194, p.subtext, '▸ Templates', 10)}
-    ${tx(48, 212, p.subtext, '▸ Archive', 10)}
+    ${sans(46, 74, p.subtext, '▾ Notes', 10)}
+    <rect x="54" y="80" width="1" height="68" fill="${p.border}" opacity="0.5"/>
+    <!-- Active file row -->
+    <rect x="56" y="80" width="126" height="17" rx="3" fill="${p.blue}" opacity="0.14"/>
+    ${sans(66, 92, p.blue, '📝 Color Theory', 10)}
+    ${sans(66, 109, p.muted, '   Getting Started', 10)}
+    ${sans(66, 126, p.muted, '   Daily Notes', 10)}
+    ${sans(66, 143, p.muted, '   Ideas', 10)}
+    ${sans(46, 160, p.subtext, '▸ Projects', 10)}
+    ${sans(46, 177, p.subtext, '▸ Resources', 10)}
+    ${sans(46, 194, p.subtext, '▸ Templates', 10)}
 
-    <!-- Editor area -->
+    <!-- Tags panel header -->
+    <rect x="34" y="${H-60}" width="156" height="1" fill="${p.border}" opacity="0.4"/>
+    ${sans(46, H-46, p.muted, 'Tags', 10, 'font-weight="600"')}
+    <rect x="46"  y="${H-38}" width="34" height="12" rx="6" fill="${p.purple}" opacity="0.2"/>
+    <rect x="50"  y="${H-34}" width="26" height="4"  rx="2" fill="${p.purple}" opacity="0.6"/>
+    <rect x="86"  y="${H-38}" width="28" height="12" rx="6" fill="${p.blue}"   opacity="0.2"/>
+    <rect x="90"  y="${H-34}" width="20" height="4"  rx="2" fill="${p.blue}"   opacity="0.6"/>
+    <rect x="120" y="${H-38}" width="38" height="12" rx="6" fill="${p.green}"  opacity="0.2"/>
+    <rect x="124" y="${H-34}" width="30" height="4"  rx="2" fill="${p.green}"  opacity="0.6"/>
+
+    <!-- ── Editor pane ── -->
     <rect x="190" y="0" width="${W-190}" height="${H}" fill="${p.bg}"/>
 
     <!-- Tab bar -->
-    <rect x="190" y="0" width="${W-190}" height="32" fill="${p.bg2}"/>
-    <rect x="190" y="0" width="146" height="32" fill="${p.bg}"/>
-    <rect x="200" y="9" width="10" height="10" rx="2" fill="${p.blue}" opacity="0.55"/>
-    <rect x="216" y="12" width="78" height="7" rx="2" fill="${p.text}" opacity="0.65"/>
-    <rect x="344" y="8" width="116" height="20" rx="4" fill="${p.bg2}"/>
-    <rect x="352" y="14" width="68" height="6" rx="2" fill="${p.muted}" opacity="0.45"/>
+    <rect x="190" y="0" width="${W-190}" height="30" fill="${p.bg2}"/>
+    <!-- Active tab -->
+    <rect x="190" y="0" width="152" height="30" fill="${p.bg}"/>
+    <rect x="196" y="9" width="10" height="10" rx="2" fill="${p.blue}" opacity="0.5"/>
+    ${sans(212, 20, p.text, 'Color Theory', 11)}
+    <text x="329" y="21" font-family="sans-serif" font-size="9" fill="${p.muted}">✕</text>
+    <!-- Inactive tab -->
+    <rect x="344" y="6" width="110" height="20" rx="4" fill="${p.bg2}"/>
+    ${sans(358, 20, p.muted, 'Getting Started', 10)}
 
-    <!-- Toolbar -->
-    <rect x="190" y="32" width="${W-190}" height="26" fill="${p.bg2}" opacity="0.5"/>
-    <rect x="200" y="41" width="9" height="9" rx="2" fill="${p.muted}" opacity="0.35"/>
-    <rect x="215" y="42" width="8" height="7" rx="1" fill="${p.muted}" opacity="0.35"/>
-    <rect x="229" y="42" width="8" height="7" rx="1" fill="${p.muted}" opacity="0.35"/>
-    <rect x="243" y="42" width="8" height="7" rx="1" fill="${p.muted}" opacity="0.35"/>
-    <line x1="260" y1="34" x2="260" y2="56" stroke="${p.border}" stroke-width="1"/>
-    <rect x="268" y="42" width="8" height="7" rx="1" fill="${p.muted}" opacity="0.35"/>
-    <rect x="282" y="42" width="8" height="7" rx="1" fill="${p.muted}" opacity="0.35"/>
+    <!-- Toolbar row -->
+    <rect x="190" y="30" width="${W-190}" height="24" fill="${p.bg2}" opacity="0.45"/>
+    <rect x="198" y="38" width="8" height="8" rx="1.5" fill="${p.muted}" opacity="0.3"/>
+    <rect x="212" y="39" width="7" height="6" rx="1"   fill="${p.muted}" opacity="0.3"/>
+    <rect x="224" y="39" width="7" height="6" rx="1"   fill="${p.muted}" opacity="0.3"/>
+    <rect x="236" y="39" width="7" height="6" rx="1"   fill="${p.muted}" opacity="0.3"/>
+    <line x1="252" y1="31" x2="252" y2="52" stroke="${p.border}" stroke-width="1" opacity="0.5"/>
+    <rect x="258" y="39" width="7" height="6" rx="1"   fill="${p.muted}" opacity="0.3"/>
+    <rect x="270" y="39" width="7" height="6" rx="1"   fill="${p.muted}" opacity="0.3"/>
+    <rect x="282" y="39" width="7" height="6" rx="1"   fill="${p.muted}" opacity="0.3"/>
+    <!-- Reading time -->
+    ${sans(W-16, 42, p.muted, '3 min read', 9, 'text-anchor="end"')}
 
-    <!-- Markdown content -->
-    <!-- H1 -->
-    <rect x="206" y="68" width="218" height="15" rx="3" fill="${p.blue}" opacity="0.8"/>
-    <!-- Paragraph -->
-    <rect x="206" y="98" width="372" height="7" rx="2" fill="${p.text}" opacity="0.5"/>
-    <rect x="206" y="110" width="350" height="7" rx="2" fill="${p.text}" opacity="0.5"/>
-    <rect x="206" y="122" width="280" height="7" rx="2" fill="${p.text}" opacity="0.5"/>
+    <!-- ────────── Markdown content ────────── -->
 
-    <!-- H2 -->
-    <rect x="206" y="146" width="136" height="11" rx="3" fill="${p.purple}" opacity="0.75"/>
+    <!-- H1: "Color Theory Guide" -->
+    ${sans(cx, 82, p.blue, 'Color Theory Guide', 17, 'font-weight="700"')}
+    <!-- H1 underline decoration -->
+    <line x1="${cx}" y1="88" x2="${cx+210}" y2="88" stroke="${p.blue}" stroke-width="1.5" opacity="0.25"/>
 
-    <!-- List items -->
-    <circle cx="216" cy="170" r="2.5" fill="${p.muted}" opacity="0.6"/>
-    <rect x="226" y="165" width="196" height="7" rx="2" fill="${p.text}" opacity="0.45"/>
-    <circle cx="216" cy="185" r="2.5" fill="${p.muted}" opacity="0.6"/>
-    <rect x="226" y="180" width="236" height="7" rx="2" fill="${p.text}" opacity="0.45"/>
-    <circle cx="216" cy="200" r="2.5" fill="${p.muted}" opacity="0.6"/>
-    <rect x="226" y="195" width="176" height="7" rx="2" fill="${p.text}" opacity="0.45"/>
+    <!-- Body paragraph — line 1 -->
+    <text x="${cx}" y="107" font-family="sans-serif" font-size="12" fill="${p.text}" opacity="0.8">A <tspan font-weight="700">color scheme</tspan> defines the visual <tspan font-style="italic">language</tspan> of your workspace.</text>
+    <!-- Body paragraph — line 2 -->
+    <text x="${cx}" y="123" font-family="sans-serif" font-size="12" fill="${p.text}" opacity="0.72">It shapes focus, mood, and <tspan fill="${p.blue}">readability</tspan> across all tools.</text>
 
-    <!-- Callout -->
-    <rect x="206" y="218" width="366" height="52" rx="6" fill="${p.blue}" opacity="0.06" stroke="${p.blue}" stroke-width="1.5" stroke-opacity="0.3"/>
-    <rect x="206" y="218" width="4" height="52" rx="2" fill="${p.blue}" opacity="0.55"/>
-    <rect x="218" y="227" width="78" height="7" rx="2" fill="${p.blue}" opacity="0.65"/>
-    <rect x="218" y="239" width="300" height="6" rx="2" fill="${p.text}" opacity="0.4"/>
-    <rect x="218" y="251" width="258" height="6" rx="2" fill="${p.text}" opacity="0.3"/>
+    <!-- H2: "Palette Structure" -->
+    ${sans(cx, 147, p.purple, 'Palette Structure', 13, 'font-weight="700"')}
+
+    <!-- Task list — unchecked -->
+    <rect x="${cx}"   y="160" width="10" height="10" rx="2" fill="none" stroke="${p.border}" stroke-width="1.5"/>
+    <text x="${cx+16}" y="170" font-family="sans-serif" font-size="11.5" fill="${p.text}" opacity="0.75">Define base background colors</text>
+    <!-- Task list — checked -->
+    <rect x="${cx}"   y="177" width="10" height="10" rx="2" fill="${p.green}" opacity="0.85"/>
+    <text x="${cx+3}" y="186" font-family="sans-serif" font-size="9" fill="${p.bg}" font-weight="700">✓</text>
+    <text x="${cx+16}" y="187" font-family="sans-serif" font-size="11.5" fill="${p.muted}" text-decoration="line-through">Configure accent palette</text>
+    <!-- Task list — unchecked -->
+    <rect x="${cx}"   y="194" width="10" height="10" rx="2" fill="none" stroke="${p.border}" stroke-width="1.5"/>
+    <text x="${cx+16}" y="204" font-family="sans-serif" font-size="11.5" fill="${p.text}" opacity="0.75">Export as CSS variables</text>
+
+    <!-- Blockquote -->
+    <rect x="${cx}" y="216" width="3" height="32" rx="1.5" fill="${p.cyan}" opacity="0.6"/>
+    <text x="${cx+12}" y="229" font-family="sans-serif" font-size="11.5" fill="${p.subtext}" font-style="italic">Well-designed schemes reduce eye strain</text>
+    <text x="${cx+12}" y="244" font-family="sans-serif" font-size="11.5" fill="${p.subtext}" font-style="italic">during long creative sessions.</text>
+
+    <!-- H2: "Code Sample" -->
+    ${sans(cx, 268, p.purple, 'Code Sample', 13, 'font-weight="700"')}
 
     <!-- Code block -->
-    <rect x="206" y="282" width="366" height="66" rx="6" fill="${p.bg2}"/>
-    <rect x="206" y="282" width="366" height="20" rx="6" fill="${p.bg3}"/>
-    <rect x="206" y="290" width="366" height="12" fill="${p.bg3}"/>
-    <rect x="220" y="284" width="56" height="7" rx="2" fill="${p.muted}" opacity="0.5"/>
-    ${mono(218, 320, p.keyword, 'const', 11)}
-    <rect x="258" y="312" width="50" height="8" rx="2" fill="${p.text}" opacity="0.65"/>
-    <rect x="315" y="312" width="7" height="8" rx="2" fill="${p.operator}" opacity="0.7"/>
-    <rect x="330" y="312" width="66" height="8" rx="2" fill="${p.string}" opacity="0.8"/>
-    ${mono(218, 338, p.func, 'deriveAll', 11)}
-    <rect x="278" y="330" width="7" height="8" rx="2" fill="${p.text}" opacity="0.55"/>
-    <rect x="293" y="330" width="46" height="8" rx="2" fill="${p.type}" opacity="0.7"/>
-    <rect x="346" y="330" width="7" height="8" rx="2" fill="${p.text}" opacity="0.55"/>
+    <rect x="${cx}" y="274" width="${cxEnd - cx}" height="58" rx="5" fill="${p.bg2}"/>
+    <rect x="${cx}" y="274" width="${cxEnd - cx}" height="18" rx="5" fill="${p.bg3}"/>
+    <rect x="${cx}" y="281" width="${cxEnd - cx}" height="11" fill="${p.bg3}"/>
+    ${sans(cx+8, 287, p.muted, 'javascript', 9)}
+
+    ${mono(cx+10, 307, p.keyword,  'const')}
+    ${mono(cx+44, 307, p.text,     ' scheme')}
+    ${mono(cx+90, 307, p.operator, ' =')}
+    ${mono(cx+103,307, p.text,     ' {')}
+    ${mono(cx+10, 322, p.muted,   '  // bg')}
+    ${mono(cx+50, 322, p.string,   '"#1e1e2e"')}
+
+    <!-- Tags / wikilinks at bottom -->
+    ${sans(cx, H-12, p.muted, 'Related:', 10)}
+    <rect x="${cx+50}" y="${H-22}" width="82" height="13" rx="6" fill="${p.blue}" opacity="0.14"/>
+    ${sans(cx+58, H-12, p.blue, '[[Dark Themes]]', 10)}
+    <rect x="${cx+140}" y="${H-22}" width="68" height="13" rx="6" fill="${p.purple}" opacity="0.14"/>
+    ${sans(cx+148, H-12, p.purple, '[[Catppuccin]]', 10)}
+    ${sans(cx+218, H-12, p.muted, '#design', 10)}
+    ${sans(cx+265, H-12, p.muted, '#tools', 10)}
 
     <!-- Status bar -->
-    <rect x="190" y="${H-18}" width="${W-190}" height="18" fill="${p.bg2}"/>
-    <rect x="200" y="${H-13}" width="56" height="6" rx="2" fill="${p.muted}" opacity="0.4"/>
-    <rect x="${W-80}" y="${H-13}" width="38" height="6" rx="2" fill="${p.muted}" opacity="0.35"/>
-    <rect x="${W-36}" y="${H-13}" width="28" height="6" rx="2" fill="${p.blue}" opacity="0.45"/>
+    <rect x="190" y="${H-16}" width="${W-190}" height="16" fill="${p.bg2}"/>
+    ${sans(200, H-5, p.muted, 'Editing', 9)}
+    ${sans(240, H-5, p.muted, '·  Ln 28, Col 1', 9)}
+    ${sans(W-10, H-5, p.blue, 'Markdown', 9, 'text-anchor="end"')}
   </svg>`;
 }
 
 // ── Entry point ───────────────────────────────────────────────────
 
+// Returns { type: 'svg'|'html', content: string }
 function generatePreview(mode, colors) {
   const p = deriveAll(colors);
   switch (mode) {
-    case 'terminal': return previewTerminal(p);
-    case 'browser':  return previewBrowser(p);
-    case 'html':     return previewHtml(p);
-    case 'obsidian': return previewObsidian(p);
-    default:         return previewEditor(p);
+    case 'terminal': return { type: 'svg',  content: previewTerminal(p, colors) };
+    case 'browser':  return { type: 'svg',  content: previewBrowser(p) };
+    case 'html':     return { type: 'html', content: previewHtml(p) };
+    case 'obsidian': return { type: 'svg',  content: previewObsidian(p) };
+    default:         return { type: 'svg',  content: previewEditor(p) };
   }
 }

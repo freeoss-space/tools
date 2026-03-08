@@ -136,9 +136,19 @@ function renderColorList() {
 // ── Render: preview ───────────────────────────────────────────────
 
 function renderPreview() {
-  const svg = generatePreview(state.previewMode, state.colors);
-  document.getElementById('preview-img').src =
-    `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+  const img    = document.getElementById('preview-img');
+  const iframe = document.getElementById('preview-iframe');
+  const result = generatePreview(state.previewMode, state.colors);
+
+  if (result.type === 'html') {
+    iframe.srcdoc = result.content;
+    iframe.style.display = 'block';
+    img.style.display    = 'none';
+  } else {
+    img.src           = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(result.content)}`;
+    img.style.display    = 'block';
+    iframe.style.display = 'none';
+  }
 }
 
 // ── Render: export ────────────────────────────────────────────────
