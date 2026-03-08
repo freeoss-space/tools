@@ -753,11 +753,10 @@ function previewObsidian(p) {
   </svg>`;
 }
 
-// ── UI Showcase ───────────────────────────────────────────────────
-// One semantic-token panel + one UI component card per variant.
-// Card templates cycle so each variant shows different content.
+// ── Semantic Tokens preview ───────────────────────────────────────
+// Grid of semantic token panels, one per variant.
 
-function previewUi(p, colors, allVariants) {
+function previewTokens(p, colors, allVariants) {
   allVariants = allVariants && allVariants.length ? allVariants : [{ name: 'Dark', colors }];
 
   const rgba = (hex, a) => {
@@ -767,13 +766,8 @@ function previewUi(p, colors, allVariants) {
     return `rgba(${r},${g},${b},${a})`;
   };
 
-  // ── Per-variant data (run deriveAll on each variant's colors) ─────
-  const variants = allVariants.map(v => {
-    const vp = deriveAll(v.colors);
-    return { name: v.name, vp };
-  });
+  const variants = allVariants.map(v => ({ name: v.name, vp: deriveAll(v.colors) }));
 
-  // ── Token row: swatch + name + value ─────────────────────────────
   const tok = (dot, name, val, textCol, bdr) =>
     `<div style="display:flex;align-items:center;gap:12px;padding:7px 10px;border-radius:9px;">` +
     `<div style="width:28px;height:28px;border-radius:7px;flex-shrink:0;background:${dot};border:1px solid ${bdr};"></div>` +
@@ -781,9 +775,8 @@ function previewUi(p, colors, allVariants) {
     `<span style="font-family:'DM Mono',monospace;font-size:10px;opacity:.45;color:${textCol};">${val}</span>` +
     `</div>`;
 
-  // ── Semantic token panel for one variant ──────────────────────────
   const tokenPanel = ({ name, vp }) => {
-    const bdr = rgba(vp.text, 0.15);  // swatch border visible on any bg
+    const bdr = rgba(vp.text, 0.15);
     return `<div style="border-radius:18px;padding:20px 18px 12px;border:1px solid ${vp.border};background:${vp.bg2};">` +
       `<div style="font-size:13px;font-weight:700;margin-bottom:10px;color:${vp.text};">${name}</div>` +
       tok(vp.bg,        'background',          vp.bg,        vp.text, bdr) +
@@ -796,6 +789,46 @@ function previewUi(p, colors, allVariants) {
       tok(vp.highlight, 'interactive.subtle',  vp.highlight, vp.text, bdr) +
       `</div>`;
   };
+
+  const nCols    = Math.min(allVariants.length, 2);
+  const pageBg   = '#F4EDED';
+  const labelCol = rgba(p.bg, 0.55);
+  const lineCol  = rgba(p.bg, 0.12);
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Syne',sans-serif;background:${pageBg};padding:22px 26px 30px;min-height:100vh;}
+.sl{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.25em;text-transform:uppercase;color:${labelCol};margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.sl::after{content:'';flex:1;height:1px;background:${lineCol};}
+.s{margin-bottom:24px;}
+.panels{display:grid;grid-template-columns:repeat(${nCols},1fr);gap:14px;}
+</style></head>
+<body>
+<div class="s">
+  <div class="sl">Semantic Tokens</div>
+  <div class="panels">${variants.map(tokenPanel).join('')}</div>
+</div>
+</body>
+</html>`;
+}
+
+// ── UI Component Showcase ─────────────────────────────────────────
+// One UI component card per variant.
+
+function previewUi(p, colors, allVariants) {
+  allVariants = allVariants && allVariants.length ? allVariants : [{ name: 'Dark', colors }];
+
+  const rgba = (hex, a) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r},${g},${b},${a})`;
+  };
+
+  const variants = allVariants.map(v => ({ name: v.name, vp: deriveAll(v.colors) }));
 
   // ── UI preview card for one variant ──────────────────────────────
   const uiCard = ({ name, vp }) => {
@@ -922,13 +955,9 @@ function previewUi(p, colors, allVariants) {
   };
 
   // ── Layout ────────────────────────────────────────────────────────
-  const nCols    = Math.min(allVariants.length, 2);
   const pageBg   = '#F4EDED';
   const labelCol = rgba(p.bg, 0.55);
   const lineCol  = rgba(p.bg, 0.12);
-  const tokTitle = allVariants.length === 2
-    ? `Semantic Tokens &#8212; ${allVariants[0].name} &amp; ${allVariants[1].name}`
-    : 'Semantic Tokens';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -939,13 +968,8 @@ body{font-family:'Syne',sans-serif;background:${pageBg};padding:22px 26px 30px;m
 .sl{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.25em;text-transform:uppercase;color:${labelCol};margin-bottom:14px;display:flex;align-items:center;gap:10px;}
 .sl::after{content:'';flex:1;height:1px;background:${lineCol};}
 .s{margin-bottom:24px;}
-.panels{display:grid;grid-template-columns:repeat(${nCols},1fr);gap:14px;}
 </style></head>
 <body>
-<div class="s">
-  <div class="sl">${tokTitle}</div>
-  <div class="panels">${variants.map(tokenPanel).join('')}</div>
-</div>
 ${variants.map(v => `<div class="s"><div class="sl">UI Preview &#8212; ${v.name}</div>${uiCard(v)}</div>`).join('')}
 </body>
 </html>`;
@@ -961,6 +985,7 @@ function generatePreview(mode, colors, allVariants) {
     case 'browser':  return { type: 'svg',  content: previewBrowser(p) };
     case 'html':     return { type: 'html', content: previewHtml(p) };
     case 'obsidian': return { type: 'svg',  content: previewObsidian(p) };
+    case 'tokens':   return { type: 'html', content: previewTokens(p, colors, allVariants) };
     case 'ui':       return { type: 'html', content: previewUi(p, colors, allVariants) };
     default:         return { type: 'svg',  content: previewEditor(p) };
   }
