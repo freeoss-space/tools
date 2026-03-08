@@ -73,22 +73,31 @@ function esc(s) {
     .replace(/>/g, '&gt;');
 }
 
-// ── Render: color list ────────────────────────────────────────────
+// ── Render: color palette as swatch cards ─────────────────────────
 
 function renderColorList() {
   const list = document.getElementById('color-list');
 
   list.innerHTML = state.colors.map((c, i) => `
-    <div class="color-item" data-idx="${i}">
-      <div class="swatch-wrap" title="Pick color">
-        <div class="swatch" style="background:${c.hex}"></div>
+    <div class="swatch-card" data-idx="${i}">
+      <div class="swatch-color" style="background:${c.hex}">
         <input type="color" class="swatch-picker" value="${c.hex}" data-idx="${i}" tabindex="-1">
+        <button class="del-btn" data-idx="${i}" title="Remove">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
       </div>
-      <input type="text" class="color-name-input" value="${esc(c.name)}" data-idx="${i}" placeholder="Name" spellcheck="false">
-      <input type="text" class="color-val-input" value="${esc(formatColor(c.hex, state.colorFormat))}" data-idx="${i}" data-hex="${c.hex}" spellcheck="false">
-      <button class="del-btn" data-idx="${i}" title="Remove">×</button>
+      <div class="swatch-info">
+        <input type="text" class="color-name-input" value="${esc(c.name)}" data-idx="${i}" placeholder="Name" spellcheck="false">
+        <input type="text" class="color-val-input" value="${esc(formatColor(c.hex, state.colorFormat))}" data-idx="${i}" data-hex="${c.hex}" spellcheck="false">
+      </div>
     </div>
   `).join('');
+
+  // Update palette label with current count
+  const label = document.getElementById('palette-label');
+  if (label) label.textContent = `Palette — ${state.colors.length} Colors`;
 
   // Native color picker
   list.querySelectorAll('.swatch-picker').forEach(el => {
@@ -128,7 +137,8 @@ function renderColorList() {
   // Delete
   list.querySelectorAll('.del-btn').forEach(el => {
     el.addEventListener('click', e => {
-      const i = +e.target.dataset.idx;
+      e.stopPropagation();
+      const i = +e.currentTarget.dataset.idx;
       if (state.colors.length <= 1) return;
       state.colors.splice(i, 1);
       renderColorList();
@@ -151,7 +161,7 @@ function renderPreview() {
     iframe.style.display = 'block';
     img.style.display    = 'none';
   } else {
-    img.src           = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(result.content)}`;
+    img.src              = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(result.content)}`;
     img.style.display    = 'block';
     iframe.style.display = 'none';
   }
@@ -198,12 +208,12 @@ function exportFilename() {
 function updateColor(idx, hex) {
   state.colors[idx].hex = hex;
 
-  // Update swatch + value input in-place (avoid full list re-render)
-  const item = document.querySelector(`.color-item[data-idx="${idx}"]`);
-  if (item) {
-    item.querySelector('.swatch').style.background = hex;
-    item.querySelector('.swatch-picker').value = hex;
-    const vi = item.querySelector('.color-val-input');
+  // Update swatch color area and value input in-place
+  const card = document.querySelector(`.swatch-card[data-idx="${idx}"]`);
+  if (card) {
+    card.querySelector('.swatch-color').style.background = hex;
+    card.querySelector('.swatch-picker').value = hex;
+    const vi = card.querySelector('.color-val-input');
     vi.dataset.hex = hex;
     if (document.activeElement !== vi) {
       vi.value = formatColor(hex, state.colorFormat);
@@ -220,7 +230,7 @@ function updateColor(idx, hex) {
 function showToast(msg, isError = false) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.style.background = isError ? '#da3633' : '#238636';
+  t.style.background = isError ? '#E66260' : '#52B788';
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2200);
 }
@@ -279,7 +289,6 @@ document.getElementById('export-tabs-groups').addEventListener('click', e => {
 // ── Event: add color ──────────────────────────────────────────────
 
 document.getElementById('add-color-btn').addEventListener('click', () => {
-  // Random vivid hue, same lightness feel as typical accent colors
   const hue = Math.floor(Math.random() * 360);
   const hex = hslToHex(hue, 72, 68);
   state.colors.push({ name: 'New Color', hex });
@@ -287,13 +296,14 @@ document.getElementById('add-color-btn').addEventListener('click', () => {
   renderPreview();
   renderExport();
   syncHash();
-  // Scroll to bottom
-  const list = document.getElementById('color-list');
-  list.scrollTop = list.scrollHeight;
-  // Focus the new name input
-  const items = list.querySelectorAll('.color-name-input');
-  const last = items[items.length - 1];
-  if (last) { last.focus(); last.select(); }
+  // Scroll new card into view and focus its name input
+  const cards = document.querySelectorAll('.swatch-card');
+  const last  = cards[cards.length - 1];
+  if (last) {
+    last.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    const nameInput = last.querySelector('.color-name-input');
+    if (nameInput) { nameInput.focus(); nameInput.select(); }
+  }
 });
 
 // ── Event: reset ──────────────────────────────────────────────────
