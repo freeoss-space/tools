@@ -49,6 +49,10 @@ function decodeState(hash) {
   } catch { return null; }
 }
 
+function syncHash() {
+  history.replaceState(null, '', '#' + encodeState());
+}
+
 function loadFromHash() {
   const hash = location.hash.slice(1);
   if (!hash) return;
@@ -96,6 +100,7 @@ function renderColorList() {
     el.addEventListener('change', e => {
       state.colors[+e.target.dataset.idx].name = e.target.value;
       renderExport();
+      syncHash();
     });
   });
 
@@ -129,6 +134,7 @@ function renderColorList() {
       renderColorList();
       renderPreview();
       renderExport();
+      syncHash();
     });
   });
 }
@@ -206,6 +212,7 @@ function updateColor(idx, hex) {
 
   renderPreview();
   renderExport();
+  syncHash();
 }
 
 // ── Toast ─────────────────────────────────────────────────────────
@@ -230,6 +237,7 @@ renderExport();
 document.getElementById('scheme-name').addEventListener('input', e => {
   state.name = e.target.value;
   renderExport();
+  syncHash();
 });
 
 // ── Event: color format toggle ────────────────────────────────────
@@ -278,6 +286,7 @@ document.getElementById('add-color-btn').addEventListener('click', () => {
   renderColorList();
   renderPreview();
   renderExport();
+  syncHash();
   // Scroll to bottom
   const list = document.getElementById('color-list');
   list.scrollTop = list.scrollHeight;
@@ -300,19 +309,41 @@ document.getElementById('reset-btn').addEventListener('click', () => {
   renderExport();
 });
 
-// ── Event: share ──────────────────────────────────────────────────
+// ── Share modal ────────────────────────────────────────────────────
 
-document.getElementById('share-btn').addEventListener('click', () => {
-  const hash = encodeState();
-  const url  = `${location.origin}${location.pathname}#${hash}`;
-  history.replaceState(null, '', '#' + hash);
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(url)
-      .then(() => showToast('Share URL copied!'))
-      .catch(() => showToast('URL updated in address bar'));
-  } else {
-    showToast('URL updated in address bar');
-  }
+function openShareModal() {
+  syncHash();
+  const url = `${location.origin}${location.pathname}${location.hash}`;
+  const input = document.getElementById('share-url-input');
+  input.value = url;
+  document.getElementById('share-modal').removeAttribute('hidden');
+  requestAnimationFrame(() => { input.focus(); input.select(); });
+}
+
+function closeShareModal() {
+  document.getElementById('share-modal').setAttribute('hidden', '');
+}
+
+document.getElementById('share-btn').addEventListener('click', openShareModal);
+document.getElementById('share-modal-close').addEventListener('click', closeShareModal);
+
+document.getElementById('share-modal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeShareModal();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeShareModal();
+});
+
+document.getElementById('share-copy-btn').addEventListener('click', e => {
+  const url = document.getElementById('share-url-input').value;
+  const btn = e.currentTarget;
+  navigator.clipboard.writeText(url).then(() => {
+    const orig = btn.innerHTML;
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('btn-copied');
+    setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('btn-copied'); }, 2000);
+  }).catch(() => showToast('Copy failed', true));
 });
 
 // ── Event: copy export ────────────────────────────────────────────
