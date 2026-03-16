@@ -966,6 +966,11 @@ function init() {
   }
 
   renderAll();
+
+  // Auto-sync feeds on startup to fetch new articles
+  if (state.feeds.length > 0) {
+    syncAllFeeds();
+  }
 }
 
 document.addEventListener('DOMContentLoaded', init);

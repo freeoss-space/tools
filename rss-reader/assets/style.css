@@ -621,14 +621,18 @@ body {
 .toast.show { opacity: 1; }
 
 /* Sidebar toggle - hidden on desktop */
-.sidebar-toggle { display: none; }
+.sidebar-toggle { display: none !important; }
 
 /* Responsive */
 @media (max-width: 768px) {
   #app {
     grid-template-columns: 1fr;
   }
-  .sidebar-toggle { display: flex; }
+  .sidebar-toggle {
+    display: flex !important;
+    min-width: 44px;
+    min-height: 44px;
+  }
   .sidebar {
     display: none;
     position: fixed;

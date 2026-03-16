@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rss-reader-v1';
+const CACHE_NAME = 'rss-reader-v2';
 const ASSETS = [
   './',
   './index.html',
