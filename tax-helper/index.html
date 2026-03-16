@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tax Helper</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg2: #161b22;
+      --bg3: #21262d;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #7d8590;
+      --accent: #58a6ff;
+      --green: #3fb950;
+      --red: #f85149;
+      --yellow: #d29922;
+      --purple: #bc8cff;
+      --radius: 10px;
+      --radius-sm: 6px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    header .left { display: flex; align-items: center; gap: 12px; }
+    header .left a { color: var(--text-muted); text-decoration: none; font-size: 13px; }
+    header .left a:hover { color: var(--text); }
+
+    header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      background: linear-gradient(135deg, #58a6ff, #3fb950);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    button, .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg3);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      white-space: nowrap;
+    }
+
+    button:hover { border-color: var(--accent); background: #21262d; }
+    button.primary { background: #238636; border-color: #2ea043; }
+    button.primary:hover { background: #2ea043; }
+    button.danger { border-color: var(--red); color: var(--red); }
+    button.danger:hover { background: rgba(248,81,73,0.1); }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .tab {
+      padding: 10px 20px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--text); border-bottom-color: var(--accent); }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      text-align: left;
+      padding: 10px 12px;
+      background: var(--bg3);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    tr:hover td { background: rgba(88,166,255,0.03); }
+
+    .amount-positive { color: var(--green); font-weight: 600; }
+    .amount-negative { color: var(--red); font-weight: 600; }
+
+    .category-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+      background: var(--bg);
+      border: 1px solid var(--border);
+    }
+
+    .category-badge.income { border-color: #2ea043; color: var(--green); }
+    .category-badge.expense { border-color: #da3633; color: var(--red); }
+    .category-badge.crypto { border-color: #d29922; color: var(--yellow); }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      font-size: 16px;
+      line-height: 1;
+    }
+    .delete-btn:hover { color: var(--red); background: none; border: none; }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-muted);
+    }
+    .empty-state p { font-size: 14px; }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      width: 460px;
+      max-width: 95vw;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--accent);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    /* Overview */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .stat-card .stat-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .stat-card .stat-value {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .month-section {
+      margin-bottom: 24px;
+    }
+
+    .month-section h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    .month-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .month-stat {
+      background: var(--bg3);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+    }
+
+    .month-stat .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; }
+    .month-stat .value { font-size: 16px; font-weight: 600; margin-top: 2px; }
+
+    .table-wrapper {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .section-header h2 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    input[type="file"] { display: none; }
+
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .filter-row select,
+    .filter-row input {
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg3);
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+    }
+
+    .filter-row select:focus,
+    .filter-row input:focus { border-color: var(--accent); }
+
+    @media (max-width: 600px) {
+      .container { padding: 0 12px; }
+      .overview-grid { grid-template-columns: 1fr 1fr; }
+      .modal { padding: 16px; }
+      table { font-size: 12px; }
+      th, td { padding: 8px 6px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="left">
+        <a href="../index.html">&larr; Tools</a>
+        <h1>Tax Helper</h1>
+      </div>
+      <div class="header-actions">
+        <button onclick="importCSV()">Import CSV</button>
+        <button onclick="exportCSV()">Export CSV</button>
+        <button onclick="exportPDF()">Export PDF</button>
+      </div>
+    </header>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="entries">Entries</button>
+      <button class="tab" data-tab="crypto">Crypto</button>
+      <button class="tab" data-tab="overview">Overview</button>
+    </div>
+
+    <!-- Entries Tab -->
+    <div class="tab-content active" id="tab-entries">
+      <div class="section-header">
+        <h2>Income &amp; Expense Entries</h2>
+        <button class="primary" onclick="openModal('entry')">+ New Entry</button>
+      </div>
+
+      <div class="filter-row">
+        <select id="filter-type" onchange="renderEntries()">
+          <option value="all">All Types</option>
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+        <select id="filter-category" onchange="renderEntries()">
+          <option value="all">All Categories</option>
+        </select>
+        <input type="month" id="filter-month" onchange="renderEntries()">
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Type</th>
+              <th style="text-align:right">Amount (BRL)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="entries-body"></tbody>
+        </table>
+      </div>
+      <div id="entries-empty" class="empty-state" style="display:none">
+        <p>No entries yet. Click "+ New Entry" to add one.</p>
+      </div>
+    </div>
+
+    <!-- Crypto Tab -->
+    <div class="tab-content" id="tab-crypto">
+      <div class="section-header">
+        <h2>Crypto Transactions</h2>
+        <div style="display:flex;gap:8px">
+          <button class="primary" onclick="openModal('crypto-buy')">+ Purchase</button>
+          <button class="primary" onclick="openModal('crypto-sell')">+ Sale</button>
+        </div>
+      </div>
+
+      <h3 style="font-size:14px;color:var(--text-muted);margin-bottom:12px">Purchases</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Crypto</th>
+              <th style="text-align:right">Amount (BRL)</th>
+              <th style="text-align:right">Amount (Crypto)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="crypto-buy-body"></tbody>
+        </table>
+      </div>
+      <div id="crypto-buy-empty" class="empty-state" style="display:none">
+        <p>No purchases yet.</p>
+      </div>
+
+      <h3 style="font-size:14px;color:var(--text-muted);margin:24px 0 12px">Sales</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Crypto</th>
+              <th style="text-align:right">Amount (Crypto)</th>
+              <th style="text-align:right">Amount (BRL)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="crypto-sell-body"></tbody>
+        </table>
+      </div>
+      <div id="crypto-sell-empty" class="empty-state" style="display:none">
+        <p>No sales yet.</p>
+      </div>
+    </div>
+
+    <!-- Overview Tab -->
+    <div class="tab-content" id="tab-overview">
+      <div id="overview-content"></div>
+    </div>
+  </div>
+
+  <!-- Entry Modal -->
+  <div class="modal-overlay" id="modal-entry">
+    <div class="modal">
+      <h2>New Entry</h2>
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" id="entry-title" placeholder="e.g. Monthly salary">
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select id="entry-type" onchange="updateCategoryOptions()">
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select id="entry-category"></select>
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="entry-date">
+      </div>
+      <div class="form-group">
+        <label>Amount (BRL)</label>
+        <input type="number" id="entry-amount" step="0.01" min="0" placeholder="0.00">
+      </div>
+      <div class="modal-actions">
+        <button onclick="closeModal('entry')">Cancel</button>
+        <button class="primary" onclick="addEntry()">Add Entry</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Crypto Buy Modal -->
+  <div class="modal-overlay" id="modal-crypto-buy">
+    <div class="modal">
+      <h2>New Crypto Purchase</h2>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="crypto-buy-date">
+      </div>
+      <div class="form-group">
+        <label>Crypto Type</label>
+        <select id="crypto-buy-type">
+          <option value="BTC">BTC (Bitcoin)</option>
+          <option value="ETH">ETH (Ethereum)</option>
+          <option value="SOL">SOL (Solana)</option>
+          <option value="ADA">ADA (Cardano)</option>
+          <option value="XRP">XRP (Ripple)</option>
+          <option value="DOT">DOT (Polkadot)</option>
+          <option value="MATIC">MATIC (Polygon)</option>
+          <option value="USDT">USDT (Tether)</option>
+          <option value="USDC">USDC (USD Coin)</option>
+          <option value="OTHER">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Amount (BRL)</label>
+        <input type="number" id="crypto-buy-brl" step="0.01" min="0" placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label>Amount (Crypto)</label>
+        <input type="number" id="crypto-buy-amount" step="0.00000001" min="0" placeholder="0.00000000">
+      </div>
+      <div class="modal-actions">
+        <button onclick="closeModal('crypto-buy')">Cancel</button>
+        <button class="primary" onclick="addCryptoBuy()">Add Purchase</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Crypto Sell Modal -->
+  <div class="modal-overlay" id="modal-crypto-sell">
+    <div class="modal">
+      <h2>New Crypto Sale</h2>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="crypto-sell-date">
+      </div>
+      <div class="form-group">
+        <label>Crypto Type</label>
+        <select id="crypto-sell-type">
+          <option value="BTC">BTC (Bitcoin)</option>
+          <option value="ETH">ETH (Ethereum)</option>
+          <option value="SOL">SOL (Solana)</option>
+          <option value="ADA">ADA (Cardano)</option>
+          <option value="XRP">XRP (Ripple)</option>
+          <option value="DOT">DOT (Polkadot)</option>
+          <option value="MATIC">MATIC (Polygon)</option>
+          <option value="USDT">USDT (Tether)</option>
+          <option value="USDC">USDC (USD Coin)</option>
+          <option value="OTHER">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Amount (Crypto)</label>
+        <input type="number" id="crypto-sell-amount" step="0.00000001" min="0" placeholder="0.00000000">
+      </div>
+      <div class="form-group">
+        <label>Amount (BRL)</label>
+        <input type="number" id="crypto-sell-brl" step="0.01" min="0" placeholder="0.00">
+      </div>
+      <div class="modal-actions">
+        <button onclick="closeModal('crypto-sell')">Cancel</button>
+        <button class="primary" onclick="addCryptoSell()">Add Sale</button>
+      </div>
+    </div>
+  </div>
+
+  <input type="file" id="csv-input" accept=".csv" onchange="handleCSVImport(event)">
+
+  <script>
+    // Categories
+    const CATEGORIES = {
+      income: [
+        { id: 'profit_distribution', label: 'Profit Distribution' },
+        { id: 'pro_labore', label: 'Pro-labore' },
+        { id: 'reimbursements', label: 'Reimbursements' },
+        { id: 'other_income', label: 'Other' }
+      ],
+      expense: [
+        { id: 'health', label: 'Health' },
+        { id: 'education', label: 'Education' },
+        { id: 'rent', label: 'Rent' },
+        { id: 'debt_payments', label: 'Debt Payments' }
+      ]
+    };
+
+    // State (in-memory only, no saving)
+    let entries = [];
+    let cryptoBuys = [];
+    let cryptoSells = [];
+
+    // --- Tabs ---
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+        if (tab.dataset.tab === 'overview') renderOverview();
+      });
+    });
+
+    // --- Modals ---
+    function openModal(type) {
+      if (type === 'entry') {
+        document.getElementById('entry-title').value = '';
+        document.getElementById('entry-type').value = 'income';
+        document.getElementById('entry-date').value = new Date().toISOString().slice(0, 10);
+        document.getElementById('entry-amount').value = '';
+        updateCategoryOptions();
+      } else if (type === 'crypto-buy') {
+        document.getElementById('crypto-buy-date').value = new Date().toISOString().slice(0, 10);
+        document.getElementById('crypto-buy-type').value = 'BTC';
+        document.getElementById('crypto-buy-brl').value = '';
+        document.getElementById('crypto-buy-amount').value = '';
+      } else if (type === 'crypto-sell') {
+        document.getElementById('crypto-sell-date').value = new Date().toISOString().slice(0, 10);
+        document.getElementById('crypto-sell-type').value = 'BTC';
+        document.getElementById('crypto-sell-amount').value = '';
+        document.getElementById('crypto-sell-brl').value = '';
+      }
+      document.getElementById('modal-' + type).classList.add('open');
+    }
+
+    function closeModal(type) {
+      document.getElementById('modal-' + type).classList.remove('open');
+    }
+
+    // Close modal on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.classList.remove('open');
+      });
+    });
+
+    // --- Category options ---
+    function updateCategoryOptions() {
+      const type = document.getElementById('entry-type').value;
+      const select = document.getElementById('entry-category');
+      select.innerHTML = CATEGORIES[type].map(c => `<option value="${c.id}">${c.label}</option>`).join('');
+    }
+
+    function updateFilterCategories() {
+      const sel = document.getElementById('filter-category');
+      const current = sel.value;
+      sel.innerHTML = '<option value="all">All Categories</option>';
+      [...CATEGORIES.income, ...CATEGORIES.expense].forEach(c => {
+        sel.innerHTML += `<option value="${c.id}">${c.label}</option>`;
+      });
+      sel.value = current || 'all';
+    }
+
+    function getCategoryLabel(id) {
+      const all = [...CATEGORIES.income, ...CATEGORIES.expense];
+      const found = all.find(c => c.id === id);
+      return found ? found.label : id;
+    }
+
+    // --- Entries ---
+    function addEntry() {
+      const title = document.getElementById('entry-title').value.trim();
+      const type = document.getElementById('entry-type').value;
+      const category = document.getElementById('entry-category').value;
+      const date = document.getElementById('entry-date').value;
+      const amount = parseFloat(document.getElementById('entry-amount').value);
+
+      if (!title || !date || isNaN(amount) || amount <= 0) {
+        alert('Please fill all fields with valid values.');
+        return;
+      }
+
+      entries.push({ id: Date.now(), title, type, category, date, amount });
+      entries.sort((a, b) => b.date.localeCompare(a.date));
+      closeModal('entry');
+      renderEntries();
+    }
+
+    function deleteEntry(id) {
+      entries = entries.filter(e => e.id !== id);
+      renderEntries();
+    }
+
+    function renderEntries() {
+      const typeFilter = document.getElementById('filter-type').value;
+      const catFilter = document.getElementById('filter-category').value;
+      const monthFilter = document.getElementById('filter-month').value;
+
+      let filtered = entries;
+      if (typeFilter !== 'all') filtered = filtered.filter(e => e.type === typeFilter);
+      if (catFilter !== 'all') filtered = filtered.filter(e => e.category === catFilter);
+      if (monthFilter) filtered = filtered.filter(e => e.date.slice(0, 7) === monthFilter);
+
+      const tbody = document.getElementById('entries-body');
+      const empty = document.getElementById('entries-empty');
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      tbody.innerHTML = filtered.map(e => `
+        <tr>
+          <td>${formatDate(e.date)}</td>
+          <td>${esc(e.title)}</td>
+          <td><span class="category-badge ${e.type}">${getCategoryLabel(e.category)}</span></td>
+          <td>${e.type === 'income' ? 'Income' : 'Expense'}</td>
+          <td style="text-align:right" class="${e.type === 'income' ? 'amount-positive' : 'amount-negative'}">
+            ${e.type === 'income' ? '+' : '-'} R$ ${e.amount.toFixed(2)}
+          </td>
+          <td><button class="delete-btn" onclick="deleteEntry(${e.id})" title="Delete">&times;</button></td>
+        </tr>
+      `).join('');
+    }
+
+    // --- Crypto ---
+    function addCryptoBuy() {
+      const date = document.getElementById('crypto-buy-date').value;
+      const crypto = document.getElementById('crypto-buy-type').value;
+      const brl = parseFloat(document.getElementById('crypto-buy-brl').value);
+      const amount = parseFloat(document.getElementById('crypto-buy-amount').value);
+
+      if (!date || isNaN(brl) || isNaN(amount) || brl <= 0 || amount <= 0) {
+        alert('Please fill all fields with valid values.');
+        return;
+      }
+
+      cryptoBuys.push({ id: Date.now(), date, crypto, brl, amount });
+      cryptoBuys.sort((a, b) => b.date.localeCompare(a.date));
+      closeModal('crypto-buy');
+      renderCrypto();
+    }
+
+    function addCryptoSell() {
+      const date = document.getElementById('crypto-sell-date').value;
+      const crypto = document.getElementById('crypto-sell-type').value;
+      const amount = parseFloat(document.getElementById('crypto-sell-amount').value);
+      const brl = parseFloat(document.getElementById('crypto-sell-brl').value);
+
+      if (!date || isNaN(brl) || isNaN(amount) || brl <= 0 || amount <= 0) {
+        alert('Please fill all fields with valid values.');
+        return;
+      }
+
+      cryptoSells.push({ id: Date.now(), date, crypto, amount, brl });
+      cryptoSells.sort((a, b) => b.date.localeCompare(a.date));
+      closeModal('crypto-sell');
+      renderCrypto();
+    }
+
+    function deleteCryptoBuy(id) {
+      cryptoBuys = cryptoBuys.filter(e => e.id !== id);
+      renderCrypto();
+    }
+
+    function deleteCryptoSell(id) {
+      cryptoSells = cryptoSells.filter(e => e.id !== id);
+      renderCrypto();
+    }
+
+    function renderCrypto() {
+      const buyBody = document.getElementById('crypto-buy-body');
+      const buyEmpty = document.getElementById('crypto-buy-empty');
+      const sellBody = document.getElementById('crypto-sell-body');
+      const sellEmpty = document.getElementById('crypto-sell-empty');
+
+      if (cryptoBuys.length === 0) {
+        buyBody.innerHTML = '';
+        buyEmpty.style.display = 'block';
+      } else {
+        buyEmpty.style.display = 'none';
+        buyBody.innerHTML = cryptoBuys.map(e => `
+          <tr>
+            <td>${formatDate(e.date)}</td>
+            <td><span class="category-badge crypto">${e.crypto}</span></td>
+            <td style="text-align:right" class="amount-negative">R$ ${e.brl.toFixed(2)}</td>
+            <td style="text-align:right">${e.amount}</td>
+            <td><button class="delete-btn" onclick="deleteCryptoBuy(${e.id})" title="Delete">&times;</button></td>
+          </tr>
+        `).join('');
+      }
+
+      if (cryptoSells.length === 0) {
+        sellBody.innerHTML = '';
+        sellEmpty.style.display = 'block';
+      } else {
+        sellEmpty.style.display = 'none';
+        sellBody.innerHTML = cryptoSells.map(e => `
+          <tr>
+            <td>${formatDate(e.date)}</td>
+            <td><span class="category-badge crypto">${e.crypto}</span></td>
+            <td style="text-align:right">${e.amount}</td>
+            <td style="text-align:right" class="amount-positive">R$ ${e.brl.toFixed(2)}</td>
+            <td><button class="delete-btn" onclick="deleteCryptoSell(${e.id})" title="Delete">&times;</button></td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    // --- Overview ---
+    function renderOverview() {
+      const container = document.getElementById('overview-content');
+
+      const totalIncome = entries.filter(e => e.type === 'income').reduce((s, e) => s + e.amount, 0);
+      const totalExpense = entries.filter(e => e.type === 'expense').reduce((s, e) => s + e.amount, 0);
+      const totalCryptoBought = cryptoBuys.reduce((s, e) => s + e.brl, 0);
+      const totalCryptoSold = cryptoSells.reduce((s, e) => s + e.brl, 0);
+      const net = totalIncome - totalExpense;
+
+      // Collect all months
+      const allDates = [
+        ...entries.map(e => e.date),
+        ...cryptoBuys.map(e => e.date),
+        ...cryptoSells.map(e => e.date)
+      ];
+      const months = [...new Set(allDates.map(d => d.slice(0, 7)))].sort().reverse();
+
+      let html = `
+        <div class="overview-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Income</div>
+            <div class="stat-value amount-positive">R$ ${totalIncome.toFixed(2)}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Expenses</div>
+            <div class="stat-value amount-negative">R$ ${totalExpense.toFixed(2)}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Net Balance</div>
+            <div class="stat-value" style="color:${net >= 0 ? 'var(--green)' : 'var(--red)'}">R$ ${net.toFixed(2)}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Crypto Invested</div>
+            <div class="stat-value" style="color:var(--yellow)">R$ ${totalCryptoBought.toFixed(2)}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Crypto Sold</div>
+            <div class="stat-value" style="color:var(--purple)">R$ ${totalCryptoSold.toFixed(2)}</div>
+          </div>
+        </div>
+      `;
+
+      if (months.length === 0) {
+        html += '<div class="empty-state"><p>No data to display. Add entries or crypto transactions first.</p></div>';
+        container.innerHTML = html;
+        return;
+      }
+
+      for (const month of months) {
+        const monthLabel = formatMonth(month);
+        const mEntries = entries.filter(e => e.date.slice(0, 7) === month);
+        const mIncome = mEntries.filter(e => e.type === 'income').reduce((s, e) => s + e.amount, 0);
+        const mExpense = mEntries.filter(e => e.type === 'expense').reduce((s, e) => s + e.amount, 0);
+        const mCryptoBuy = cryptoBuys.filter(e => e.date.slice(0, 7) === month).reduce((s, e) => s + e.brl, 0);
+        const mCryptoSell = cryptoSells.filter(e => e.date.slice(0, 7) === month).reduce((s, e) => s + e.brl, 0);
+
+        html += `
+          <div class="month-section">
+            <h3>${monthLabel}</h3>
+            <div class="month-summary">
+              <div class="month-stat">
+                <div class="label">Income</div>
+                <div class="value amount-positive">R$ ${mIncome.toFixed(2)}</div>
+              </div>
+              <div class="month-stat">
+                <div class="label">Expenses</div>
+                <div class="value amount-negative">R$ ${mExpense.toFixed(2)}</div>
+              </div>
+              <div class="month-stat">
+                <div class="label">Net</div>
+                <div class="value" style="color:${(mIncome - mExpense) >= 0 ? 'var(--green)' : 'var(--red)'}">R$ ${(mIncome - mExpense).toFixed(2)}</div>
+              </div>
+              ${mCryptoBuy > 0 ? `<div class="month-stat"><div class="label">Crypto Bought</div><div class="value" style="color:var(--yellow)">R$ ${mCryptoBuy.toFixed(2)}</div></div>` : ''}
+              ${mCryptoSell > 0 ? `<div class="month-stat"><div class="label">Crypto Sold</div><div class="value" style="color:var(--purple)">R$ ${mCryptoSell.toFixed(2)}</div></div>` : ''}
+            </div>
+        `;
+
+        if (mEntries.length > 0) {
+          html += `<div class="table-wrapper"><table>
+            <thead><tr><th>Date</th><th>Title</th><th>Category</th><th>Type</th><th style="text-align:right">Amount</th></tr></thead>
+            <tbody>`;
+          for (const e of mEntries.sort((a, b) => a.date.localeCompare(b.date))) {
+            html += `<tr>
+              <td>${formatDate(e.date)}</td>
+              <td>${esc(e.title)}</td>
+              <td><span class="category-badge ${e.type}">${getCategoryLabel(e.category)}</span></td>
+              <td>${e.type === 'income' ? 'Income' : 'Expense'}</td>
+              <td style="text-align:right" class="${e.type === 'income' ? 'amount-positive' : 'amount-negative'}">${e.type === 'income' ? '+' : '-'} R$ ${e.amount.toFixed(2)}</td>
+            </tr>`;
+          }
+          html += '</tbody></table></div>';
+        }
+
+        html += '</div>';
+      }
+
+      container.innerHTML = html;
+    }
+
+    // --- CSV Export ---
+    function exportCSV() {
+      let csv = '';
+
+      // Entries
+      csv += 'section,date,title,type,category,amount_brl,crypto_type,amount_crypto\n';
+      for (const e of entries) {
+        csv += `entry,${e.date},${csvEsc(e.title)},${e.type},${e.category},${e.amount.toFixed(2)},,\n`;
+      }
+      for (const e of cryptoBuys) {
+        csv += `crypto_buy,${e.date},,,,${e.brl.toFixed(2)},${e.crypto},${e.amount}\n`;
+      }
+      for (const e of cryptoSells) {
+        csv += `crypto_sell,${e.date},,,,${e.brl.toFixed(2)},${e.crypto},${e.amount}\n`;
+      }
+
+      downloadFile('tax-helper-export.csv', csv, 'text/csv');
+    }
+
+    // --- CSV Import ---
+    function importCSV() {
+      document.getElementById('csv-input').click();
+    }
+
+    function handleCSVImport(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const lines = e.target.result.split('\n').filter(l => l.trim());
+        if (lines.length < 2) { alert('CSV file is empty or invalid.'); return; }
+
+        // Clear existing data
+        entries = [];
+        cryptoBuys = [];
+        cryptoSells = [];
+
+        for (let i = 1; i < lines.length; i++) {
+          const cols = parseCSVLine(lines[i]);
+          if (cols.length < 7) continue;
+
+          const [section, date, title, type, category, amountBrl, cryptoType, amountCrypto] = cols;
+
+          if (section === 'entry') {
+            entries.push({
+              id: Date.now() + i,
+              title: title || '',
+              type: type || 'income',
+              category: category || 'other_income',
+              date: date || '',
+              amount: parseFloat(amountBrl) || 0
+            });
+          } else if (section === 'crypto_buy') {
+            cryptoBuys.push({
+              id: Date.now() + i,
+              date: date || '',
+              crypto: cryptoType || 'BTC',
+              brl: parseFloat(amountBrl) || 0,
+              amount: parseFloat(amountCrypto) || 0
+            });
+          } else if (section === 'crypto_sell') {
+            cryptoSells.push({
+              id: Date.now() + i,
+              date: date || '',
+              crypto: cryptoType || 'BTC',
+              amount: parseFloat(amountCrypto) || 0,
+              brl: parseFloat(amountBrl) || 0
+            });
+          }
+        }
+
+        entries.sort((a, b) => b.date.localeCompare(a.date));
+        cryptoBuys.sort((a, b) => b.date.localeCompare(a.date));
+        cryptoSells.sort((a, b) => b.date.localeCompare(a.date));
+
+        renderEntries();
+        renderCrypto();
+        alert(`Imported ${entries.length} entries, ${cryptoBuys.length} crypto purchases, ${cryptoSells.length} crypto sales.`);
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    function parseCSVLine(line) {
+      const result = [];
+      let current = '';
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (inQuotes) {
+          if (ch === '"' && line[i + 1] === '"') { current += '"'; i++; }
+          else if (ch === '"') { inQuotes = false; }
+          else { current += ch; }
+        } else {
+          if (ch === '"') { inQuotes = true; }
+          else if (ch === ',') { result.push(current.trim()); current = ''; }
+          else { current += ch; }
+        }
+      }
+      result.push(current.trim());
+      return result;
+    }
+
+    // --- PDF Export ---
+    function exportPDF() {
+      const totalIncome = entries.filter(e => e.type === 'income').reduce((s, e) => s + e.amount, 0);
+      const totalExpense = entries.filter(e => e.type === 'expense').reduce((s, e) => s + e.amount, 0);
+      const net = totalIncome - totalExpense;
+
+      let html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Tax Helper Report</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 32px; color: #1a1a1a; font-size: 12px; }
+          h1 { font-size: 20px; margin-bottom: 4px; }
+          h2 { font-size: 15px; margin-top: 24px; margin-bottom: 8px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+          .meta { color: #666; margin-bottom: 20px; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+          th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid #eee; }
+          th { background: #f5f5f5; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+          .right { text-align: right; }
+          .green { color: #1a7f37; }
+          .red { color: #cf222e; }
+          .summary { display: flex; gap: 24px; margin-bottom: 20px; }
+          .summary-item { flex: 1; }
+          .summary-label { font-size: 11px; color: #666; text-transform: uppercase; }
+          .summary-value { font-size: 18px; font-weight: 700; }
+        </style>
+      </head><body>
+        <h1>Tax Helper Report</h1>
+        <p class="meta">Generated on ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+
+        <div class="summary">
+          <div class="summary-item"><div class="summary-label">Total Income</div><div class="summary-value green">R$ ${totalIncome.toFixed(2)}</div></div>
+          <div class="summary-item"><div class="summary-label">Total Expenses</div><div class="summary-value red">R$ ${totalExpense.toFixed(2)}</div></div>
+          <div class="summary-item"><div class="summary-label">Net Balance</div><div class="summary-value" style="color:${net >= 0 ? '#1a7f37' : '#cf222e'}">R$ ${net.toFixed(2)}</div></div>
+        </div>
+      `;
+
+      if (entries.length > 0) {
+        html += `<h2>Income &amp; Expense Entries</h2>
+          <table><thead><tr><th>Date</th><th>Title</th><th>Category</th><th>Type</th><th class="right">Amount (BRL)</th></tr></thead><tbody>`;
+        for (const e of [...entries].sort((a, b) => a.date.localeCompare(b.date))) {
+          html += `<tr><td>${formatDate(e.date)}</td><td>${esc(e.title)}</td><td>${getCategoryLabel(e.category)}</td><td>${e.type === 'income' ? 'Income' : 'Expense'}</td><td class="right ${e.type === 'income' ? 'green' : 'red'}">${e.type === 'income' ? '+' : '-'} R$ ${e.amount.toFixed(2)}</td></tr>`;
+        }
+        html += '</tbody></table>';
+      }
+
+      if (cryptoBuys.length > 0) {
+        const totalBuy = cryptoBuys.reduce((s, e) => s + e.brl, 0);
+        html += `<h2>Crypto Purchases (Total: R$ ${totalBuy.toFixed(2)})</h2>
+          <table><thead><tr><th>Date</th><th>Crypto</th><th class="right">Amount (BRL)</th><th class="right">Amount (Crypto)</th></tr></thead><tbody>`;
+        for (const e of [...cryptoBuys].sort((a, b) => a.date.localeCompare(b.date))) {
+          html += `<tr><td>${formatDate(e.date)}</td><td>${e.crypto}</td><td class="right">R$ ${e.brl.toFixed(2)}</td><td class="right">${e.amount}</td></tr>`;
+        }
+        html += '</tbody></table>';
+      }
+
+      if (cryptoSells.length > 0) {
+        const totalSell = cryptoSells.reduce((s, e) => s + e.brl, 0);
+        html += `<h2>Crypto Sales (Total: R$ ${totalSell.toFixed(2)})</h2>
+          <table><thead><tr><th>Date</th><th>Crypto</th><th class="right">Amount (Crypto)</th><th class="right">Amount (BRL)</th></tr></thead><tbody>`;
+        for (const e of [...cryptoSells].sort((a, b) => a.date.localeCompare(b.date))) {
+          html += `<tr><td>${formatDate(e.date)}</td><td>${e.crypto}</td><td class="right">${e.amount}</td><td class="right">R$ ${e.brl.toFixed(2)}</td></tr>`;
+        }
+        html += '</tbody></table>';
+      }
+
+      html += '</body></html>';
+
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(html);
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+    }
+
+    // --- Utilities ---
+    function formatDate(dateStr) {
+      const [y, m, d] = dateStr.split('-');
+      return `${d}/${m}/${y}`;
+    }
+
+    function formatMonth(monthStr) {
+      const [y, m] = monthStr.split('-');
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      return `${months[parseInt(m) - 1]} ${y}`;
+    }
+
+    function esc(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function csvEsc(str) {
+      if (!str) return '';
+      if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+        return '"' + str.replace(/"/g, '""') + '"';
+      }
+      return str;
+    }
+
+    function downloadFile(filename, content, type) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // --- Init ---
+    updateCategoryOptions();
+    updateFilterCategories();
+    renderEntries();
+    renderCrypto();
+  </script>
+</body>
+</html>
