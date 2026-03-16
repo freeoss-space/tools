@@ -89,6 +89,7 @@
       gap: 0;
       border-bottom: 1px solid var(--border);
       margin-bottom: 24px;
+      overflow-x: auto;
     }
 
     .tab {
@@ -366,6 +367,9 @@
     <div class="tabs">
       <button class="tab active" data-tab="entries">Entries</button>
       <button class="tab" data-tab="crypto">Crypto</button>
+      <button class="tab" data-tab="deductions">Deductions</button>
+      <button class="tab" data-tab="irpf">IRPF Simulator</button>
+      <button class="tab" data-tab="darf">DARF</button>
       <button class="tab" data-tab="overview">Overview</button>
     </div>
 
@@ -455,6 +459,102 @@
       <div id="crypto-sell-empty" class="empty-state" style="display:none">
         <p>No sales yet.</p>
       </div>
+    </div>
+
+    <!-- Deductions Tab -->
+    <div class="tab-content" id="tab-deductions">
+      <div class="section-header">
+        <h2>Deductions (IRPF 2026)</h2>
+        <button class="primary" onclick="openModal('deduction')">+ Add Deduction</button>
+      </div>
+      <div class="deductions-limits" style="margin-bottom:20px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);font-size:13px;color:var(--text-muted)">
+        <strong style="color:var(--text)">Annual Deduction Limits (2026):</strong><br>
+        Dependents: R$ 2,275.08/yr each &bull; Education: R$ 3,561.50/person/yr &bull; Health: Unlimited &bull; PGBL: 12% of gross taxable income &bull; Simplified deduction: R$ 17,640.00
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Description</th>
+              <th style="text-align:right">Annual Amount (BRL)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="deductions-body"></tbody>
+        </table>
+      </div>
+      <div id="deductions-empty" class="empty-state" style="display:none">
+        <p>No deductions yet. Click "+ Add Deduction" to track your deductible expenses.</p>
+      </div>
+      <div id="deductions-summary" style="margin-top:16px"></div>
+    </div>
+
+    <!-- IRPF Simulator Tab -->
+    <div class="tab-content" id="tab-irpf">
+      <div class="section-header">
+        <h2>IRPF 2026 Tax Simulator</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+        <div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px">
+            <h3 style="font-size:14px;margin-bottom:16px;color:var(--text-muted)">Income Data</h3>
+            <div class="form-group">
+              <label>Annual Gross Income (BRL)</label>
+              <input type="number" id="irpf-income" step="0.01" min="0" placeholder="0.00" oninput="calculateIRPF()">
+            </div>
+            <div class="form-group">
+              <label>Deduction Model</label>
+              <select id="irpf-deduction-model" onchange="calculateIRPF()">
+                <option value="simplified">Simplified (R$ 17,640 max)</option>
+                <option value="full">Full (itemized deductions)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Number of Dependents</label>
+              <input type="number" id="irpf-dependents" min="0" value="0" oninput="calculateIRPF()">
+            </div>
+            <div style="margin-top:12px">
+              <button onclick="loadIncomeFromEntries()">Load from Entries</button>
+            </div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
+            <h3 style="font-size:14px;margin-bottom:12px;color:var(--text-muted)">2026 Progressive Tax Table</h3>
+            <table style="font-size:12px">
+              <thead><tr><th>Annual Income Range</th><th>Rate</th><th>Deduction</th></tr></thead>
+              <tbody>
+                <tr><td>Up to R$ 24,511.92</td><td>0%</td><td>-</td></tr>
+                <tr><td>R$ 24,511.93 - R$ 33,919.80</td><td>7.5%</td><td>R$ 1,838.39</td></tr>
+                <tr><td>R$ 33,919.81 - R$ 45,012.60</td><td>15%</td><td>R$ 4,382.38</td></tr>
+                <tr><td>R$ 45,012.61 - R$ 55,976.16</td><td>22.5%</td><td>R$ 7,758.32</td></tr>
+                <tr><td>Above R$ 55,976.16</td><td>27.5%</td><td>R$ 10,557.13</td></tr>
+              </tbody>
+            </table>
+            <p style="font-size:11px;color:var(--text-muted);margin-top:10px">
+              * Law 15,270/2025: Income up to R$ 5,000/month (R$ 60,000/yr) is exempt via tax reduction.<br>
+              * Partial reduction for income R$ 60,000 - R$ 88,200/yr.
+            </p>
+          </div>
+        </div>
+        <div>
+          <div id="irpf-result" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
+            <h3 style="font-size:14px;margin-bottom:16px;color:var(--text-muted)">Tax Calculation Result</h3>
+            <div class="empty-state"><p>Enter your income to see the tax calculation.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DARF Tab -->
+    <div class="tab-content" id="tab-darf">
+      <div class="section-header">
+        <h2>DARF Payment Estimator</h2>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:20px;font-size:13px;color:var(--text-muted)">
+        <strong style="color:var(--text)">About DARF:</strong> The DARF (Documento de Arrecadacao de Receitas Federais) is used to pay federal taxes in Brazil.
+        Crypto capital gains must be reported and paid monthly/quarterly. Late payments incur 0.33%/day penalty (max 20%) + SELIC interest.
+      </div>
+      <div id="darf-content"></div>
     </div>
 
     <!-- Overview Tab -->
@@ -573,14 +673,49 @@
     </div>
   </div>
 
+  <!-- Deduction Modal -->
+  <div class="modal-overlay" id="modal-deduction">
+    <div class="modal">
+      <h2>New Deduction</h2>
+      <div class="form-group">
+        <label>Deduction Type</label>
+        <select id="deduction-type">
+          <option value="dependents">Dependents (R$ 2,275.08/yr each)</option>
+          <option value="education">Education (max R$ 3,561.50/person/yr)</option>
+          <option value="health">Health (unlimited)</option>
+          <option value="pgbl">PGBL Private Pension (max 12% of income)</option>
+          <option value="inss">INSS Contributions</option>
+          <option value="alimony">Alimony (court-ordered)</option>
+          <option value="other_deduction">Other Deduction</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" id="deduction-description" placeholder="e.g. School tuition for child">
+      </div>
+      <div class="form-group">
+        <label>Annual Amount (BRL)</label>
+        <input type="number" id="deduction-amount" step="0.01" min="0" placeholder="0.00">
+      </div>
+      <div class="modal-actions">
+        <button onclick="closeModal('deduction')">Cancel</button>
+        <button class="primary" onclick="addDeduction()">Add Deduction</button>
+      </div>
+    </div>
+  </div>
+
   <input type="file" id="csv-input" accept=".csv" onchange="handleCSVImport(event)">
 
   <script>
     // Categories
     const CATEGORIES = {
       income: [
-        { id: 'profit_distribution', label: 'Profit Distribution' },
+        { id: 'salary', label: 'Salary' },
         { id: 'pro_labore', label: 'Pro-labore' },
+        { id: 'profit_distribution', label: 'Profit Distribution' },
+        { id: 'dividends', label: 'Dividends' },
+        { id: 'freelance', label: 'Freelance / Autonomous' },
+        { id: 'rental_income', label: 'Rental Income' },
         { id: 'reimbursements', label: 'Reimbursements' },
         { id: 'other_income', label: 'Other' }
       ],
@@ -588,14 +723,41 @@
         { id: 'health', label: 'Health' },
         { id: 'education', label: 'Education' },
         { id: 'rent', label: 'Rent' },
-        { id: 'debt_payments', label: 'Debt Payments' }
+        { id: 'transportation', label: 'Transportation' },
+        { id: 'food', label: 'Food' },
+        { id: 'utilities', label: 'Utilities' },
+        { id: 'insurance', label: 'Insurance' },
+        { id: 'debt_payments', label: 'Debt Payments' },
+        { id: 'pgbl', label: 'PGBL (Private Pension)' },
+        { id: 'other_expense', label: 'Other' }
       ]
     };
 
-    // State (in-memory only, no saving)
+    // State (persisted to localStorage)
     let entries = [];
     let cryptoBuys = [];
     let cryptoSells = [];
+    let deductions = [];
+
+    function saveData() {
+      localStorage.setItem('taxhelper_entries', JSON.stringify(entries));
+      localStorage.setItem('taxhelper_cryptoBuys', JSON.stringify(cryptoBuys));
+      localStorage.setItem('taxhelper_cryptoSells', JSON.stringify(cryptoSells));
+      localStorage.setItem('taxhelper_deductions', JSON.stringify(deductions));
+    }
+
+    function loadData() {
+      try {
+        entries = JSON.parse(localStorage.getItem('taxhelper_entries')) || [];
+        cryptoBuys = JSON.parse(localStorage.getItem('taxhelper_cryptoBuys')) || [];
+        cryptoSells = JSON.parse(localStorage.getItem('taxhelper_cryptoSells')) || [];
+        deductions = JSON.parse(localStorage.getItem('taxhelper_deductions')) || [];
+      } catch(e) {
+        entries = []; cryptoBuys = []; cryptoSells = []; deductions = [];
+      }
+    }
+
+    loadData();
 
     // --- Tabs ---
     document.querySelectorAll('.tab').forEach(tab => {
@@ -605,6 +767,9 @@
         tab.classList.add('active');
         document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
         if (tab.dataset.tab === 'overview') renderOverview();
+        if (tab.dataset.tab === 'deductions') renderDeductions();
+        if (tab.dataset.tab === 'irpf') calculateIRPF();
+        if (tab.dataset.tab === 'darf') renderDARF();
       });
     });
 
@@ -626,6 +791,10 @@
         document.getElementById('crypto-sell-type').value = 'BTC';
         document.getElementById('crypto-sell-amount').value = '';
         document.getElementById('crypto-sell-brl').value = '';
+      } else if (type === 'deduction') {
+        document.getElementById('deduction-type').value = 'health';
+        document.getElementById('deduction-description').value = '';
+        document.getElementById('deduction-amount').value = '';
       }
       document.getElementById('modal-' + type).classList.add('open');
     }
@@ -679,12 +848,14 @@
 
       entries.push({ id: Date.now(), title, type, category, date, amount });
       entries.sort((a, b) => b.date.localeCompare(a.date));
+      saveData();
       closeModal('entry');
       renderEntries();
     }
 
     function deleteEntry(id) {
       entries = entries.filter(e => e.id !== id);
+      saveData();
       renderEntries();
     }
 
@@ -736,6 +907,7 @@
 
       cryptoBuys.push({ id: Date.now(), date, crypto, brl, amount });
       cryptoBuys.sort((a, b) => b.date.localeCompare(a.date));
+      saveData();
       closeModal('crypto-buy');
       renderCrypto();
     }
@@ -753,17 +925,20 @@
 
       cryptoSells.push({ id: Date.now(), date, crypto, amount, brl });
       cryptoSells.sort((a, b) => b.date.localeCompare(a.date));
+      saveData();
       closeModal('crypto-sell');
       renderCrypto();
     }
 
     function deleteCryptoBuy(id) {
       cryptoBuys = cryptoBuys.filter(e => e.id !== id);
+      saveData();
       renderCrypto();
     }
 
     function deleteCryptoSell(id) {
       cryptoSells = cryptoSells.filter(e => e.id !== id);
+      saveData();
       renderCrypto();
     }
 
@@ -806,6 +981,367 @@
       }
     }
 
+    // --- Deductions ---
+    const DEDUCTION_LABELS = {
+      dependents: 'Dependents',
+      education: 'Education',
+      health: 'Health',
+      pgbl: 'PGBL Private Pension',
+      inss: 'INSS Contributions',
+      alimony: 'Alimony',
+      other_deduction: 'Other'
+    };
+
+    function addDeduction() {
+      const type = document.getElementById('deduction-type').value;
+      const description = document.getElementById('deduction-description').value.trim();
+      const amount = parseFloat(document.getElementById('deduction-amount').value);
+
+      if (!description || isNaN(amount) || amount <= 0) {
+        alert('Please fill all fields with valid values.');
+        return;
+      }
+
+      deductions.push({ id: Date.now(), type, description, amount });
+      saveData();
+      closeModal('deduction');
+      renderDeductions();
+    }
+
+    function deleteDeduction(id) {
+      deductions = deductions.filter(d => d.id !== id);
+      saveData();
+      renderDeductions();
+    }
+
+    function getDeductionTotals() {
+      const totals = {};
+      for (const d of deductions) {
+        totals[d.type] = (totals[d.type] || 0) + d.amount;
+      }
+      return totals;
+    }
+
+    function getEffectiveDeductions(annualIncome) {
+      const totals = getDeductionTotals();
+      const effective = {};
+      // Dependents: R$ 2,275.08 each per year (count items, not amounts — but we stored amounts)
+      effective.dependents = totals.dependents || 0;
+      // Education: capped at R$ 3,561.50 per item
+      effective.education = Math.min(totals.education || 0, 3561.50 * (deductions.filter(d => d.type === 'education').length || 1));
+      // Health: unlimited
+      effective.health = totals.health || 0;
+      // PGBL: max 12% of gross taxable income
+      effective.pgbl = Math.min(totals.pgbl || 0, annualIncome * 0.12);
+      // INSS
+      effective.inss = totals.inss || 0;
+      // Alimony
+      effective.alimony = totals.alimony || 0;
+      // Other
+      effective.other_deduction = totals.other_deduction || 0;
+
+      effective.total = Object.values(effective).reduce((s, v) => s + v, 0);
+      return effective;
+    }
+
+    function renderDeductions() {
+      const tbody = document.getElementById('deductions-body');
+      const empty = document.getElementById('deductions-empty');
+      const summary = document.getElementById('deductions-summary');
+
+      if (deductions.length === 0) {
+        tbody.innerHTML = '';
+        empty.style.display = 'block';
+        summary.innerHTML = '';
+        return;
+      }
+
+      empty.style.display = 'none';
+      tbody.innerHTML = deductions.map(d => `
+        <tr>
+          <td><span class="category-badge expense">${DEDUCTION_LABELS[d.type] || d.type}</span></td>
+          <td>${esc(d.description)}</td>
+          <td style="text-align:right" class="amount-negative">R$ ${d.amount.toFixed(2)}</td>
+          <td><button class="delete-btn" onclick="deleteDeduction(${d.id})" title="Delete">&times;</button></td>
+        </tr>
+      `).join('');
+
+      const totals = getDeductionTotals();
+      const grandTotal = deductions.reduce((s, d) => s + d.amount, 0);
+      const simplifiedLimit = 17640.00;
+
+      let html = `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+        <h3 style="font-size:14px;margin-bottom:12px;color:var(--text-muted)">Deduction Summary</h3>
+        <div class="month-summary">`;
+
+      for (const [type, amount] of Object.entries(totals)) {
+        html += `<div class="month-stat">
+          <div class="label">${DEDUCTION_LABELS[type] || type}</div>
+          <div class="value amount-negative">R$ ${amount.toFixed(2)}</div>
+        </div>`;
+      }
+
+      html += `<div class="month-stat">
+        <div class="label">Total Itemized</div>
+        <div class="value" style="color:var(--accent)">R$ ${grandTotal.toFixed(2)}</div>
+      </div>
+      <div class="month-stat">
+        <div class="label">Simplified Limit</div>
+        <div class="value" style="color:var(--yellow)">R$ ${simplifiedLimit.toFixed(2)}</div>
+      </div>
+      <div class="month-stat">
+        <div class="label">Best Option</div>
+        <div class="value" style="color:var(--green)">${grandTotal > simplifiedLimit ? 'Itemized' : 'Simplified'} (R$ ${Math.max(grandTotal, simplifiedLimit).toFixed(2)})</div>
+      </div>
+      </div></div>`;
+
+      summary.innerHTML = html;
+    }
+
+    // --- IRPF 2026 Tax Calculator ---
+    const IRPF_BRACKETS = [
+      { min: 0, max: 24511.92, rate: 0, deduction: 0 },
+      { min: 24511.93, max: 33919.80, rate: 0.075, deduction: 1838.39 },
+      { min: 33919.81, max: 45012.60, rate: 0.15, deduction: 4382.38 },
+      { min: 45012.61, max: 55976.16, rate: 0.225, deduction: 7758.32 },
+      { min: 55976.17, max: Infinity, rate: 0.275, deduction: 10557.13 }
+    ];
+
+    function calculateIRPF() {
+      const incomeInput = parseFloat(document.getElementById('irpf-income').value) || 0;
+      const deductionModel = document.getElementById('irpf-deduction-model').value;
+      const numDependents = parseInt(document.getElementById('irpf-dependents').value) || 0;
+      const container = document.getElementById('irpf-result');
+
+      if (incomeInput <= 0) {
+        container.innerHTML = `<h3 style="font-size:14px;margin-bottom:16px;color:var(--text-muted)">Tax Calculation Result</h3>
+          <div class="empty-state"><p>Enter your income to see the tax calculation.</p></div>`;
+        return;
+      }
+
+      // Calculate deductions
+      let totalDeductions = 0;
+      let deductionDetails = '';
+
+      if (deductionModel === 'simplified') {
+        totalDeductions = Math.min(incomeInput * 0.20, 17640.00);
+        deductionDetails = `Simplified: R$ ${totalDeductions.toFixed(2)} (20% of income, max R$ 17,640.00)`;
+      } else {
+        const eff = getEffectiveDeductions(incomeInput);
+        const dependentDeduction = numDependents * 2275.08;
+        totalDeductions = eff.total + dependentDeduction;
+        deductionDetails = `Itemized: R$ ${totalDeductions.toFixed(2)}`;
+        if (numDependents > 0) deductionDetails += ` (incl. ${numDependents} dependent(s): R$ ${dependentDeduction.toFixed(2)})`;
+      }
+
+      const taxableIncome = Math.max(0, incomeInput - totalDeductions);
+
+      // Progressive tax calculation
+      let tax = 0;
+      let bracketUsed = '';
+      for (const bracket of IRPF_BRACKETS) {
+        if (taxableIncome >= bracket.min) {
+          tax = taxableIncome * bracket.rate - bracket.deduction;
+          bracketUsed = `${(bracket.rate * 100).toFixed(1)}%`;
+        }
+      }
+      tax = Math.max(0, tax);
+
+      // Law 15,270/2025: New exemption/reduction
+      // Annual: exempt if income <= R$ 60,000; partial reduction R$ 60,000 - R$ 88,200
+      let reduction = 0;
+      let reductionNote = '';
+      if (incomeInput <= 60000) {
+        reduction = tax;
+        reductionNote = 'Full exemption (Law 15,270/2025: income up to R$ 60,000/yr)';
+      } else if (incomeInput <= 88200) {
+        // Monthly reduction formula: R$ 978.62 - (0.133145 x monthly taxable income)
+        // Annual equivalent: R$ 11,743.44 - (0.133145 x annual taxable income)
+        const monthlyIncome = incomeInput / 12;
+        const monthlyReduction = Math.max(0, 978.62 - (0.133145 * monthlyIncome));
+        reduction = monthlyReduction * 12;
+        reduction = Math.min(reduction, tax);
+        reductionNote = `Partial reduction (Law 15,270/2025): R$ ${reduction.toFixed(2)}/yr`;
+      }
+
+      const finalTax = Math.max(0, tax - reduction);
+      const effectiveRate = incomeInput > 0 ? (finalTax / incomeInput * 100) : 0;
+
+      // IRPFM (Minimum Tax for High Earners) check
+      let irpfmTax = 0;
+      let irpfmNote = '';
+      if (incomeInput > 600000) {
+        let irpfmRate;
+        if (incomeInput >= 1200000) {
+          irpfmRate = 0.10;
+        } else {
+          irpfmRate = ((incomeInput - 600000) / 600000) * 0.10;
+        }
+        const irpfmDue = incomeInput * irpfmRate;
+        if (irpfmDue > finalTax) {
+          irpfmTax = irpfmDue - finalTax;
+          irpfmNote = `IRPFM applies: ${(irpfmRate * 100).toFixed(2)}% minimum rate on total income`;
+        }
+      }
+
+      const totalDue = finalTax + irpfmTax;
+
+      let html = `<h3 style="font-size:14px;margin-bottom:16px;color:var(--text-muted)">Tax Calculation Result</h3>`;
+      html += `<div class="overview-grid" style="grid-template-columns:1fr 1fr">
+        <div class="stat-card"><div class="stat-label">Gross Income</div><div class="stat-value" style="color:var(--text)">R$ ${incomeInput.toFixed(2)}</div></div>
+        <div class="stat-card"><div class="stat-label">Deductions</div><div class="stat-value amount-negative">R$ ${totalDeductions.toFixed(2)}</div></div>
+        <div class="stat-card"><div class="stat-label">Taxable Income</div><div class="stat-value" style="color:var(--yellow)">R$ ${taxableIncome.toFixed(2)}</div></div>
+        <div class="stat-card"><div class="stat-label">Bracket Rate</div><div class="stat-value" style="color:var(--accent)">${bracketUsed || '0%'}</div></div>
+        <div class="stat-card"><div class="stat-label">Tax Before Reduction</div><div class="stat-value amount-negative">R$ ${tax.toFixed(2)}</div></div>
+        <div class="stat-card"><div class="stat-label">Reduction (Law 15,270)</div><div class="stat-value amount-positive">R$ ${reduction.toFixed(2)}</div></div>
+        <div class="stat-card"><div class="stat-label">IRPF Due</div><div class="stat-value" style="color:var(--red)">R$ ${finalTax.toFixed(2)}</div></div>
+        <div class="stat-card"><div class="stat-label">Effective Rate</div><div class="stat-value" style="color:var(--purple)">${effectiveRate.toFixed(2)}%</div></div>
+      </div>`;
+
+      if (irpfmTax > 0) {
+        html += `<div style="margin-top:16px;padding:16px;background:rgba(248,81,73,0.1);border:1px solid var(--red);border-radius:var(--radius)">
+          <strong style="color:var(--red)">IRPFM (Minimum Tax for High Earners)</strong><br>
+          <span style="font-size:13px;color:var(--text-muted)">${irpfmNote}</span><br>
+          <span style="font-size:18px;font-weight:700;color:var(--red)">Additional: R$ ${irpfmTax.toFixed(2)}</span><br>
+          <span style="font-size:15px;font-weight:600;color:var(--red)">Total Due: R$ ${totalDue.toFixed(2)}</span>
+        </div>`;
+      }
+
+      if (reductionNote) {
+        html += `<p style="margin-top:12px;font-size:12px;color:var(--green)">${reductionNote}</p>`;
+      }
+
+      html += `<p style="margin-top:8px;font-size:11px;color:var(--text-muted)">${deductionDetails}</p>`;
+
+      container.innerHTML = html;
+    }
+
+    function loadIncomeFromEntries() {
+      const totalIncome = entries.filter(e => e.type === 'income').reduce((s, e) => s + e.amount, 0);
+      document.getElementById('irpf-income').value = totalIncome.toFixed(2);
+      calculateIRPF();
+    }
+
+    // --- Crypto Capital Gains (FIFO) ---
+    function calculateCryptoGains() {
+      // Group buys by crypto type for FIFO
+      const buysByCrypto = {};
+      for (const b of [...cryptoBuys].sort((a, b) => a.date.localeCompare(b.date))) {
+        if (!buysByCrypto[b.crypto]) buysByCrypto[b.crypto] = [];
+        buysByCrypto[b.crypto].push({ ...b, remaining: b.amount });
+      }
+
+      const gains = [];
+      for (const s of [...cryptoSells].sort((a, b) => a.date.localeCompare(b.date))) {
+        const buys = buysByCrypto[s.crypto] || [];
+        let amountToSell = s.amount;
+        let costBasis = 0;
+
+        // FIFO: consume oldest buys first
+        for (const buy of buys) {
+          if (amountToSell <= 0) break;
+          if (buy.remaining <= 0) continue;
+
+          const used = Math.min(buy.remaining, amountToSell);
+          const unitCost = buy.brl / buy.amount;
+          costBasis += used * unitCost;
+          buy.remaining -= used;
+          amountToSell -= used;
+        }
+
+        const gain = s.brl - costBasis;
+        const taxRate = 0.175; // 17.5% flat rate 2026
+        const taxDue = gain > 0 ? gain * taxRate : 0;
+
+        gains.push({
+          date: s.date,
+          crypto: s.crypto,
+          soldAmount: s.amount,
+          soldBrl: s.brl,
+          costBasis: costBasis,
+          gain: gain,
+          taxDue: taxDue
+        });
+      }
+
+      return gains;
+    }
+
+    // --- DARF Estimator ---
+    function renderDARF() {
+      const container = document.getElementById('darf-content');
+      const gains = calculateCryptoGains();
+
+      if (gains.length === 0) {
+        container.innerHTML = '<div class="empty-state"><p>No crypto sales recorded. Add crypto transactions to see DARF estimates.</p></div>';
+        return;
+      }
+
+      // Group by quarter
+      const quarters = {};
+      for (const g of gains) {
+        const [y, m] = g.date.split('-');
+        const q = `${y}-Q${Math.ceil(parseInt(m) / 3)}`;
+        if (!quarters[q]) quarters[q] = { gains: [], totalGain: 0, totalTax: 0, totalSold: 0 };
+        quarters[q].gains.push(g);
+        quarters[q].totalGain += g.gain;
+        quarters[q].totalTax += g.taxDue;
+        quarters[q].totalSold += g.soldBrl;
+      }
+
+      const totalGain = gains.reduce((s, g) => s + g.gain, 0);
+      const totalTax = gains.reduce((s, g) => s + g.taxDue, 0);
+
+      let html = `<div class="overview-grid">
+        <div class="stat-card"><div class="stat-label">Total Crypto Gains</div>
+          <div class="stat-value" style="color:${totalGain >= 0 ? 'var(--green)' : 'var(--red)'}">R$ ${totalGain.toFixed(2)}</div></div>
+        <div class="stat-card"><div class="stat-label">Total Tax Due (17.5%)</div>
+          <div class="stat-value" style="color:var(--red)">R$ ${totalTax.toFixed(2)}</div></div>
+        <div class="stat-card"><div class="stat-label">Tax Rate</div>
+          <div class="stat-value" style="color:var(--accent)">17.5% flat</div></div>
+      </div>`;
+
+      html += '<h3 style="font-size:15px;color:var(--text-muted);margin:20px 0 12px">Quarterly Breakdown (DARF Payments)</h3>';
+
+      for (const [quarter, data] of Object.entries(quarters).sort()) {
+        const [year, q] = quarter.split('-');
+        html += `<div class="month-section">
+          <h3>${q} ${year}</h3>
+          <div class="month-summary">
+            <div class="month-stat"><div class="label">Total Sold</div><div class="value" style="color:var(--yellow)">R$ ${data.totalSold.toFixed(2)}</div></div>
+            <div class="month-stat"><div class="label">Net Gain/Loss</div><div class="value" style="color:${data.totalGain >= 0 ? 'var(--green)' : 'var(--red)'}">R$ ${data.totalGain.toFixed(2)}</div></div>
+            <div class="month-stat"><div class="label">DARF Due</div><div class="value" style="color:var(--red)">R$ ${data.totalTax.toFixed(2)}</div></div>
+          </div>
+          <div class="table-wrapper"><table>
+            <thead><tr><th>Date</th><th>Crypto</th><th style="text-align:right">Sold (BRL)</th><th style="text-align:right">Cost Basis</th><th style="text-align:right">Gain/Loss</th><th style="text-align:right">Tax (17.5%)</th></tr></thead>
+            <tbody>`;
+
+        for (const g of data.gains) {
+          html += `<tr>
+            <td>${formatDate(g.date)}</td>
+            <td><span class="category-badge crypto">${g.crypto}</span></td>
+            <td style="text-align:right">R$ ${g.soldBrl.toFixed(2)}</td>
+            <td style="text-align:right">R$ ${g.costBasis.toFixed(2)}</td>
+            <td style="text-align:right" class="${g.gain >= 0 ? 'amount-positive' : 'amount-negative'}">R$ ${g.gain.toFixed(2)}</td>
+            <td style="text-align:right" class="amount-negative">R$ ${g.taxDue.toFixed(2)}</td>
+          </tr>`;
+        }
+
+        html += '</tbody></table></div></div>';
+      }
+
+      html += `<div style="margin-top:16px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);font-size:12px;color:var(--text-muted)">
+        <strong style="color:var(--text)">Important Notes:</strong><br>
+        &bull; Capital gains are taxed at a flat 17.5% rate (Law 15,270/2025, effective Jan 2026).<br>
+        &bull; DARF payments are due quarterly. Late payments incur 0.33%/day penalty (max 20%) + SELIC interest.<br>
+        &bull; Losses can offset gains for up to 5 future quarters (crypto losses only offset crypto gains).<br>
+        &bull; Transactions exceeding R$ 30,000/month off-exchange must be reported via e-CAC.<br>
+        &bull; Holdings with acquisition cost &ge; R$ 5,000 must be declared in DIRPF "Assets and Rights" section.
+      </div>`;
+
+      container.innerHTML = html;
+    }
+
     // --- Overview ---
     function renderOverview() {
       const container = document.getElementById('overview-content');
@@ -823,6 +1359,12 @@
         ...cryptoSells.map(e => e.date)
       ];
       const months = [...new Set(allDates.map(d => d.slice(0, 7)))].sort().reverse();
+
+      // Tax estimates
+      const gains = calculateCryptoGains();
+      const totalCryptoGain = gains.reduce((s, g) => s + g.gain, 0);
+      const totalCryptoTax = gains.reduce((s, g) => s + g.taxDue, 0);
+      const totalDeductions = deductions.reduce((s, d) => s + d.amount, 0);
 
       let html = `
         <div class="overview-grid">
@@ -845,6 +1387,18 @@
           <div class="stat-card">
             <div class="stat-label">Crypto Sold</div>
             <div class="stat-value" style="color:var(--purple)">R$ ${totalCryptoSold.toFixed(2)}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Crypto Capital Gains</div>
+            <div class="stat-value" style="color:${totalCryptoGain >= 0 ? 'var(--green)' : 'var(--red)'}">R$ ${totalCryptoGain.toFixed(2)}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Crypto Tax Due (17.5%)</div>
+            <div class="stat-value" style="color:var(--red)">R$ ${totalCryptoTax.toFixed(2)}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Deductions</div>
+            <div class="stat-value" style="color:var(--accent)">R$ ${totalDeductions.toFixed(2)}</div>
           </div>
         </div>
       `;
@@ -921,6 +1475,9 @@
       for (const e of cryptoSells) {
         csv += `crypto_sell,${e.date},,,,${e.brl.toFixed(2)},${e.crypto},${e.amount}\n`;
       }
+      for (const d of deductions) {
+        csv += `deduction,${d.type},${csvEsc(d.description)},,,,,,${d.amount.toFixed(2)}\n`;
+      }
 
       downloadFile('tax-helper-export.csv', csv, 'text/csv');
     }
@@ -975,6 +1532,13 @@
               amount: parseFloat(amountCrypto) || 0,
               brl: parseFloat(amountBrl) || 0
             });
+          } else if (section === 'deduction') {
+            deductions.push({
+              id: Date.now() + i,
+              type: date || 'other_deduction',
+              description: title || '',
+              amount: parseFloat(cols[8]) || parseFloat(amountBrl) || 0
+            });
           }
         }
 
@@ -982,6 +1546,7 @@
         cryptoBuys.sort((a, b) => b.date.localeCompare(a.date));
         cryptoSells.sort((a, b) => b.date.localeCompare(a.date));
 
+        saveData();
         renderEntries();
         renderCrypto();
         alert(`Imported ${entries.length} entries, ${cryptoBuys.length} crypto purchases, ${cryptoSells.length} crypto sales.`);
@@ -1073,6 +1638,32 @@
         html += '</tbody></table>';
       }
 
+      // Crypto Capital Gains
+      const gains = calculateCryptoGains();
+      if (gains.length > 0) {
+        const totalGain = gains.reduce((s, g) => s + g.gain, 0);
+        const totalTax = gains.reduce((s, g) => s + g.taxDue, 0);
+        html += `<h2>Crypto Capital Gains (Net: R$ ${totalGain.toFixed(2)} | Tax: R$ ${totalTax.toFixed(2)})</h2>
+          <table><thead><tr><th>Date</th><th>Crypto</th><th class="right">Sold (BRL)</th><th class="right">Cost Basis</th><th class="right">Gain/Loss</th><th class="right">Tax (17.5%)</th></tr></thead><tbody>`;
+        for (const g of gains) {
+          html += `<tr><td>${formatDate(g.date)}</td><td>${g.crypto}</td><td class="right">R$ ${g.soldBrl.toFixed(2)}</td><td class="right">R$ ${g.costBasis.toFixed(2)}</td><td class="right ${g.gain >= 0 ? 'green' : 'red'}">R$ ${g.gain.toFixed(2)}</td><td class="right red">R$ ${g.taxDue.toFixed(2)}</td></tr>`;
+        }
+        html += '</tbody></table>';
+      }
+
+      // Deductions
+      if (deductions.length > 0) {
+        const totalDed = deductions.reduce((s, d) => s + d.amount, 0);
+        html += `<h2>Deductions (Total: R$ ${totalDed.toFixed(2)})</h2>
+          <table><thead><tr><th>Type</th><th>Description</th><th class="right">Amount (BRL)</th></tr></thead><tbody>`;
+        for (const d of deductions) {
+          html += `<tr><td>${DEDUCTION_LABELS[d.type] || d.type}</td><td>${esc(d.description)}</td><td class="right red">R$ ${d.amount.toFixed(2)}</td></tr>`;
+        }
+        html += '</tbody></table>';
+        html += `<p style="margin-top:8px;font-size:11px;color:#666">Simplified deduction limit: R$ 17,640.00 | Best option: ${totalDed > 17640 ? 'Itemized' : 'Simplified'}</p>`;
+      }
+
+      html += '<p style="margin-top:24px;font-size:10px;color:#999">Tax calculations based on IRPF 2026 rules (Law 15,270/2025). This is an estimate only - consult a tax professional.</p>';
       html += '</body></html>';
 
       const printWindow = window.open('', '_blank');
@@ -1123,6 +1714,7 @@
     updateFilterCategories();
     renderEntries();
     renderCrypto();
+    renderDeductions();
   </script>
 </body>
 </html>
