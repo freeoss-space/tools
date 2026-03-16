@@ -36,6 +36,7 @@ const Store = {
 
 let state = Store.load();
 let currentView = { type: 'all' }; // { type: 'all' | 'feed' | 'folder' | 'readlist', id: string }
+let sidebarFilter = 'all'; // 'all' | 'unread'
 let pendingFeedData = null;
 
 // ── CORS Fetch Helper ──────────────────────────────────
@@ -324,7 +325,14 @@ function openAllInReadList(listId) {
 // ── Rendering ──────────────────────────────────────────
 function renderAll() {
   renderSidebar();
+  renderSidebarTabs();
   renderArticles();
+}
+
+function renderSidebarTabs() {
+  document.querySelectorAll('.sidebar-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.filter === sidebarFilter);
+  });
 }
 
 function renderSidebar() {
@@ -502,18 +510,21 @@ function renderArticles() {
 }
 
 function getFilteredArticles() {
-  if (currentView.type === 'all') return [...state.articles];
-  if (currentView.type === 'feed') return state.articles.filter(a => a.feedId === currentView.id);
-  if (currentView.type === 'folder') {
+  let articles;
+  if (currentView.type === 'all') articles = [...state.articles];
+  else if (currentView.type === 'feed') articles = state.articles.filter(a => a.feedId === currentView.id);
+  else if (currentView.type === 'folder') {
     const feedIds = state.feeds.filter(f => f.folder === currentView.id).map(f => f.id);
-    return state.articles.filter(a => feedIds.includes(a.feedId));
-  }
-  if (currentView.type === 'readlist') {
+    articles = state.articles.filter(a => feedIds.includes(a.feedId));
+  } else if (currentView.type === 'readlist') {
     const rl = state.readLists.find(l => l.id === currentView.id);
     if (!rl) return [];
-    return state.articles.filter(a => rl.items.includes(a.id));
+    articles = state.articles.filter(a => rl.items.includes(a.id));
+  } else {
+    articles = [];
   }
-  return [];
+  if (sidebarFilter === 'unread') articles = articles.filter(a => !a.read);
+  return articles;
 }
 
 function countUnread(feedId, folder) {
@@ -847,6 +858,14 @@ function init() {
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', e => {
       if (e.target === overlay) overlay.classList.remove('open');
+    });
+  });
+
+  // Sidebar filter tabs
+  document.querySelectorAll('.sidebar-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      sidebarFilter = tab.dataset.filter;
+      renderAll();
     });
   });
 

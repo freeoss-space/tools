@@ -94,6 +94,34 @@ body {
   top: 49px;
 }
 
+/* Sidebar tabs */
+.sidebar-tabs {
+  display: flex;
+  padding: 8px 10px;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+.sidebar-tab {
+  flex: 1;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.15s, color 0.15s;
+}
+.sidebar-tab:hover { background: var(--bg3); color: var(--text); }
+.sidebar-tab.active {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
 .sidebar-section { margin-bottom: 16px; }
 
 .sidebar-heading {
