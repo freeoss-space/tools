@@ -195,6 +195,36 @@ function parseAtomItems(doc) {
 }
 
 // ── Sync ───────────────────────────────────────────────
+function parseArticleDate(dateStr) {
+  if (!dateStr) return new Date().toISOString();
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return new Date().toISOString();
+    return d.toISOString();
+  } catch { return new Date().toISOString(); }
+}
+
+function addFeedArticles(feed, parsed) {
+  let newCount = 0;
+  for (const item of parsed.items) {
+    const artId = hashId(feed.id + item.link + item.title);
+    if (!state.articles.find(a => a.id === artId)) {
+      state.articles.push({
+        id: artId,
+        feedId: feed.id,
+        title: item.title,
+        link: item.link,
+        date: parseArticleDate(item.date),
+        image: item.image,
+        snippet: item.snippet,
+        read: false,
+      });
+      newCount++;
+    }
+  }
+  return newCount;
+}
+
 async function syncAllFeeds() {
   const btn = document.getElementById('btn-sync');
   btn.classList.add('syncing');
@@ -205,22 +235,7 @@ async function syncAllFeeds() {
       const text = await corsFetch(feed.url);
       const parsed = parseFeedXml(text, feed.url);
       if (!parsed) continue;
-      for (const item of parsed.items) {
-        const artId = hashId(feed.id + item.link + item.title);
-        if (!state.articles.find(a => a.id === artId)) {
-          state.articles.push({
-            id: artId,
-            feedId: feed.id,
-            title: item.title,
-            link: item.link,
-            date: item.date ? new Date(item.date).toISOString() : new Date().toISOString(),
-            image: item.image,
-            snippet: item.snippet,
-            read: false,
-          });
-          newCount++;
-        }
-      }
+      newCount += addFeedArticles(feed, parsed);
     } catch (e) {
       console.warn(`Failed to sync ${feed.title}:`, e);
     }
@@ -230,6 +245,27 @@ async function syncAllFeeds() {
   btn.classList.remove('syncing');
   renderAll();
   showToast(newCount ? `${newCount} new article${newCount > 1 ? 's' : ''}` : 'All up to date');
+}
+
+async function syncSingleFeed(feed) {
+  const btn = document.getElementById('btn-sync');
+  btn.classList.add('syncing');
+  let newCount = 0;
+
+  try {
+    const text = await corsFetch(feed.url);
+    const parsed = parseFeedXml(text, feed.url);
+    if (parsed) {
+      newCount = addFeedArticles(feed, parsed);
+      Store.save(state);
+    }
+  } catch (e) {
+    console.warn(`Failed to sync ${feed.title}:`, e);
+  }
+
+  btn.classList.remove('syncing');
+  renderAll();
+  if (newCount) showToast(`${newCount} new article${newCount > 1 ? 's' : ''}`);
 }
 
 function hashId(str) {
@@ -674,6 +710,9 @@ function saveFeed() {
   resetAddModal();
   renderAll();
   showToast(`Added "${title}"`);
+
+  // Auto-sync the newly added feed to show unread articles immediately
+  syncSingleFeed(feed);
 }
 
 function resetAddModal() {
@@ -798,13 +837,11 @@ function initMobileSidebar() {
   document.body.appendChild(backdrop);
   backdrop.addEventListener('click', closeSidebarMobile);
 
-  // Title click toggles sidebar on mobile
-  document.querySelector('.app-title').addEventListener('click', () => {
-    if (window.innerWidth <= 768) {
-      const sidebar = document.getElementById('sidebar');
-      sidebar.classList.toggle('open');
-      backdrop.classList.toggle('open');
-    }
+  // Hamburger button toggles sidebar on mobile
+  document.getElementById('btn-sidebar-toggle').addEventListener('click', () => {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('open');
+    backdrop.classList.toggle('open');
   });
 }
 
