@@ -753,16 +753,240 @@ function previewObsidian(p) {
   </svg>`;
 }
 
+// ── Semantic Tokens preview ───────────────────────────────────────
+// Grid of semantic token panels, one per variant.
+
+function previewTokens(p, colors, allVariants) {
+  allVariants = allVariants && allVariants.length ? allVariants : [{ name: 'Dark', colors }];
+
+  const rgba = (hex, a) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r},${g},${b},${a})`;
+  };
+
+  const variants = allVariants.map(v => ({ name: v.name, vp: deriveAll(v.colors) }));
+
+  const tok = (dot, name, val, textCol, bdr) =>
+    `<div style="display:flex;align-items:center;gap:12px;padding:7px 10px;border-radius:9px;">` +
+    `<div style="width:28px;height:28px;border-radius:7px;flex-shrink:0;background:${dot};border:1px solid ${bdr};"></div>` +
+    `<span style="font-size:11.5px;font-weight:600;flex:1;font-family:'DM Mono',monospace;color:${textCol};">${name}</span>` +
+    `<span style="font-family:'DM Mono',monospace;font-size:10px;opacity:.45;color:${textCol};">${val}</span>` +
+    `</div>`;
+
+  const tokenPanel = ({ name, vp }) => {
+    const bdr = rgba(vp.text, 0.15);
+    return `<div style="border-radius:18px;padding:20px 18px 12px;border:1px solid ${vp.border};background:${vp.bg2};">` +
+      `<div style="font-size:13px;font-weight:700;margin-bottom:10px;color:${vp.text};">${name}</div>` +
+      tok(vp.bg,        'background',          vp.bg,        vp.text, bdr) +
+      tok(vp.bg2,       'surface',             vp.bg2,       vp.text, bdr) +
+      tok(vp.border,    'border',              vp.border,    vp.text, bdr) +
+      tok(vp.text,      'text.primary',        vp.text,      vp.text, bdr) +
+      tok(vp.muted,     'text.secondary',      vp.muted,     vp.text, bdr) +
+      tok(vp.blue,      'interactive.primary', vp.blue,      vp.text, bdr) +
+      tok(vp.keyword,   'interactive.hover',   vp.keyword,   vp.text, bdr) +
+      tok(vp.highlight, 'interactive.subtle',  vp.highlight, vp.text, bdr) +
+      `</div>`;
+  };
+
+  const nCols    = Math.min(allVariants.length, 2);
+  const pageBg   = '#F4EDED';
+  const labelCol = rgba(p.bg, 0.55);
+  const lineCol  = rgba(p.bg, 0.12);
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Syne',sans-serif;background:${pageBg};padding:22px 26px 30px;min-height:100vh;}
+.sl{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.25em;text-transform:uppercase;color:${labelCol};margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.sl::after{content:'';flex:1;height:1px;background:${lineCol};}
+.s{margin-bottom:24px;}
+.panels{display:grid;grid-template-columns:repeat(${nCols},1fr);gap:14px;}
+</style></head>
+<body>
+<div class="s">
+  <div class="sl">Semantic Tokens</div>
+  <div class="panels">${variants.map(tokenPanel).join('')}</div>
+</div>
+</body>
+</html>`;
+}
+
+// ── UI Component Showcase ─────────────────────────────────────────
+// One UI component card per variant.
+
+function previewUi(p, colors, allVariants) {
+  allVariants = allVariants && allVariants.length ? allVariants : [{ name: 'Dark', colors }];
+
+  const rgba = (hex, a) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r},${g},${b},${a})`;
+  };
+
+  const variants = allVariants.map(v => ({ name: v.name, vp: deriveAll(v.colors) }));
+
+  // ── UI preview card for one variant ──────────────────────────────
+  const uiCard = ({ name, vp }) => {
+    const errBg  = rgba(vp.red,    0.14);
+    const warnBg = rgba(vp.yellow, 0.14);
+    const succBg = rgba(vp.green,  0.14);
+    const infoBg = rgba(vp.blue,   0.14);
+    const onBtn  = hex => relativeLuminance(hex) > 0.18 ? vp.bg : vp.text;
+    const mono   = `font-family:'DM Mono',monospace;`;
+    const sans   = `font-family:'Syne',sans-serif;`;
+    const sec    = `margin-bottom:16px;`;
+
+    const slabel = t =>
+      `<div style="${mono}font-size:9px;letter-spacing:.18em;text-transform:uppercase;` +
+      `color:${vp.muted};margin-bottom:8px;">${t}</div>`;
+
+    const badge = (txt, bg, col) =>
+      `<span style="font-size:10px;${mono}padding:3px 10px;border-radius:100px;font-weight:500;` +
+      `background:${bg};color:${col};letter-spacing:.03em;">${txt}</span>`;
+
+    const btn = (txt, bg, col, bdr) =>
+      `<button style="${sans}font-size:12px;font-weight:600;padding:8px 16px;border-radius:9px;` +
+      `border:${bdr || 'none'};cursor:default;background:${bg};color:${col};">${txt}</button>`;
+
+    const field = (lbl, val, bdCol, msg, icon) =>
+      `<div style="${sec}">` +
+      `<div style="font-size:11px;font-weight:600;color:${vp.muted};margin-bottom:4px;">${lbl}</div>` +
+      `<div style="display:flex;align-items:center;gap:6px;padding:8px 11px;border-radius:9px;` +
+      `border:1.5px solid ${bdCol};background:${vp.bg};">` +
+      `<span style="flex:1;font-size:12px;color:${vp.text};${mono}">${val}</span>` +
+      (icon ? `<span style="font-size:11px;color:${icon.col};">${icon.sym}</span>` : '') +
+      `</div>` +
+      (msg ? `<div style="font-size:10px;color:${msg.col};margin-top:3px;">&#9679; ${msg.txt}</div>` : '') +
+      `</div>`;
+
+    const alert = (icon, txt, bdCol, bg) =>
+      `<div style="border-radius:9px;border-left:3px solid ${bdCol};padding:9px 12px;background:${bg};` +
+      `margin-bottom:8px;display:flex;align-items:flex-start;gap:8px;">` +
+      `<span style="font-size:11px;color:${bdCol};flex-shrink:0;">${icon}</span>` +
+      `<span style="font-size:11px;color:${vp.text};line-height:1.4;">${txt}</span>` +
+      `</div>`;
+
+    const progress = (lbl, pct, fillCol) =>
+      `<div style="${sec}">` +
+      `<div style="display:flex;justify-content:space-between;margin-bottom:4px;">` +
+      `<span style="font-size:11px;color:${vp.text};font-weight:600;">${lbl}</span>` +
+      `<span style="font-size:10px;${mono}color:${vp.muted};">${pct}%</span>` +
+      `</div>` +
+      `<div style="height:6px;border-radius:100px;background:${rgba(fillCol, 0.18)};">` +
+      `<div style="height:6px;border-radius:100px;width:${pct}%;background:${fillCol};"></div>` +
+      `</div></div>`;
+
+    const toggle = (lbl, on, fillCol) =>
+      `<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;` +
+      `border-bottom:1px solid ${rgba(vp.border, 0.5)};">` +
+      `<span style="font-size:12px;color:${vp.text};font-weight:600;">${lbl}</span>` +
+      `<div style="position:relative;width:36px;height:20px;border-radius:100px;` +
+      `background:${on ? fillCol : rgba(vp.text, 0.15)};flex-shrink:0;">` +
+      `<div style="position:absolute;top:2px;left:${on ? '18px' : '2px'};width:16px;height:16px;` +
+      `border-radius:50%;background:${on ? vp.bg : rgba(vp.text, 0.5)};"></div>` +
+      `</div></div>`;
+
+    return `<div style="border-radius:18px;padding:22px;border:1px solid ${vp.border};background:${vp.bg2};">` +
+
+      // Typography + Badges
+      `<div style="${sec}">` +
+      slabel('Typography &amp; Badges') +
+      `<div style="font-size:22px;font-weight:800;color:${vp.text};line-height:1.1;margin-bottom:2px;">${name}</div>` +
+      `<div style="font-size:13px;font-weight:600;color:${vp.keyword};margin-bottom:4px;">Color Scheme Preview</div>` +
+      `<div style="font-size:12px;color:${vp.muted};margin-bottom:12px;">` +
+      `Explore typography, components, and interactive elements in this palette.</div>` +
+      `<div style="display:flex;gap:6px;flex-wrap:wrap;">` +
+      badge('&#11044; Active',  succBg,                       vp.green)   +
+      badge('Beta',             infoBg,                       vp.blue)    +
+      badge('New',              rgba(vp.keyword, 0.16),       vp.keyword) +
+      badge('&#9888; Warning',  warnBg,                       vp.yellow)  +
+      badge('&#10005; Error',   errBg,                        vp.red)     +
+      `</div></div>` +
+
+      // Buttons
+      `<div style="${sec}">` +
+      slabel('Buttons') +
+      `<div style="display:flex;gap:8px;flex-wrap:wrap;">` +
+      btn('Primary',   vp.blue,              onBtn(vp.blue))                   +
+      btn('Secondary', rgba(vp.blue, 0.16),  vp.blue)                          +
+      btn('Ghost',     'transparent',        vp.muted, `1px solid ${vp.border}`) +
+      btn('Danger',    errBg,                vp.red)                            +
+      `</div></div>` +
+
+      // Two-col: Form inputs + Alerts
+      `<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;${sec}">` +
+      `<div>` +
+      slabel('Form Inputs') +
+      field('Email',    'user@example.com',              vp.green,  null,
+            { sym: '&#10003;', col: vp.green }) +
+      field('Password', '&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;', vp.red,
+            { txt: 'Password too short', col: vp.red }) +
+      field('Message',  'Type your message&#8230;',      vp.blue) +
+      `</div>` +
+      `<div>` +
+      slabel('Alerts') +
+      alert('&#8505;',  'Your session will expire in 15 minutes.', vp.blue,   infoBg) +
+      alert('&#9888;',  'Low disk space detected on drive C.',     vp.yellow, warnBg) +
+      alert('&#10005;', 'Failed to connect. Check your network.', vp.red,    errBg)  +
+      alert('&#10003;', 'Settings saved successfully.',            vp.green,  succBg) +
+      `</div></div>` +
+
+      // Two-col: Progress + Toggles
+      `<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">` +
+      `<div>` +
+      slabel('Progress') +
+      progress('Storage', 68, vp.blue)  +
+      progress('CPU',     24, vp.green) +
+      progress('Errors',   5, vp.red)   +
+      `</div>` +
+      `<div>` +
+      slabel('Toggles') +
+      toggle('Dark Mode',     true,  vp.blue)  +
+      toggle('Notifications', false, vp.muted) +
+      toggle('Auto-save',     true,  vp.green) +
+      `</div></div>` +
+
+      `</div>`;
+  };
+
+  // ── Layout ────────────────────────────────────────────────────────
+  const pageBg   = '#F4EDED';
+  const labelCol = rgba(p.bg, 0.55);
+  const lineCol  = rgba(p.bg, 0.12);
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Syne',sans-serif;background:${pageBg};padding:22px 26px 30px;min-height:100vh;}
+.sl{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.25em;text-transform:uppercase;color:${labelCol};margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.sl::after{content:'';flex:1;height:1px;background:${lineCol};}
+.s{margin-bottom:24px;}
+</style></head>
+<body>
+${variants.map(v => `<div class="s"><div class="sl">UI Preview &#8212; ${v.name}</div>${uiCard(v)}</div>`).join('')}
+</body>
+</html>`;
+}
+
 // ── Entry point ───────────────────────────────────────────────────
 
 // Returns { type: 'svg'|'html', content: string }
-function generatePreview(mode, colors) {
+function generatePreview(mode, colors, allVariants) {
   const p = deriveAll(colors);
   switch (mode) {
     case 'terminal': return { type: 'svg',  content: previewTerminal(p, colors) };
     case 'browser':  return { type: 'svg',  content: previewBrowser(p) };
     case 'html':     return { type: 'html', content: previewHtml(p) };
     case 'obsidian': return { type: 'svg',  content: previewObsidian(p) };
+    case 'tokens':   return { type: 'html', content: previewTokens(p, colors, allVariants) };
+    case 'ui':       return { type: 'html', content: previewUi(p, colors, allVariants) };
     default:         return { type: 'svg',  content: previewEditor(p) };
   }
 }

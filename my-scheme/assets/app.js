@@ -24,28 +24,56 @@ const DEFAULT_COLORS = [
 // ── State ─────────────────────────────────────────────────────────
 
 const state = {
-  name:         'My Scheme',
-  colors:       DEFAULT_COLORS.map(c => ({ ...c })),
-  colorFormat:  'hex',
-  previewMode:  'editor',
-  exportFormat: 'css',
+  name:          'My Scheme',
+  variants:      [{ name: 'Dark', colors: DEFAULT_COLORS.map(c => ({ ...c })) }],
+  activeVariant: 0,
+  colorFormat:   'hex',
+  previewMode:   'editor',
+  exportFormat:  'css',
 };
+
+// Active-variant shortcut
+const vc = () => state.variants[state.activeVariant];
 
 // ── URL hash encode / decode ──────────────────────────────────────
 
 function encodeState() {
-  const data = { n: state.name, c: state.colors.map(c => [c.name, c.hex]) };
+  const data = {
+    n: state.name,
+    v: state.variants.map(v => ({ n: v.name, c: v.colors.map(c => [c.name, c.hex]) })),
+  };
   return btoa(unescape(encodeURIComponent(JSON.stringify(data))));
 }
 
 function decodeState(hash) {
   try {
     const data = JSON.parse(decodeURIComponent(escape(atob(hash))));
-    if (!data.c || !Array.isArray(data.c)) return null;
-    return {
-      name:   data.n || 'My Scheme',
-      colors: data.c.map(([name, hex]) => ({ name: String(name), hex: String(hex) })),
-    };
+    if (!data) return null;
+
+    // New format: { n, v: [{ n, c }] }
+    if (data.v && Array.isArray(data.v)) {
+      const variants = data.v
+        .map(v => ({
+          name:   v.n || 'Variant',
+          colors: (v.c || []).map(([name, hex]) => ({ name: String(name), hex: String(hex) })),
+        }))
+        .filter(v => v.colors.length > 0);
+      if (!variants.length) return null;
+      return { name: data.n || 'My Scheme', variants };
+    }
+
+    // Legacy format: { n, c: [[name, hex]] }
+    if (data.c && Array.isArray(data.c)) {
+      return {
+        name: data.n || 'My Scheme',
+        variants: [{
+          name:   'Dark',
+          colors: data.c.map(([name, hex]) => ({ name: String(name), hex: String(hex) })),
+        }],
+      };
+    }
+
+    return null;
   } catch { return null; }
 }
 
@@ -58,8 +86,9 @@ function loadFromHash() {
   if (!hash) return;
   const decoded = decodeState(hash);
   if (!decoded) return;
-  state.name   = decoded.name;
-  state.colors = decoded.colors;
+  state.name          = decoded.name;
+  state.variants      = decoded.variants;
+  state.activeVariant = 0;
   document.getElementById('scheme-name').value = state.name;
 }
 
@@ -73,22 +102,116 @@ function esc(s) {
     .replace(/>/g, '&gt;');
 }
 
-// ── Render: color list ────────────────────────────────────────────
+// ── Render: variant tabs ──────────────────────────────────────────
+
+function renderVariantTabs() {
+  const bar    = document.getElementById('variant-bar');
+  const canDel = state.variants.length > 1;
+
+  bar.innerHTML = state.variants.map((v, i) => `
+    <div class="variant-tab${i === state.activeVariant ? ' active' : ''}" data-vidx="${i}">
+      <span class="variant-tab-name" data-vidx="${i}" title="Double-click to rename">${esc(v.name)}</span>
+      ${canDel ? `<button class="variant-del" data-vidx="${i}" aria-label="Remove variant">
+        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>` : ''}
+    </div>
+  `).join('') + `
+    <button class="variant-add" id="add-variant-btn">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      Add variant
+    </button>`;
+
+  // Switch active variant
+  bar.querySelectorAll('.variant-tab').forEach(el => {
+    el.addEventListener('click', e => {
+      if (e.target.closest('.variant-del')) return;
+      const i = +el.dataset.vidx;
+      if (i === state.activeVariant) return;
+      state.activeVariant = i;
+      renderVariantTabs();
+      renderColorList();
+      renderPreview();
+      renderExport();
+    });
+  });
+
+  // Double-click to rename
+  bar.querySelectorAll('.variant-tab-name').forEach(el => {
+    el.addEventListener('dblclick', () => {
+      const i    = +el.dataset.vidx;
+      const name = prompt('Rename variant:', state.variants[i].name);
+      if (name !== null && name.trim()) {
+        state.variants[i].name = name.trim();
+        renderVariantTabs();
+        renderPreview();
+        syncHash();
+      }
+    });
+  });
+
+  // Delete variant
+  bar.querySelectorAll('.variant-del').forEach(el => {
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      const i = +el.dataset.vidx;
+      if (state.variants.length <= 1) return;
+      state.variants.splice(i, 1);
+      if (state.activeVariant >= state.variants.length) state.activeVariant = state.variants.length - 1;
+      renderVariantTabs();
+      renderColorList();
+      renderPreview();
+      renderExport();
+      syncHash();
+    });
+  });
+
+  // Add variant
+  const addBtn = document.getElementById('add-variant-btn');
+  if (addBtn) {
+    addBtn.addEventListener('click', () => {
+      const SUGGESTED = ['Dark', 'Light', 'Dim', 'OLED', 'High Contrast', 'Soft'];
+      const existing  = new Set(state.variants.map(v => v.name));
+      const name      = SUGGESTED.find(n => !existing.has(n)) ?? `Variant ${state.variants.length + 1}`;
+      state.variants.push({ name, colors: vc().colors.map(c => ({ ...c })) });
+      state.activeVariant = state.variants.length - 1;
+      renderVariantTabs();
+      renderColorList();
+      renderPreview();
+      renderExport();
+      syncHash();
+    });
+  }
+}
+
+// ── Render: color palette as swatch cards ─────────────────────────
 
 function renderColorList() {
   const list = document.getElementById('color-list');
 
-  list.innerHTML = state.colors.map((c, i) => `
-    <div class="color-item" data-idx="${i}">
-      <div class="swatch-wrap" title="Pick color">
-        <div class="swatch" style="background:${c.hex}"></div>
+  list.innerHTML = vc().colors.map((c, i) => `
+    <div class="swatch-card" data-idx="${i}">
+      <div class="swatch-color" style="background:${c.hex}">
         <input type="color" class="swatch-picker" value="${c.hex}" data-idx="${i}" tabindex="-1">
+        <button class="del-btn" data-idx="${i}" title="Remove">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
       </div>
-      <input type="text" class="color-name-input" value="${esc(c.name)}" data-idx="${i}" placeholder="Name" spellcheck="false">
-      <input type="text" class="color-val-input" value="${esc(formatColor(c.hex, state.colorFormat))}" data-idx="${i}" data-hex="${c.hex}" spellcheck="false">
-      <button class="del-btn" data-idx="${i}" title="Remove">×</button>
+      <div class="swatch-info">
+        <input type="text" class="color-name-input" value="${esc(c.name)}" data-idx="${i}" placeholder="Name" spellcheck="false">
+        <input type="text" class="color-val-input" value="${esc(formatColor(c.hex, state.colorFormat))}" data-idx="${i}" data-hex="${c.hex}" spellcheck="false">
+      </div>
     </div>
   `).join('');
+
+  // Update palette label with current count
+  const label = document.getElementById('palette-label');
+  if (label) label.textContent = `Palette — ${vc().colors.length} Colors`;
 
   // Native color picker
   list.querySelectorAll('.swatch-picker').forEach(el => {
@@ -98,7 +221,7 @@ function renderColorList() {
   // Name editing
   list.querySelectorAll('.color-name-input').forEach(el => {
     el.addEventListener('change', e => {
-      state.colors[+e.target.dataset.idx].name = e.target.value;
+      vc().colors[+e.target.dataset.idx].name = e.target.value;
       renderExport();
       syncHash();
     });
@@ -113,13 +236,13 @@ function renderColorList() {
         updateColor(i, hex);
       } else {
         // revert
-        e.target.value = formatColor(state.colors[i].hex, state.colorFormat);
+        e.target.value = formatColor(vc().colors[i].hex, state.colorFormat);
       }
     });
     // Allow Escape to cancel
     el.addEventListener('keydown', e => {
       if (e.key === 'Escape') {
-        e.target.value = formatColor(state.colors[+e.target.dataset.idx].hex, state.colorFormat);
+        e.target.value = formatColor(vc().colors[+e.target.dataset.idx].hex, state.colorFormat);
         e.target.blur();
       }
     });
@@ -128,9 +251,10 @@ function renderColorList() {
   // Delete
   list.querySelectorAll('.del-btn').forEach(el => {
     el.addEventListener('click', e => {
-      const i = +e.target.dataset.idx;
-      if (state.colors.length <= 1) return;
-      state.colors.splice(i, 1);
+      e.stopPropagation();
+      const i = +e.currentTarget.dataset.idx;
+      if (vc().colors.length <= 1) return;
+      vc().colors.splice(i, 1);
       renderColorList();
       renderPreview();
       renderExport();
@@ -144,14 +268,14 @@ function renderColorList() {
 function renderPreview() {
   const img    = document.getElementById('preview-img');
   const iframe = document.getElementById('preview-iframe');
-  const result = generatePreview(state.previewMode, state.colors);
+  const result = generatePreview(state.previewMode, vc().colors, state.variants);
 
   if (result.type === 'html') {
     iframe.srcdoc = result.content;
     iframe.style.display = 'block';
     img.style.display    = 'none';
   } else {
-    img.src           = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(result.content)}`;
+    img.src              = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(result.content)}`;
     img.style.display    = 'block';
     iframe.style.display = 'none';
   }
@@ -162,17 +286,17 @@ function renderPreview() {
 function renderExport() {
   const el = document.getElementById('export-code');
   switch (state.exportFormat) {
-    case 'base16':    el.textContent = buildBase16Yaml(state.colors, state.name);  break;
-    case 'base24':    el.textContent = buildBase24Yaml(state.colors, state.name);  break;
-    case 'nvchad':    el.textContent = buildNvChad(state.colors, state.name);      break;
-    case 'json':      el.textContent = buildJson(state.colors, state.name);        break;
-    case 'alacritty': el.textContent = buildAlacritty(state.colors, state.name);  break;
-    case 'kitty':     el.textContent = buildKitty(state.colors, state.name);      break;
-    case 'wezterm':   el.textContent = buildWezTerm(state.colors, state.name);    break;
-    case 'ghostty':   el.textContent = buildGhostty(state.colors, state.name);    break;
-    case 'vim':       el.textContent = buildVim(state.colors, state.name);        break;
-    case 'tmux':      el.textContent = buildTmux(state.colors, state.name);       break;
-    default:          el.textContent = buildCssVars(state.colors, state.name);
+    case 'base16':    el.textContent = buildBase16Yaml(vc().colors, state.name);  break;
+    case 'base24':    el.textContent = buildBase24Yaml(vc().colors, state.name);  break;
+    case 'nvchad':    el.textContent = buildNvChad(vc().colors, state.name);      break;
+    case 'json':      el.textContent = buildJson(vc().colors, state.name);        break;
+    case 'alacritty': el.textContent = buildAlacritty(vc().colors, state.name);  break;
+    case 'kitty':     el.textContent = buildKitty(vc().colors, state.name);      break;
+    case 'wezterm':   el.textContent = buildWezTerm(vc().colors, state.name);    break;
+    case 'ghostty':   el.textContent = buildGhostty(vc().colors, state.name);    break;
+    case 'vim':       el.textContent = buildVim(vc().colors, state.name);        break;
+    case 'tmux':      el.textContent = buildTmux(vc().colors, state.name);       break;
+    default:          el.textContent = buildCssVars(vc().colors, state.name);
   }
 }
 
@@ -196,14 +320,14 @@ function exportFilename() {
 // ── Update a single color (partial re-render) ─────────────────────
 
 function updateColor(idx, hex) {
-  state.colors[idx].hex = hex;
+  vc().colors[idx].hex = hex;
 
-  // Update swatch + value input in-place (avoid full list re-render)
-  const item = document.querySelector(`.color-item[data-idx="${idx}"]`);
-  if (item) {
-    item.querySelector('.swatch').style.background = hex;
-    item.querySelector('.swatch-picker').value = hex;
-    const vi = item.querySelector('.color-val-input');
+  // Update swatch color area and value input in-place
+  const card = document.querySelector(`.swatch-card[data-idx="${idx}"]`);
+  if (card) {
+    card.querySelector('.swatch-color').style.background = hex;
+    card.querySelector('.swatch-picker').value = hex;
+    const vi = card.querySelector('.color-val-input');
     vi.dataset.hex = hex;
     if (document.activeElement !== vi) {
       vi.value = formatColor(hex, state.colorFormat);
@@ -220,7 +344,7 @@ function updateColor(idx, hex) {
 function showToast(msg, isError = false) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.style.background = isError ? '#da3633' : '#238636';
+  t.style.background = isError ? '#E66260' : '#52B788';
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2200);
 }
@@ -228,6 +352,7 @@ function showToast(msg, isError = false) {
 // ── Init ──────────────────────────────────────────────────────────
 
 loadFromHash();
+renderVariantTabs();
 renderColorList();
 renderPreview();
 renderExport();
@@ -279,31 +404,33 @@ document.getElementById('export-tabs-groups').addEventListener('click', e => {
 // ── Event: add color ──────────────────────────────────────────────
 
 document.getElementById('add-color-btn').addEventListener('click', () => {
-  // Random vivid hue, same lightness feel as typical accent colors
   const hue = Math.floor(Math.random() * 360);
   const hex = hslToHex(hue, 72, 68);
-  state.colors.push({ name: 'New Color', hex });
+  vc().colors.push({ name: 'New Color', hex });
   renderColorList();
   renderPreview();
   renderExport();
   syncHash();
-  // Scroll to bottom
-  const list = document.getElementById('color-list');
-  list.scrollTop = list.scrollHeight;
-  // Focus the new name input
-  const items = list.querySelectorAll('.color-name-input');
-  const last = items[items.length - 1];
-  if (last) { last.focus(); last.select(); }
+  // Scroll new card into view and focus its name input
+  const cards = document.querySelectorAll('.swatch-card');
+  const last  = cards[cards.length - 1];
+  if (last) {
+    last.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    const nameInput = last.querySelector('.color-name-input');
+    if (nameInput) { nameInput.focus(); nameInput.select(); }
+  }
 });
 
 // ── Event: reset ──────────────────────────────────────────────────
 
 document.getElementById('reset-btn').addEventListener('click', () => {
   if (!confirm('Reset to the default Catppuccin Mocha palette?')) return;
-  state.name   = 'My Scheme';
-  state.colors = DEFAULT_COLORS.map(c => ({ ...c }));
+  state.name          = 'My Scheme';
+  state.variants      = [{ name: 'Dark', colors: DEFAULT_COLORS.map(c => ({ ...c })) }];
+  state.activeVariant = 0;
   document.getElementById('scheme-name').value = state.name;
   history.replaceState(null, '', location.pathname);
+  renderVariantTabs();
   renderColorList();
   renderPreview();
   renderExport();
