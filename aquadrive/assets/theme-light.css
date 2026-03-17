@@ -1,0 +1,44 @@
+/* AquaDrive Design System — Light Theme
+ * Customer-facing / default theme.
+ * Requires tokens.css to be loaded first.
+ */
+
+:root,
+[data-theme="light"] {
+  --bg: #f4eded;
+  --surface: #ffffff;
+  --border: #e0d5d5;
+  --text: #1c1828;
+  --text-muted: #7a6f7f;
+  --primary: #656ea4;
+  --primary-hover: #4e5688;
+  --primary-subtle: #edeef5;
+  --primary-light: #8c92be;
+  --primary-border: #c4c7df;
+  --surface-alt: #e8dede;
+  --accent: var(--primary);
+  --accent-hover: var(--primary-hover);
+
+  /* Semantic status — badge text colors (darker for light bg) */
+  --error-badge: #c94442;
+  --warning-badge: #c4952a;
+  --success-badge: #2e8c61;
+
+  /* Semantic status — alert backgrounds use tint tokens directly */
+  --alert-error-bg: var(--error-tint);
+  --alert-error-text: #c94442;
+  --alert-warning-bg: var(--warning-tint);
+  --alert-warning-text: #96720f;
+  --alert-success-bg: var(--success-tint);
+  --alert-success-text: #2e8c61;
+  --alert-info-bg: var(--info-tint);
+  --alert-info-text: var(--primary-hover);
+
+  /* Focus ring */
+  --focus-ring: rgba(101, 110, 164, 0.12);
+  --focus-ring-error: rgba(230, 98, 96, 0.12);
+
+  /* Shadows */
+  --shadow-card: 0 12px 32px rgba(101, 110, 164, 0.15);
+  --shadow-modal: 0 24px 64px rgba(28, 24, 40, 0.25);
+}

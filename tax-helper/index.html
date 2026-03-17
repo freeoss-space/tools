@@ -1,31 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tax Helper</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../aquadrive/assets/tokens.css">
+  <link rel="stylesheet" href="../aquadrive/assets/theme-light.css">
+  <link rel="stylesheet" href="../aquadrive/assets/theme-dark.css">
+  <link rel="stylesheet" href="../aquadrive/assets/typography.css">
   <style>
     :root {
-      --bg: #0d1117;
-      --bg2: #161b22;
-      --bg3: #21262d;
-      --border: #30363d;
-      --text: #e6edf3;
-      --text-muted: #7d8590;
-      --accent: #58a6ff;
-      --green: #3fb950;
-      --red: #f85149;
+      --green: var(--success);
+      --red: var(--error);
       --yellow: #d29922;
       --purple: #bc8cff;
-      --radius: 10px;
-      --radius-sm: 6px;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: var(--font-display);
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
@@ -53,7 +48,7 @@
       font-size: 22px;
       font-weight: 700;
       letter-spacing: -0.4px;
-      background: linear-gradient(135deg, #58a6ff, #3fb950);
+      background: linear-gradient(135deg, var(--primary-light), var(--success));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -68,7 +63,7 @@
       padding: 7px 14px;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border);
-      background: var(--bg3);
+      background: var(--surface-alt);
       color: var(--text);
       font-size: 13px;
       font-weight: 500;
@@ -77,7 +72,7 @@
       white-space: nowrap;
     }
 
-    button:hover { border-color: var(--accent); background: #21262d; }
+    button:hover { border-color: var(--primary); background: #21262d; }
     button.primary { background: #238636; border-color: #2ea043; }
     button.primary:hover { background: #2ea043; }
     button.danger { border-color: var(--red); color: var(--red); }
@@ -105,7 +100,7 @@
     }
 
     .tab:hover { color: var(--text); }
-    .tab.active { color: var(--text); border-bottom-color: var(--accent); }
+    .tab.active { color: var(--text); border-bottom-color: var(--primary); }
 
     .tab-content { display: none; }
     .tab-content.active { display: block; }
@@ -120,7 +115,7 @@
     th {
       text-align: left;
       padding: 10px 12px;
-      background: var(--bg3);
+      background: var(--surface-alt);
       color: var(--text-muted);
       font-weight: 600;
       font-size: 11px;
@@ -135,7 +130,7 @@
       vertical-align: middle;
     }
 
-    tr:hover td { background: rgba(88,166,255,0.03); }
+    tr:hover td { background: rgba(140, 146, 190, 0.03); }
 
     .amount-positive { color: var(--green); font-weight: 600; }
     .amount-negative { color: var(--red); font-weight: 600; }
@@ -185,7 +180,7 @@
     .modal-overlay.open { display: flex; }
 
     .modal {
-      background: var(--bg2);
+      background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 24px;
@@ -229,7 +224,7 @@
 
     .form-group input:focus,
     .form-group select:focus {
-      border-color: var(--accent);
+      border-color: var(--primary);
     }
 
     .modal-actions {
@@ -248,7 +243,7 @@
     }
 
     .stat-card {
-      background: var(--bg2);
+      background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 16px;
@@ -290,7 +285,7 @@
     }
 
     .month-stat {
-      background: var(--bg3);
+      background: var(--surface-alt);
       border-radius: var(--radius-sm);
       padding: 10px 14px;
     }
@@ -299,7 +294,7 @@
     .month-stat .value { font-size: 16px; font-weight: 600; margin-top: 2px; }
 
     .table-wrapper {
-      background: var(--bg2);
+      background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
@@ -332,14 +327,14 @@
       padding: 6px 10px;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border);
-      background: var(--bg3);
+      background: var(--surface-alt);
       color: var(--text);
       font-size: 13px;
       outline: none;
     }
 
     .filter-row select:focus,
-    .filter-row input:focus { border-color: var(--accent); }
+    .filter-row input:focus { border-color: var(--primary); }
 
     @media (max-width: 600px) {
       .container { padding: 0 12px; }
@@ -467,7 +462,7 @@
         <h2>Deductions (IRPF 2026)</h2>
         <button class="primary" onclick="openModal('deduction')">+ Add Deduction</button>
       </div>
-      <div class="deductions-limits" style="margin-bottom:20px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);font-size:13px;color:var(--text-muted)">
+      <div class="deductions-limits" style="margin-bottom:20px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);font-size:13px;color:var(--text-muted)">
         <strong style="color:var(--text)">Annual Deduction Limits (2026):</strong><br>
         Dependents: R$ 2,275.08/yr each &bull; Education: R$ 3,561.50/person/yr &bull; Health: Unlimited &bull; PGBL: 12% of gross taxable income &bull; Simplified deduction: R$ 17,640.00
       </div>
@@ -497,7 +492,7 @@
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
         <div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px">
             <h3 style="font-size:14px;margin-bottom:16px;color:var(--text-muted)">Income Data</h3>
             <div class="form-group">
               <label>Annual Gross Income (BRL)</label>
@@ -518,7 +513,7 @@
               <button onclick="loadIncomeFromEntries()">Load from Entries</button>
             </div>
           </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
             <h3 style="font-size:14px;margin-bottom:12px;color:var(--text-muted)">2026 Progressive Tax Table</h3>
             <table style="font-size:12px">
               <thead><tr><th>Annual Income Range</th><th>Rate</th><th>Deduction</th></tr></thead>
@@ -537,7 +532,7 @@
           </div>
         </div>
         <div>
-          <div id="irpf-result" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
+          <div id="irpf-result" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
             <h3 style="font-size:14px;margin-bottom:16px;color:var(--text-muted)">Tax Calculation Result</h3>
             <div class="empty-state"><p>Enter your income to see the tax calculation.</p></div>
           </div>
@@ -550,7 +545,7 @@
       <div class="section-header">
         <h2>DARF Payment Estimator</h2>
       </div>
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:20px;font-size:13px;color:var(--text-muted)">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:20px;font-size:13px;color:var(--text-muted)">
         <strong style="color:var(--text)">About DARF:</strong> The DARF (Documento de Arrecadacao de Receitas Federais) is used to pay federal taxes in Brazil.
         Crypto capital gains must be reported and paid monthly/quarterly. Late payments incur 0.33%/day penalty (max 20%) + SELIC interest.
       </div>
@@ -1070,7 +1065,7 @@
       const grandTotal = deductions.reduce((s, d) => s + d.amount, 0);
       const simplifiedLimit = 17640.00;
 
-      let html = `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+      let html = `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
         <h3 style="font-size:14px;margin-bottom:12px;color:var(--text-muted)">Deduction Summary</h3>
         <div class="month-summary">`;
 
@@ -1083,7 +1078,7 @@
 
       html += `<div class="month-stat">
         <div class="label">Total Itemized</div>
-        <div class="value" style="color:var(--accent)">R$ ${grandTotal.toFixed(2)}</div>
+        <div class="value" style="color:var(--primary)">R$ ${grandTotal.toFixed(2)}</div>
       </div>
       <div class="month-stat">
         <div class="label">Simplified Limit</div>
@@ -1191,7 +1186,7 @@
         <div class="stat-card"><div class="stat-label">Gross Income</div><div class="stat-value" style="color:var(--text)">R$ ${incomeInput.toFixed(2)}</div></div>
         <div class="stat-card"><div class="stat-label">Deductions</div><div class="stat-value amount-negative">R$ ${totalDeductions.toFixed(2)}</div></div>
         <div class="stat-card"><div class="stat-label">Taxable Income</div><div class="stat-value" style="color:var(--yellow)">R$ ${taxableIncome.toFixed(2)}</div></div>
-        <div class="stat-card"><div class="stat-label">Bracket Rate</div><div class="stat-value" style="color:var(--accent)">${bracketUsed || '0%'}</div></div>
+        <div class="stat-card"><div class="stat-label">Bracket Rate</div><div class="stat-value" style="color:var(--primary)">${bracketUsed || '0%'}</div></div>
         <div class="stat-card"><div class="stat-label">Tax Before Reduction</div><div class="stat-value amount-negative">R$ ${tax.toFixed(2)}</div></div>
         <div class="stat-card"><div class="stat-label">Reduction (Law 15,270)</div><div class="stat-value amount-positive">R$ ${reduction.toFixed(2)}</div></div>
         <div class="stat-card"><div class="stat-label">IRPF Due</div><div class="stat-value" style="color:var(--red)">R$ ${finalTax.toFixed(2)}</div></div>
@@ -1298,7 +1293,7 @@
         <div class="stat-card"><div class="stat-label">Total Tax Due (17.5%)</div>
           <div class="stat-value" style="color:var(--red)">R$ ${totalTax.toFixed(2)}</div></div>
         <div class="stat-card"><div class="stat-label">Tax Rate</div>
-          <div class="stat-value" style="color:var(--accent)">17.5% flat</div></div>
+          <div class="stat-value" style="color:var(--primary)">17.5% flat</div></div>
       </div>`;
 
       html += '<h3 style="font-size:15px;color:var(--text-muted);margin:20px 0 12px">Quarterly Breakdown (DARF Payments)</h3>';
@@ -1330,7 +1325,7 @@
         html += '</tbody></table></div></div>';
       }
 
-      html += `<div style="margin-top:16px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);font-size:12px;color:var(--text-muted)">
+      html += `<div style="margin-top:16px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);font-size:12px;color:var(--text-muted)">
         <strong style="color:var(--text)">Important Notes:</strong><br>
         &bull; Capital gains are taxed at a flat 17.5% rate (Law 15,270/2025, effective Jan 2026).<br>
         &bull; DARF payments are due quarterly. Late payments incur 0.33%/day penalty (max 20%) + SELIC interest.<br>
@@ -1398,7 +1393,7 @@
           </div>
           <div class="stat-card">
             <div class="stat-label">Total Deductions</div>
-            <div class="stat-value" style="color:var(--accent)">R$ ${totalDeductions.toFixed(2)}</div>
+            <div class="stat-value" style="color:var(--primary)">R$ ${totalDeductions.toFixed(2)}</div>
           </div>
         </div>
       `;

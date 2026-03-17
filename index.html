@@ -1,26 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tools</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="aquadrive/assets/tokens.css">
+  <link rel="stylesheet" href="aquadrive/assets/theme-light.css">
+  <link rel="stylesheet" href="aquadrive/assets/theme-dark.css">
+  <link rel="stylesheet" href="aquadrive/assets/typography.css">
   <style>
-    :root {
-      --bg: #0d1117;
-      --bg2: #161b22;
-      --bg3: #21262d;
-      --border: #30363d;
-      --text: #e6edf3;
-      --text-muted: #7d8590;
-      --radius: 12px;
-      --radius-sm: 8px;
-    }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: var(--font-display);
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
@@ -39,7 +32,7 @@
       font-size: 26px;
       font-weight: 700;
       letter-spacing: -0.4px;
-      background: linear-gradient(135deg, #58a6ff, #bc8cff);
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -59,7 +52,7 @@
     }
 
     .tool-card {
-      background: var(--bg2);
+      background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
@@ -71,7 +64,7 @@
     }
 
     .tool-card:hover {
-      border-color: #58a6ff55;
+      border-color: rgba(140, 146, 190, 0.33);
       transform: translateY(-3px);
       box-shadow: 0 8px 24px rgba(0,0,0,0.3);
     }
@@ -79,7 +72,7 @@
     .tool-thumb {
       aspect-ratio: 16/9;
       overflow: hidden;
-      background: var(--bg3);
+      background: var(--surface-alt);
     }
 
     .tool-thumb svg,
@@ -116,7 +109,8 @@
       border-radius: 20px;
       font-size: 11px;
       font-weight: 500;
-      background: var(--bg3);
+      font-family: var(--font-mono);
+      background: var(--surface-alt);
       color: var(--text-muted);
       border: 1px solid var(--border);
       align-self: flex-start;
@@ -136,45 +130,37 @@
       <a class="tool-card" href="my-scheme/index.html">
         <div class="tool-thumb">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180">
-            <rect width="320" height="180" fill="#1e1e2e"/>
-            <rect width="96" height="180" fill="#181825"/>
-            <rect x="10" y="12" width="76" height="10" rx="5" fill="#cba6f7"/>
-            <rect x="10" y="26" width="76" height="10" rx="5" fill="#89b4fa"/>
-            <rect x="10" y="40" width="76" height="10" rx="5" fill="#74c7ec"/>
-            <rect x="10" y="54" width="76" height="10" rx="5" fill="#a6e3a1"/>
-            <rect x="10" y="68" width="76" height="10" rx="5" fill="#f9e2af"/>
-            <rect x="10" y="82" width="76" height="10" rx="5" fill="#fab387"/>
-            <rect x="10" y="96" width="76" height="10" rx="5" fill="#f38ba8"/>
-            <rect x="10" y="110" width="76" height="10" rx="5" fill="#cdd6f4"/>
-            <rect x="10" y="124" width="76" height="10" rx="5" fill="#a6adc8"/>
-            <rect x="10" y="138" width="76" height="10" rx="5" fill="#6c7086"/>
-            <rect x="10" y="152" width="76" height="10" rx="5" fill="#45475a"/>
-            <rect x="10" y="166" width="76" height="10" rx="5" fill="#313244"/>
-            <rect x="96" y="0" width="224" height="180" fill="#1e1e2e"/>
-            <rect x="96" y="0" width="224" height="22" fill="#181825"/>
-            <circle cx="108" cy="11" r="4" fill="#ff5f57"/>
-            <circle cx="120" cy="11" r="4" fill="#febc2e"/>
-            <circle cx="132" cy="11" r="4" fill="#28c840"/>
-            <rect x="108" y="30" width="28" height="7" rx="2" fill="#cba6f7" opacity="0.9"/>
-            <rect x="140" y="30" width="5"  height="7" rx="2" fill="#cdd6f4" opacity="0.7"/>
-            <rect x="149" y="30" width="36" height="7" rx="2" fill="#89b4fa" opacity="0.9"/>
-            <rect x="108" y="42" width="7"  height="7" rx="2" fill="#6c7086" opacity="0.8"/>
-            <rect x="119" y="42" width="30" height="7" rx="2" fill="#6c7086" opacity="0.8"/>
-            <rect x="153" y="42" width="32" height="7" rx="2" fill="#6c7086" opacity="0.8"/>
-            <rect x="116" y="54" width="22" height="7" rx="2" fill="#cba6f7" opacity="0.9"/>
-            <rect x="142" y="54" width="26" height="7" rx="2" fill="#cdd6f4" opacity="0.7"/>
-            <rect x="172" y="54" width="44" height="7" rx="2" fill="#a6e3a1" opacity="0.9"/>
-            <rect x="108" y="66" width="36" height="7" rx="2" fill="#cba6f7" opacity="0.9"/>
-            <rect x="148" y="66" width="22" height="7" rx="2" fill="#cdd6f4" opacity="0.7"/>
-            <rect x="108" y="78" width="5"  height="7" rx="2" fill="#cdd6f4" opacity="0.7"/>
-            <rect x="108" y="92" width="28" height="7" rx="2" fill="#cba6f7" opacity="0.9"/>
-            <rect x="140" y="92" width="34" height="7" rx="2" fill="#89b4fa" opacity="0.9"/>
-            <rect x="116" y="104" width="22" height="7" rx="2" fill="#cba6f7" opacity="0.9"/>
-            <rect x="142" y="104" width="4"  height="7" rx="2" fill="#74c7ec" opacity="0.8"/>
-            <rect x="150" y="104" width="18" height="7" rx="2" fill="#fab387" opacity="0.9"/>
-            <rect x="172" y="104" width="34" height="7" rx="2" fill="#a6e3a1" opacity="0.9"/>
-            <rect x="96" y="166" width="224" height="14" fill="#181825"/>
-            <rect x="104" y="170" width="28" height="5" rx="2" fill="#89b4fa" opacity="0.4"/>
+            <rect width="320" height="180" fill="#261f34"/>
+            <rect width="96" height="180" fill="#1c1828"/>
+            <rect x="10" y="12" width="76" height="10" rx="5" fill="#8c92be"/>
+            <rect x="10" y="26" width="76" height="10" rx="5" fill="#c4c7df"/>
+            <rect x="10" y="40" width="76" height="10" rx="5" fill="#95d4b3"/>
+            <rect x="10" y="54" width="76" height="10" rx="5" fill="#f9db6d"/>
+            <rect x="10" y="68" width="76" height="10" rx="5" fill="#e66260"/>
+            <rect x="10" y="82" width="76" height="10" rx="5" fill="#f3a8a7"/>
+            <rect x="10" y="96" width="76" height="10" rx="5" fill="#b0b5d4"/>
+            <rect x="10" y="110" width="76" height="10" rx="5" fill="#f4eded"/>
+            <rect x="10" y="124" width="76" height="10" rx="5" fill="#9a8e9e"/>
+            <rect x="10" y="138" width="76" height="10" rx="5" fill="#352c43"/>
+            <rect x="10" y="152" width="76" height="10" rx="5" fill="#313666"/>
+            <rect x="96" y="0" width="224" height="180" fill="#261f34"/>
+            <rect x="96" y="0" width="224" height="22" fill="#1c1828"/>
+            <circle cx="108" cy="11" r="4" fill="#e66260"/>
+            <circle cx="120" cy="11" r="4" fill="#f9db6d"/>
+            <circle cx="132" cy="11" r="4" fill="#52b788"/>
+            <rect x="108" y="30" width="28" height="7" rx="2" fill="#8c92be" opacity="0.9"/>
+            <rect x="140" y="30" width="5"  height="7" rx="2" fill="#f4eded" opacity="0.7"/>
+            <rect x="149" y="30" width="36" height="7" rx="2" fill="#c4c7df" opacity="0.9"/>
+            <rect x="108" y="42" width="7"  height="7" rx="2" fill="#9a8e9e" opacity="0.8"/>
+            <rect x="119" y="42" width="30" height="7" rx="2" fill="#9a8e9e" opacity="0.8"/>
+            <rect x="153" y="42" width="32" height="7" rx="2" fill="#9a8e9e" opacity="0.8"/>
+            <rect x="116" y="54" width="22" height="7" rx="2" fill="#8c92be" opacity="0.9"/>
+            <rect x="142" y="54" width="26" height="7" rx="2" fill="#f4eded" opacity="0.7"/>
+            <rect x="172" y="54" width="44" height="7" rx="2" fill="#95d4b3" opacity="0.9"/>
+            <rect x="108" y="66" width="36" height="7" rx="2" fill="#8c92be" opacity="0.9"/>
+            <rect x="148" y="66" width="22" height="7" rx="2" fill="#f4eded" opacity="0.7"/>
+            <rect x="96" y="166" width="224" height="14" fill="#1c1828"/>
+            <rect x="104" y="170" width="28" height="5" rx="2" fill="#656ea4" opacity="0.4"/>
           </svg>
         </div>
         <div class="tool-info">
@@ -188,12 +174,10 @@
       <a class="tool-card" href="which-scheme/index.html">
         <div class="tool-thumb">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180">
-            <!-- Background -->
-            <rect width="320" height="180" fill="#0d1117"/>
-
-            <!-- Theme column: Catppuccin -->
-            <rect x="10" y="10" width="70" height="160" rx="6" fill="#1e1e2e"/>
-            <text x="45" y="26" text-anchor="middle" font-family="sans-serif" font-size="7" fill="#6c7086">Catppuccin</text>
+            <rect width="320" height="180" fill="#1c1828"/>
+            <!-- Theme columns using AquaDrive palette -->
+            <rect x="10" y="10" width="70" height="160" rx="6" fill="#261f34"/>
+            <text x="45" y="26" text-anchor="middle" font-family="sans-serif" font-size="7" fill="#9a8e9e">Catppuccin</text>
             <rect x="18" y="32" width="54" height="11" rx="3" fill="#f5e0dc"/>
             <rect x="18" y="46" width="54" height="11" rx="3" fill="#f5c2e7"/>
             <rect x="18" y="60" width="54" height="11" rx="3" fill="#cba6f7"/>
@@ -203,11 +187,9 @@
             <rect x="18" y="116" width="54" height="11" rx="3" fill="#a6e3a1"/>
             <rect x="18" y="130" width="54" height="11" rx="3" fill="#89b4fa"/>
             <rect x="18" y="144" width="54" height="11" rx="3" fill="#cdd6f4"/>
-            <rect x="18" y="158" width="54" height="6" rx="2" fill="#313244"/>
-
-            <!-- Theme column: Rosé Pine -->
-            <rect x="88" y="10" width="70" height="160" rx="6" fill="#191724"/>
-            <text x="123" y="26" text-anchor="middle" font-family="sans-serif" font-size="7" fill="#6e6a86">Rosé Pine</text>
+            <rect x="18" y="158" width="54" height="6" rx="2" fill="#352c43"/>
+            <rect x="88" y="10" width="70" height="160" rx="6" fill="#261f34"/>
+            <text x="123" y="26" text-anchor="middle" font-family="sans-serif" font-size="7" fill="#9a8e9e">Rosé Pine</text>
             <rect x="96" y="32" width="54" height="11" rx="3" fill="#eb6f92"/>
             <rect x="96" y="46" width="54" height="11" rx="3" fill="#f6c177"/>
             <rect x="96" y="60" width="54" height="11" rx="3" fill="#ebbcba"/>
@@ -217,11 +199,9 @@
             <rect x="96" y="116" width="54" height="11" rx="3" fill="#e0def4"/>
             <rect x="96" y="130" width="54" height="11" rx="3" fill="#908caa"/>
             <rect x="96" y="144" width="54" height="11" rx="3" fill="#6e6a86"/>
-            <rect x="96" y="158" width="54" height="6" rx="2" fill="#26233a"/>
-
-            <!-- Theme column: Dracula -->
-            <rect x="166" y="10" width="70" height="160" rx="6" fill="#282a36"/>
-            <text x="201" y="26" text-anchor="middle" font-family="sans-serif" font-size="7" fill="#6272a4">Dracula</text>
+            <rect x="96" y="158" width="54" height="6" rx="2" fill="#352c43"/>
+            <rect x="166" y="10" width="70" height="160" rx="6" fill="#261f34"/>
+            <text x="201" y="26" text-anchor="middle" font-family="sans-serif" font-size="7" fill="#9a8e9e">Dracula</text>
             <rect x="174" y="32" width="54" height="11" rx="3" fill="#ff5555"/>
             <rect x="174" y="46" width="54" height="11" rx="3" fill="#ffb86c"/>
             <rect x="174" y="60" width="54" height="11" rx="3" fill="#f1fa8c"/>
@@ -231,11 +211,9 @@
             <rect x="174" y="116" width="54" height="11" rx="3" fill="#bd93f9"/>
             <rect x="174" y="130" width="54" height="11" rx="3" fill="#f8f8f2"/>
             <rect x="174" y="144" width="54" height="11" rx="3" fill="#6272a4"/>
-            <rect x="174" y="158" width="54" height="6" rx="2" fill="#44475a"/>
-
-            <!-- Theme column: Nord -->
-            <rect x="244" y="10" width="66" height="160" rx="6" fill="#2e3440"/>
-            <text x="277" y="26" text-anchor="middle" font-family="sans-serif" font-size="7" fill="#4c566a">Nord</text>
+            <rect x="174" y="158" width="54" height="6" rx="2" fill="#352c43"/>
+            <rect x="244" y="10" width="66" height="160" rx="6" fill="#261f34"/>
+            <text x="277" y="26" text-anchor="middle" font-family="sans-serif" font-size="7" fill="#9a8e9e">Nord</text>
             <rect x="252" y="32" width="50" height="11" rx="3" fill="#bf616a"/>
             <rect x="252" y="46" width="50" height="11" rx="3" fill="#d08770"/>
             <rect x="252" y="60" width="50" height="11" rx="3" fill="#ebcb8b"/>
@@ -245,7 +223,7 @@
             <rect x="252" y="116" width="50" height="11" rx="3" fill="#5e81ac"/>
             <rect x="252" y="130" width="50" height="11" rx="3" fill="#b48ead"/>
             <rect x="252" y="144" width="50" height="11" rx="3" fill="#d8dee9"/>
-            <rect x="252" y="158" width="50" height="6" rx="2" fill="#3b4252"/>
+            <rect x="252" y="158" width="50" height="6" rx="2" fill="#352c43"/>
           </svg>
         </div>
         <div class="tool-info">
@@ -259,39 +237,31 @@
       <a class="tool-card" href="tax-helper/index.html">
         <div class="tool-thumb">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180">
-            <rect width="320" height="180" fill="#0d1117"/>
-            <!-- Ledger lines -->
-            <rect x="20" y="20" width="280" height="140" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1"/>
-            <!-- Header -->
-            <rect x="20" y="20" width="280" height="28" rx="8" fill="#21262d"/>
-            <rect x="20" y="40" width="280" height="8" fill="#21262d"/>
-            <text x="36" y="39" font-family="sans-serif" font-size="10" font-weight="600" fill="#58a6ff">$</text>
-            <text x="48" y="39" font-family="sans-serif" font-size="9" fill="#7d8590">Tax Helper</text>
-            <!-- Row 1 - income -->
-            <rect x="32" y="56" width="60" height="6" rx="3" fill="#7d8590" opacity="0.5"/>
-            <rect x="110" y="56" width="40" height="6" rx="3" fill="#3fb950" opacity="0.3"/>
-            <text x="268" y="62" text-anchor="end" font-family="sans-serif" font-size="9" fill="#3fb950">+ R$ 5,000</text>
-            <!-- Row 2 - income -->
-            <rect x="32" y="72" width="50" height="6" rx="3" fill="#7d8590" opacity="0.5"/>
-            <rect x="110" y="72" width="35" height="6" rx="3" fill="#3fb950" opacity="0.3"/>
-            <text x="268" y="78" text-anchor="end" font-family="sans-serif" font-size="9" fill="#3fb950">+ R$ 2,400</text>
-            <!-- Row 3 - expense -->
-            <rect x="32" y="88" width="44" height="6" rx="3" fill="#7d8590" opacity="0.5"/>
-            <rect x="110" y="88" width="30" height="6" rx="3" fill="#f85149" opacity="0.3"/>
-            <text x="268" y="94" text-anchor="end" font-family="sans-serif" font-size="9" fill="#f85149">- R$ 1,200</text>
-            <!-- Row 4 - expense -->
-            <rect x="32" y="104" width="56" height="6" rx="3" fill="#7d8590" opacity="0.5"/>
-            <rect x="110" y="104" width="28" height="6" rx="3" fill="#f85149" opacity="0.3"/>
-            <text x="268" y="110" text-anchor="end" font-family="sans-serif" font-size="9" fill="#f85149">- R$ 800</text>
-            <!-- Crypto indicator -->
-            <rect x="32" y="122" width="100" height="18" rx="4" fill="#21262d" stroke="#d29922" stroke-width="0.5" opacity="0.8"/>
-            <text x="42" y="134" font-family="sans-serif" font-size="8" fill="#d29922">BTC</text>
-            <text x="62" y="134" font-family="sans-serif" font-size="8" fill="#7d8590">0.05 &middot; R$ 15k</text>
-            <!-- Bottom bar -->
-            <rect x="20" y="148" width="280" height="12" rx="0" fill="#21262d"/>
-            <rect x="20" y="152" width="280" height="8" rx="0 0 8 8" fill="#21262d"/>
-            <text x="36" y="157" font-family="sans-serif" font-size="7" fill="#7d8590">Net:</text>
-            <text x="52" y="157" font-family="sans-serif" font-size="7" font-weight="600" fill="#3fb950">R$ 5,400</text>
+            <rect width="320" height="180" fill="#1c1828"/>
+            <rect x="20" y="20" width="280" height="140" rx="8" fill="#261f34" stroke="#352c43" stroke-width="1"/>
+            <rect x="20" y="20" width="280" height="28" rx="8" fill="#352c43"/>
+            <rect x="20" y="40" width="280" height="8" fill="#352c43"/>
+            <text x="36" y="39" font-family="sans-serif" font-size="10" font-weight="600" fill="#8c92be">$</text>
+            <text x="48" y="39" font-family="sans-serif" font-size="9" fill="#9a8e9e">Tax Helper</text>
+            <rect x="32" y="56" width="60" height="6" rx="3" fill="#9a8e9e" opacity="0.5"/>
+            <rect x="110" y="56" width="40" height="6" rx="3" fill="#52b788" opacity="0.3"/>
+            <text x="268" y="62" text-anchor="end" font-family="sans-serif" font-size="9" fill="#52b788">+ R$ 5,000</text>
+            <rect x="32" y="72" width="50" height="6" rx="3" fill="#9a8e9e" opacity="0.5"/>
+            <rect x="110" y="72" width="35" height="6" rx="3" fill="#52b788" opacity="0.3"/>
+            <text x="268" y="78" text-anchor="end" font-family="sans-serif" font-size="9" fill="#52b788">+ R$ 2,400</text>
+            <rect x="32" y="88" width="44" height="6" rx="3" fill="#9a8e9e" opacity="0.5"/>
+            <rect x="110" y="88" width="30" height="6" rx="3" fill="#e66260" opacity="0.3"/>
+            <text x="268" y="94" text-anchor="end" font-family="sans-serif" font-size="9" fill="#e66260">- R$ 1,200</text>
+            <rect x="32" y="104" width="56" height="6" rx="3" fill="#9a8e9e" opacity="0.5"/>
+            <rect x="110" y="104" width="28" height="6" rx="3" fill="#e66260" opacity="0.3"/>
+            <text x="268" y="110" text-anchor="end" font-family="sans-serif" font-size="9" fill="#e66260">- R$ 800</text>
+            <rect x="32" y="122" width="100" height="18" rx="4" fill="#352c43" stroke="#f9db6d" stroke-width="0.5" opacity="0.8"/>
+            <text x="42" y="134" font-family="sans-serif" font-size="8" fill="#f9db6d">BTC</text>
+            <text x="62" y="134" font-family="sans-serif" font-size="8" fill="#9a8e9e">0.05 · R$ 15k</text>
+            <rect x="20" y="148" width="280" height="12" rx="0" fill="#352c43"/>
+            <rect x="20" y="152" width="280" height="8" rx="0 0 8 8" fill="#352c43"/>
+            <text x="36" y="157" font-family="sans-serif" font-size="7" fill="#9a8e9e">Net:</text>
+            <text x="52" y="157" font-family="sans-serif" font-size="7" font-weight="600" fill="#52b788">R$ 5,400</text>
           </svg>
         </div>
         <div class="tool-info">
@@ -305,44 +275,41 @@
       <a class="tool-card" href="rss-reader/index.html">
         <div class="tool-thumb">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180">
-            <rect width="320" height="180" fill="#0d1117"/>
-            <!-- Sidebar -->
-            <rect x="0" y="0" width="80" height="180" fill="#161b22"/>
-            <rect x="0" y="0" width="80" height="24" fill="#21262d"/>
-            <text x="12" y="16" font-family="sans-serif" font-size="8" font-weight="600" fill="#f0883e">RSS</text>
-            <rect x="8" y="32" width="64" height="8" rx="4" fill="#f0883e" opacity="0.2"/>
-            <rect x="8" y="32" width="64" height="8" rx="4" fill="#f0883e" opacity="0.3"/>
-            <rect x="12" y="46" width="56" height="6" rx="3" fill="#30363d"/>
-            <rect x="12" y="56" width="56" height="6" rx="3" fill="#30363d"/>
-            <rect x="8" y="70" width="40" height="5" rx="2" fill="#7d8590" opacity="0.5"/>
-            <rect x="12" y="80" width="56" height="6" rx="3" fill="#30363d"/>
-            <!-- Article cards -->
-            <rect x="92" y="12" width="216" height="48" rx="6" fill="#161b22" stroke="#30363d" stroke-width="0.5"/>
-            <rect x="96" y="16" width="40" height="40" rx="4" fill="#21262d"/>
-            <rect x="96" y="16" width="40" height="40" rx="4" fill="#f0883e" opacity="0.15"/>
-            <rect x="142" y="20" width="100" height="7" rx="3" fill="#e6edf3" opacity="0.8"/>
-            <rect x="142" y="32" width="50" height="5" rx="2" fill="#f0883e" opacity="0.6"/>
-            <rect x="196" y="32" width="30" height="5" rx="2" fill="#7d8590" opacity="0.4"/>
-            <rect x="142" y="42" width="140" height="4" rx="2" fill="#7d8590" opacity="0.3"/>
-            <rect x="142" y="49" width="100" height="4" rx="2" fill="#7d8590" opacity="0.3"/>
-            <rect x="92" y="68" width="216" height="48" rx="6" fill="#161b22" stroke="#30363d" stroke-width="0.5"/>
-            <rect x="96" y="72" width="40" height="40" rx="4" fill="#21262d"/>
-            <rect x="96" y="72" width="40" height="40" rx="4" fill="#58a6ff" opacity="0.15"/>
-            <rect x="142" y="76" width="120" height="7" rx="3" fill="#e6edf3" opacity="0.8"/>
-            <rect x="142" y="88" width="60" height="5" rx="2" fill="#f0883e" opacity="0.6"/>
-            <rect x="206" y="88" width="40" height="5" rx="2" fill="#7d8590" opacity="0.4"/>
-            <rect x="142" y="98" width="130" height="4" rx="2" fill="#7d8590" opacity="0.3"/>
-            <rect x="142" y="105" width="80" height="4" rx="2" fill="#7d8590" opacity="0.3"/>
-            <rect x="92" y="124" width="216" height="48" rx="6" fill="#161b22" stroke="#30363d" stroke-width="0.5"/>
-            <rect x="96" y="128" width="40" height="40" rx="4" fill="#21262d"/>
-            <rect x="96" y="128" width="40" height="40" rx="4" fill="#3fb950" opacity="0.15"/>
-            <rect x="142" y="132" width="90" height="7" rx="3" fill="#e6edf3" opacity="0.8"/>
-            <rect x="142" y="144" width="44" height="5" rx="2" fill="#f0883e" opacity="0.6"/>
-            <rect x="190" y="144" width="35" height="5" rx="2" fill="#7d8590" opacity="0.4"/>
-            <rect x="142" y="154" width="150" height="4" rx="2" fill="#7d8590" opacity="0.3"/>
-            <rect x="142" y="161" width="90" height="4" rx="2" fill="#7d8590" opacity="0.3"/>
-            <!-- FAB -->
-            <circle cx="290" cy="164" r="14" fill="#f0883e"/>
+            <rect width="320" height="180" fill="#1c1828"/>
+            <rect x="0" y="0" width="80" height="180" fill="#261f34"/>
+            <rect x="0" y="0" width="80" height="24" fill="#352c43"/>
+            <text x="12" y="16" font-family="sans-serif" font-size="8" font-weight="600" fill="#8c92be">RSS</text>
+            <rect x="8" y="32" width="64" height="8" rx="4" fill="#8c92be" opacity="0.2"/>
+            <rect x="8" y="32" width="64" height="8" rx="4" fill="#8c92be" opacity="0.3"/>
+            <rect x="12" y="46" width="56" height="6" rx="3" fill="#352c43"/>
+            <rect x="12" y="56" width="56" height="6" rx="3" fill="#352c43"/>
+            <rect x="8" y="70" width="40" height="5" rx="2" fill="#9a8e9e" opacity="0.5"/>
+            <rect x="12" y="80" width="56" height="6" rx="3" fill="#352c43"/>
+            <rect x="92" y="12" width="216" height="48" rx="6" fill="#261f34" stroke="#352c43" stroke-width="0.5"/>
+            <rect x="96" y="16" width="40" height="40" rx="4" fill="#352c43"/>
+            <rect x="96" y="16" width="40" height="40" rx="4" fill="#8c92be" opacity="0.15"/>
+            <rect x="142" y="20" width="100" height="7" rx="3" fill="#f4eded" opacity="0.8"/>
+            <rect x="142" y="32" width="50" height="5" rx="2" fill="#8c92be" opacity="0.6"/>
+            <rect x="196" y="32" width="30" height="5" rx="2" fill="#9a8e9e" opacity="0.4"/>
+            <rect x="142" y="42" width="140" height="4" rx="2" fill="#9a8e9e" opacity="0.3"/>
+            <rect x="142" y="49" width="100" height="4" rx="2" fill="#9a8e9e" opacity="0.3"/>
+            <rect x="92" y="68" width="216" height="48" rx="6" fill="#261f34" stroke="#352c43" stroke-width="0.5"/>
+            <rect x="96" y="72" width="40" height="40" rx="4" fill="#352c43"/>
+            <rect x="96" y="72" width="40" height="40" rx="4" fill="#656ea4" opacity="0.15"/>
+            <rect x="142" y="76" width="120" height="7" rx="3" fill="#f4eded" opacity="0.8"/>
+            <rect x="142" y="88" width="60" height="5" rx="2" fill="#8c92be" opacity="0.6"/>
+            <rect x="206" y="88" width="40" height="5" rx="2" fill="#9a8e9e" opacity="0.4"/>
+            <rect x="142" y="98" width="130" height="4" rx="2" fill="#9a8e9e" opacity="0.3"/>
+            <rect x="142" y="105" width="80" height="4" rx="2" fill="#9a8e9e" opacity="0.3"/>
+            <rect x="92" y="124" width="216" height="48" rx="6" fill="#261f34" stroke="#352c43" stroke-width="0.5"/>
+            <rect x="96" y="128" width="40" height="40" rx="4" fill="#352c43"/>
+            <rect x="96" y="128" width="40" height="40" rx="4" fill="#52b788" opacity="0.15"/>
+            <rect x="142" y="132" width="90" height="7" rx="3" fill="#f4eded" opacity="0.8"/>
+            <rect x="142" y="144" width="44" height="5" rx="2" fill="#8c92be" opacity="0.6"/>
+            <rect x="190" y="144" width="35" height="5" rx="2" fill="#9a8e9e" opacity="0.4"/>
+            <rect x="142" y="154" width="150" height="4" rx="2" fill="#9a8e9e" opacity="0.3"/>
+            <rect x="142" y="161" width="90" height="4" rx="2" fill="#9a8e9e" opacity="0.3"/>
+            <circle cx="290" cy="164" r="14" fill="#656ea4"/>
             <line x1="284" y1="164" x2="296" y2="164" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
             <line x1="290" y1="158" x2="290" y2="170" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
           </svg>
@@ -358,51 +325,44 @@
       <a class="tool-card" href="spec-helper/index.html">
         <div class="tool-thumb">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180">
-            <rect width="320" height="180" fill="#0d1117"/>
-            <!-- Sidebar panel -->
-            <rect x="10" y="10" width="90" height="160" rx="6" fill="#161b22" stroke="#30363d" stroke-width="0.5"/>
-            <rect x="10" y="10" width="90" height="22" rx="6" fill="#21262d"/>
-            <rect x="10" y="26" width="90" height="6" fill="#21262d"/>
-            <text x="20" y="24" font-family="sans-serif" font-size="8" font-weight="600" fill="#bc8cff">Spec Helper</text>
-            <!-- Task rows -->
-            <rect x="18" y="38" width="6" height="6" rx="1" fill="#3fb950" opacity="0.8"/>
-            <rect x="28" y="39" width="50" height="4" rx="2" fill="#e6edf3" opacity="0.5"/>
-            <rect x="18" y="50" width="6" height="6" rx="1" fill="#58a6ff" opacity="0.8"/>
-            <rect x="28" y="51" width="40" height="4" rx="2" fill="#e6edf3" opacity="0.5"/>
-            <rect x="18" y="62" width="6" height="6" rx="1" fill="#58a6ff" opacity="0.8"/>
-            <rect x="28" y="63" width="55" height="4" rx="2" fill="#e6edf3" opacity="0.5"/>
-            <rect x="18" y="74" width="6" height="6" rx="1" fill="#7d8590" opacity="0.8"/>
-            <rect x="28" y="75" width="35" height="4" rx="2" fill="#e6edf3" opacity="0.5"/>
-            <rect x="18" y="86" width="6" height="6" rx="1" fill="#f85149" opacity="0.8"/>
-            <rect x="28" y="87" width="45" height="4" rx="2" fill="#e6edf3" opacity="0.5"/>
-            <rect x="18" y="98" width="6" height="6" rx="1" fill="#3fb950" opacity="0.8"/>
-            <rect x="28" y="99" width="42" height="4" rx="2" fill="#e6edf3" opacity="0.5"/>
-            <!-- Detail panel -->
-            <rect x="110" y="10" width="200" height="160" rx="6" fill="#161b22" stroke="#30363d" stroke-width="0.5"/>
-            <!-- Title -->
-            <rect x="120" y="20" width="120" height="9" rx="3" fill="#e6edf3" opacity="0.8"/>
-            <!-- Status & priority badges -->
-            <rect x="120" y="36" width="48" height="12" rx="6" fill="#58a6ff" opacity="0.2"/>
-            <text x="132" y="45" font-family="sans-serif" font-size="7" fill="#58a6ff">In Progress</text>
-            <rect x="174" y="36" width="34" height="12" rx="6" fill="#d29922" opacity="0.2"/>
-            <text x="181" y="45" font-family="sans-serif" font-size="7" fill="#d29922">Medium</text>
-            <!-- Description lines (markdown preview) -->
-            <rect x="120" y="56" width="170" height="4" rx="2" fill="#7d8590" opacity="0.4"/>
-            <rect x="120" y="64" width="150" height="4" rx="2" fill="#7d8590" opacity="0.4"/>
-            <rect x="120" y="72" width="160" height="4" rx="2" fill="#7d8590" opacity="0.4"/>
-            <rect x="120" y="80" width="100" height="4" rx="2" fill="#7d8590" opacity="0.4"/>
-            <!-- Subtasks -->
-            <rect x="120" y="96" width="60" height="5" rx="2" fill="#7d8590" opacity="0.6"/>
-            <rect x="122" y="106" width="8" height="8" rx="2" fill="none" stroke="#3fb950" stroke-width="1"/>
-            <polyline points="124,110 126,112 130,108" fill="none" stroke="#3fb950" stroke-width="1" stroke-linecap="round"/>
-            <rect x="134" y="108" width="70" height="4" rx="2" fill="#e6edf3" opacity="0.35"/>
-            <rect x="122" y="118" width="8" height="8" rx="2" fill="none" stroke="#3fb950" stroke-width="1"/>
-            <polyline points="124,122 126,124 130,120" fill="none" stroke="#3fb950" stroke-width="1" stroke-linecap="round"/>
-            <rect x="134" y="120" width="55" height="4" rx="2" fill="#e6edf3" opacity="0.35"/>
-            <rect x="122" y="130" width="8" height="8" rx="2" fill="none" stroke="#58a6ff" stroke-width="1"/>
-            <rect x="134" y="132" width="80" height="4" rx="2" fill="#e6edf3" opacity="0.35"/>
-            <rect x="122" y="142" width="8" height="8" rx="2" fill="none" stroke="#58a6ff" stroke-width="1"/>
-            <rect x="134" y="144" width="60" height="4" rx="2" fill="#e6edf3" opacity="0.35"/>
+            <rect width="320" height="180" fill="#1c1828"/>
+            <rect x="10" y="10" width="90" height="160" rx="6" fill="#261f34" stroke="#352c43" stroke-width="0.5"/>
+            <rect x="10" y="10" width="90" height="22" rx="6" fill="#352c43"/>
+            <rect x="10" y="26" width="90" height="6" fill="#352c43"/>
+            <text x="20" y="24" font-family="sans-serif" font-size="8" font-weight="600" fill="#8c92be">Spec Helper</text>
+            <rect x="18" y="38" width="6" height="6" rx="1" fill="#52b788" opacity="0.8"/>
+            <rect x="28" y="39" width="50" height="4" rx="2" fill="#f4eded" opacity="0.5"/>
+            <rect x="18" y="50" width="6" height="6" rx="1" fill="#656ea4" opacity="0.8"/>
+            <rect x="28" y="51" width="40" height="4" rx="2" fill="#f4eded" opacity="0.5"/>
+            <rect x="18" y="62" width="6" height="6" rx="1" fill="#656ea4" opacity="0.8"/>
+            <rect x="28" y="63" width="55" height="4" rx="2" fill="#f4eded" opacity="0.5"/>
+            <rect x="18" y="74" width="6" height="6" rx="1" fill="#9a8e9e" opacity="0.8"/>
+            <rect x="28" y="75" width="35" height="4" rx="2" fill="#f4eded" opacity="0.5"/>
+            <rect x="18" y="86" width="6" height="6" rx="1" fill="#e66260" opacity="0.8"/>
+            <rect x="28" y="87" width="45" height="4" rx="2" fill="#f4eded" opacity="0.5"/>
+            <rect x="18" y="98" width="6" height="6" rx="1" fill="#52b788" opacity="0.8"/>
+            <rect x="28" y="99" width="42" height="4" rx="2" fill="#f4eded" opacity="0.5"/>
+            <rect x="110" y="10" width="200" height="160" rx="6" fill="#261f34" stroke="#352c43" stroke-width="0.5"/>
+            <rect x="120" y="20" width="120" height="9" rx="3" fill="#f4eded" opacity="0.8"/>
+            <rect x="120" y="36" width="48" height="12" rx="6" fill="#656ea4" opacity="0.2"/>
+            <text x="132" y="45" font-family="sans-serif" font-size="7" fill="#8c92be">In Progress</text>
+            <rect x="174" y="36" width="34" height="12" rx="6" fill="#f9db6d" opacity="0.2"/>
+            <text x="181" y="45" font-family="sans-serif" font-size="7" fill="#f9db6d">Medium</text>
+            <rect x="120" y="56" width="170" height="4" rx="2" fill="#9a8e9e" opacity="0.4"/>
+            <rect x="120" y="64" width="150" height="4" rx="2" fill="#9a8e9e" opacity="0.4"/>
+            <rect x="120" y="72" width="160" height="4" rx="2" fill="#9a8e9e" opacity="0.4"/>
+            <rect x="120" y="80" width="100" height="4" rx="2" fill="#9a8e9e" opacity="0.4"/>
+            <rect x="120" y="96" width="60" height="5" rx="2" fill="#9a8e9e" opacity="0.6"/>
+            <rect x="122" y="106" width="8" height="8" rx="2" fill="none" stroke="#52b788" stroke-width="1"/>
+            <polyline points="124,110 126,112 130,108" fill="none" stroke="#52b788" stroke-width="1" stroke-linecap="round"/>
+            <rect x="134" y="108" width="70" height="4" rx="2" fill="#f4eded" opacity="0.35"/>
+            <rect x="122" y="118" width="8" height="8" rx="2" fill="none" stroke="#52b788" stroke-width="1"/>
+            <polyline points="124,122 126,124 130,120" fill="none" stroke="#52b788" stroke-width="1" stroke-linecap="round"/>
+            <rect x="134" y="120" width="55" height="4" rx="2" fill="#f4eded" opacity="0.35"/>
+            <rect x="122" y="130" width="8" height="8" rx="2" fill="none" stroke="#656ea4" stroke-width="1"/>
+            <rect x="134" y="132" width="80" height="4" rx="2" fill="#f4eded" opacity="0.35"/>
+            <rect x="122" y="142" width="8" height="8" rx="2" fill="none" stroke="#656ea4" stroke-width="1"/>
+            <rect x="134" y="144" width="60" height="4" rx="2" fill="#f4eded" opacity="0.35"/>
           </svg>
         </div>
         <div class="tool-info">
