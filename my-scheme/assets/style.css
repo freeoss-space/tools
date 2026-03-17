@@ -1,21 +1,11 @@
 :root {
-  --bg:           #0d1117;
-  --bg2:          #161b22;
-  --bg3:          #21262d;
-  --border:       #30363d;
-  --text:         #e6edf3;
-  --text-muted:   #7d8590;
-  --accent:       #388bfd;
-  --accent-hover: #58a6ff;
-  --radius:       10px;
-  --radius-sm:    6px;
-  --sidebar-w:    308px;
+  --sidebar-w: 308px;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-display);
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
@@ -39,7 +29,7 @@ body {
   gap: 16px;
   padding: 10px 20px;
   border-bottom: 1px solid var(--border);
-  background: var(--bg2);
+  background: var(--surface);
   flex-shrink: 0;
 }
 
@@ -62,7 +52,7 @@ body {
   font-size: 18px;
   font-weight: 700;
   letter-spacing: -0.4px;
-  background: linear-gradient(135deg, #58a6ff, #bc8cff);
+  background: linear-gradient(135deg, var(--primary-light), var(--primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -85,7 +75,7 @@ body {
 .sidebar {
   width: var(--sidebar-w);
   flex-shrink: 0;
-  background: var(--bg2);
+  background: var(--surface);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -116,7 +106,7 @@ body {
 .fmt-toggle {
   display: flex;
   gap: 2px;
-  background: var(--bg3);
+  background: var(--surface-alt);
   border-radius: 7px;
   padding: 2px;
 }
@@ -134,7 +124,7 @@ body {
   letter-spacing: 0.04em;
 }
 .fmt-btn.active {
-  background: var(--bg2);
+  background: var(--surface);
   color: var(--text);
   box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
@@ -160,7 +150,7 @@ body {
   transition: background 0.12s;
   cursor: default;
 }
-.color-item:hover { background: var(--bg3); }
+.color-item:hover { background: var(--surface-alt); }
 
 .swatch-wrap {
   position: relative;
@@ -206,7 +196,7 @@ body {
 
 .color-val-input {
   font-size: 11px;
-  font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  font-family: var(--font-mono);
   color: var(--text);
   background: transparent;
   border: 1px solid transparent;
@@ -221,7 +211,7 @@ body {
 }
 .color-val-input:focus {
   border-color: var(--accent);
-  background: var(--bg3);
+  background: var(--surface-alt);
 }
 
 .del-btn {
@@ -238,7 +228,7 @@ body {
   flex-shrink: 0;
 }
 .color-item:hover .del-btn { opacity: 1; }
-.del-btn:hover { color: #ff7b7b; }
+.del-btn:hover { color: var(--error); }
 
 /* Sidebar bottom */
 .sidebar-bottom {
@@ -266,7 +256,7 @@ body {
 .add-color-btn:hover {
   border-color: var(--accent);
   color: var(--accent);
-  background: rgba(56, 139, 253, 0.05);
+  background: rgba(101, 110, 164, 0.05);
 }
 
 /* ── Main ──────────────────────────────────────────────── */
@@ -307,7 +297,7 @@ body {
 .tab-group {
   display: flex;
   gap: 2px;
-  background: var(--bg3);
+  background: var(--surface-alt);
   border-radius: 7px;
   padding: 2px;
 }
@@ -324,7 +314,7 @@ body {
   white-space: nowrap;
 }
 .tab.active {
-  background: var(--bg2);
+  background: var(--surface);
   color: var(--text);
   box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
@@ -376,7 +366,7 @@ body {
 /* Export */
 .export-code-wrap {
   margin: 0 18px;
-  background: var(--bg3);
+  background: var(--surface-alt);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   max-height: 200px;
@@ -389,7 +379,7 @@ body {
 .export-code {
   padding: 12px 14px;
   font-size: 11px;
-  font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  font-family: var(--font-mono);
   color: var(--text-muted);
   white-space: pre;
   tab-size: 2;
@@ -423,15 +413,15 @@ body {
   color: var(--text-muted);
   border: 1px solid var(--border);
 }
-.btn-ghost:hover { color: var(--text); border-color: #58a6ff55; }
+.btn-ghost:hover { color: var(--text); border-color: rgba(140, 146, 190, 0.33); }
 
 .btn-secondary {
-  background: var(--bg3);
+  background: var(--surface-alt);
   color: var(--text);
   border: 1px solid var(--border);
 }
-.btn-secondary:hover { border-color: #58a6ff55; color: var(--accent-hover); }
-.btn-copied { background: #238636 !important; color: #fff !important; border-color: transparent !important; }
+.btn-secondary:hover { border-color: rgba(140, 146, 190, 0.33); color: var(--accent-hover); }
+.btn-copied { background: var(--success) !important; color: #fff !important; border-color: transparent !important; }
 
 /* ── Toast ─────────────────────────────────────────────── */
 
@@ -439,7 +429,7 @@ body {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background: #238636;
+  background: var(--success);
   color: #fff;
   padding: 9px 16px;
   border-radius: var(--radius-sm);
@@ -468,7 +458,7 @@ body {
 .share-modal-overlay[hidden] { display: none; }
 
 .share-modal {
-  background: var(--bg2);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 20px 22px;
@@ -502,7 +492,7 @@ body {
   border-radius: 5px;
   transition: color 0.15s, background 0.15s;
 }
-.share-modal-close:hover { color: var(--text); background: var(--bg3); }
+.share-modal-close:hover { color: var(--text); background: var(--surface-alt); }
 
 .share-url-row {
   display: flex;
@@ -512,12 +502,12 @@ body {
 .share-url-input {
   flex: 1;
   min-width: 0;
-  background: var(--bg3);
+  background: var(--surface-alt);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text);
   font-size: 12px;
-  font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  font-family: var(--font-mono);
   padding: 7px 10px;
   outline: none;
   overflow: hidden;

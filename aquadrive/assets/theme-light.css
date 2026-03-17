@@ -15,6 +15,9 @@
   --primary-subtle: #edeef5;
   --primary-light: #8c92be;
   --primary-border: #c4c7df;
+  --surface-alt: #e8dede;
+  --accent: var(--primary);
+  --accent-hover: var(--primary-hover);
 
   /* Semantic status — badge text colors (darker for light bg) */
   --error-badge: #c94442;

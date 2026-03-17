@@ -121,22 +121,26 @@ Toggle dark mode by setting `data-theme="dark"` on `<html>`. Light is the defaul
 Light mode (default):
 - `--bg`: `#F4EDED`
 - `--surface`: `#FFFFFF`
+- `--surface-alt`: `#E8DEDE` (elevated surface)
 - `--border`: `#E0D5D5`
 - `--text`: `#1C1828`
 - `--text-muted`: `#7A6F7F`
 - `--primary`: `#656EA4`
 - `--primary-hover`: `#4E5688`
 - `--primary-subtle`: `#EDEEF5`
+- `--accent`: alias for `--primary`
 
 Dark mode (`[data-theme="dark"]`):
 - `--bg`: `#1C1828`
 - `--surface`: `#261F34`
+- `--surface-alt`: `#352C43` (elevated surface)
 - `--border`: `#352C43`
 - `--text`: `#F4EDED`
 - `--text-muted`: `#9A8E9E`
 - `--primary`: `#8C92BE`
 - `--primary-hover`: `#C4C7DF`
 - `--primary-subtle`: `#313666`
+- `--accent`: alias for `--primary`
 
 ### Typography
 
