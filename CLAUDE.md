@@ -18,8 +18,7 @@ tools/
 ├── which-scheme/       # Theme comparison browser
 ├── spec-helper/        # Spec-driven dev helper
 ├── rss-reader/         # RSS feed reader (PWA)
-├── tax-helper/         # Tax tracking tool
-└── aquadrive/          # AquaDrive design system reference
+└── tax-helper/         # Tax tracking tool
 ```
 
 ## Adding a New Tool
@@ -47,3 +46,72 @@ tools/
 - BEM-like CSS class naming
 - Inline SVGs for icons (stroke-based, 16–18px)
 - Single-file tools are acceptable for small utilities (see `tax-helper`)
+
+## AquaDrive Design System
+
+Reference design tokens for the AquaDrive car wash app. Use these colors and conventions when building or modifying AquaDrive-related UI.
+
+### Primary — Blue Scale (base #656EA4)
+
+| Token      | Hex       | Usage                    |
+|------------|-----------|--------------------------|
+| Blue 50    | `#EDEEF5` | Tinted backgrounds       |
+| Blue 200   | `#C4C7DF` | Subtle borders           |
+| Blue 400   | `#8C92BE` | Hover states             |
+| Blue 500   | `#656EA4` | Primary brand / CTAs     |
+| Blue 600   | `#4E5688` | Active / pressed         |
+| Blue 800   | `#313666` | Dark mode tint surface   |
+
+### Neutrals — Warm Rose-tinted Grays
+
+| Token      | Hex       | Usage                        |
+|------------|-----------|------------------------------|
+| Warm 50    | `#F4EDED` | App background (light)       |
+| Warm 100   | `#E8DEDE` | Card surface (light)         |
+| Warm 200   | `#E0D5D5` | Borders, dividers            |
+| Warm 500   | `#9A8E8E` | Secondary / muted text       |
+| Warm 800   | `#3D3240` | Primary text (light)         |
+| Warm 850   | `#352C43` | Dark elevated surface        |
+| Warm 900   | `#261F34` | Dark card surface            |
+| Warm 950   | `#1C1828` | App background (dark)        |
+
+### Semantic — Status Colors
+
+Each status color has three tiers: **Main**, **Soft**, and **Tint**.
+
+| Status  | Main      | Soft      | Tint      | Usage                    |
+|---------|-----------|-----------|-----------|--------------------------|
+| Error   | `#E66260` | `#F3A8A7` | `#FCEAEA` | Failed payments, alerts  |
+| Warning | `#F9DB6D` | `#FCEEA8` | `#FEF9E6` | Pending, in-progress     |
+| Success | `#52B788` | `#95D4B3` | `#EAF7EF` | Completed, paid          |
+| Info    | `#656EA4` | `#B0B5D4` | `#EDEEF5` | Tips, schedule notices   |
+
+### Theme Tokens
+
+Light mode (default):
+- `--bg`: Warm 50 (`#F4EDED`)
+- `--surface`: `#FFFFFF`
+- `--border`: Warm 200 (`#E0D5D5`)
+- `--text`: Warm 950 (`#1C1828`)
+- `--text-muted`: Warm 500 (`#9A8E8E`)
+- `--accent`: Blue 500 (`#656EA4`)
+
+Dark mode:
+- `--bg`: Warm 950 (`#1C1828`)
+- `--surface`: Warm 900 (`#261F34`)
+- `--border`: Warm 850 (`#352C43`)
+- `--text`: Warm 50 (`#F4EDED`)
+- `--text-muted`: Warm 500 (`#9A8E8E`)
+
+### Typography
+
+- Headings: `"Syne", sans-serif` (weight 400–800)
+- Monospace / labels: `"DM Mono", monospace` (weight 400–500)
+- Border radius: `16px` (large), `10px` (small)
+
+### UI Component Patterns
+
+- **Buttons**: Primary (`bg: Blue 500, color: #fff`), Secondary (`bg: Blue 50, color: Blue 500`), Ghost (`transparent, border: 1px solid var(--border)`)
+- **Status badges**: Pill-shaped (`border-radius: 100px`), use semantic tint bg + main text color
+- **Cards**: `border-radius: 16px`, `border: 1px solid var(--border)`, `background: var(--surface)`
+- **Stat cards**: Use semantic tint background with main color text (e.g. success tint bg + success main text for revenue)
