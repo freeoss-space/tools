@@ -1,0 +1,59 @@
+/* AquaDrive Design System — Tokens
+ * Base design tokens: colors, spacing, radii, typography scales.
+ * Import this file first, then layer a theme file on top.
+ */
+
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap");
+
+:root {
+  /* ── Primary — Blue Scale ── */
+  --blue-50: #edeef5;
+  --blue-200: #c4c7df;
+  --blue-400: #8c92be;
+  --blue-500: #656ea4;
+  --blue-600: #4e5688;
+  --blue-800: #313666;
+
+  /* ── Neutrals — Warm Rose-tinted Grays ── */
+  --warm-50: #f4eded;
+  --warm-100: #e8dede;
+  --warm-200: #e0d5d5;
+  --warm-500: #9a8e8e;
+  --warm-800: #3d3240;
+  --warm-850: #352c43;
+  --warm-900: #261f34;
+  --warm-950: #1c1828;
+
+  /* ── Semantic — Status Colors ── */
+  --error: #e66260;
+  --error-soft: #f3a8a7;
+  --error-tint: #fceaea;
+  --warning: #f9db6d;
+  --warning-soft: #fceea8;
+  --warning-tint: #fef9e6;
+  --success: #52b788;
+  --success-soft: #95d4b3;
+  --success-tint: #eaf7ef;
+  --info: #656ea4;
+  --info-soft: #b0b5d4;
+  --info-tint: #edeef5;
+
+  /* ── Typography ── */
+  --font-display: "Syne", sans-serif;
+  --font-mono: "DM Mono", monospace;
+
+  --text-display: 42px;
+  --text-h2: 28px;
+  --text-h3: 20px;
+  --text-h4: 15px;
+  --text-body: 14px;
+  --text-small: 13px;
+  --text-caption: 12px;
+  --text-label: 10px;
+
+  /* ── Radii ── */
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 8px;
+  --radius-pill: 100px;
+}

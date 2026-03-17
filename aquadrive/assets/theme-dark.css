@@ -1,0 +1,40 @@
+/* AquaDrive Design System — Dark Theme
+ * Provider dashboard / alternate theme.
+ * Requires tokens.css to be loaded first.
+ */
+
+[data-theme="dark"] {
+  --bg: #1c1828;
+  --surface: #261f34;
+  --border: #352c43;
+  --text: #f4eded;
+  --text-muted: #9a8e9e;
+  --primary: #8c92be;
+  --primary-hover: #c4c7df;
+  --primary-subtle: #313666;
+  --primary-light: #c4c7df;
+  --primary-border: #4e5688;
+
+  /* Semantic status — badge text colors (lighter for dark bg) */
+  --error-badge: #f3a8a7;
+  --warning-badge: #fceea8;
+  --success-badge: #95d4b3;
+
+  /* Semantic status — alert backgrounds (darker tinted) */
+  --alert-error-bg: #2e1a1a;
+  --alert-error-text: #f3a8a7;
+  --alert-warning-bg: #2e2810;
+  --alert-warning-text: #fceea8;
+  --alert-success-bg: #0e2419;
+  --alert-success-text: #95d4b3;
+  --alert-info-bg: #313666;
+  --alert-info-text: #c4c7df;
+
+  /* Focus ring */
+  --focus-ring: rgba(140, 146, 190, 0.15);
+  --focus-ring-error: rgba(230, 98, 96, 0.15);
+
+  /* Shadows */
+  --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.35);
+  --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.5);
+}

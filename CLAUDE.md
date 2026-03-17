@@ -14,6 +14,13 @@ A collection of handy browser-based utilities, deployed via GitHub Pages.
 tools/
 ├── index.html          # Main landing page with tool grid
 ├── favicon.svg         # Site-wide favicon
+├── aquadrive/          # AquaDrive shared design system assets
+│   └── assets/
+│       ├── tokens.css      # Base design tokens (colors, spacing, radii, type scale)
+│       ├── theme-light.css # Light theme custom properties
+│       ├── theme-dark.css  # Dark theme custom properties
+│       ├── typography.css  # Type scale & text utility classes
+│       └── components.css  # Reusable UI component styles
 ├── my-scheme/          # Color scheme builder
 ├── which-scheme/       # Theme comparison browser
 ├── spec-helper/        # Spec-driven dev helper
@@ -86,22 +93,50 @@ Each status color has three tiers: **Main**, **Soft**, and **Tint**.
 | Success | `#52B788` | `#95D4B3` | `#EAF7EF` | Completed, paid          |
 | Info    | `#656EA4` | `#B0B5D4` | `#EDEEF5` | Tips, schedule notices   |
 
+### Shared CSS Assets
+
+The `aquadrive/assets/` folder contains importable CSS files. Usage:
+
+```html
+<!-- Load tokens first, then a theme, then optional layers -->
+<link rel="stylesheet" href="/aquadrive/assets/tokens.css">
+<link rel="stylesheet" href="/aquadrive/assets/theme-light.css">
+<link rel="stylesheet" href="/aquadrive/assets/theme-dark.css">
+<link rel="stylesheet" href="/aquadrive/assets/typography.css">
+<link rel="stylesheet" href="/aquadrive/assets/components.css">
+```
+
+Toggle dark mode by setting `data-theme="dark"` on `<html>`. Light is the default.
+
+| File             | Purpose                                                      |
+|------------------|--------------------------------------------------------------|
+| `tokens.css`     | Color primitives, semantic palette, type scale, radii, fonts |
+| `theme-light.css`| Light theme custom properties (default / customer-facing)    |
+| `theme-dark.css` | Dark theme custom properties (provider dashboard)            |
+| `typography.css` | `.text-display`, `.text-h2`–`.text-caption`, utilities       |
+| `components.css` | Buttons, inputs, badges, alerts, cards, tabs, modals, etc.   |
+
 ### Theme Tokens
 
 Light mode (default):
-- `--bg`: Warm 50 (`#F4EDED`)
+- `--bg`: `#F4EDED`
 - `--surface`: `#FFFFFF`
-- `--border`: Warm 200 (`#E0D5D5`)
-- `--text`: Warm 950 (`#1C1828`)
-- `--text-muted`: Warm 500 (`#9A8E8E`)
-- `--accent`: Blue 500 (`#656EA4`)
+- `--border`: `#E0D5D5`
+- `--text`: `#1C1828`
+- `--text-muted`: `#7A6F7F`
+- `--primary`: `#656EA4`
+- `--primary-hover`: `#4E5688`
+- `--primary-subtle`: `#EDEEF5`
 
-Dark mode:
-- `--bg`: Warm 950 (`#1C1828`)
-- `--surface`: Warm 900 (`#261F34`)
-- `--border`: Warm 850 (`#352C43`)
-- `--text`: Warm 50 (`#F4EDED`)
-- `--text-muted`: Warm 500 (`#9A8E8E`)
+Dark mode (`[data-theme="dark"]`):
+- `--bg`: `#1C1828`
+- `--surface`: `#261F34`
+- `--border`: `#352C43`
+- `--text`: `#F4EDED`
+- `--text-muted`: `#9A8E9E`
+- `--primary`: `#8C92BE`
+- `--primary-hover`: `#C4C7DF`
+- `--primary-subtle`: `#313666`
 
 ### Typography
 
