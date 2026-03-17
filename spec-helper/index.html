@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spec Helper</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="left">
+        <a class="back-link" href="../index.html">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Tools
+        </a>
+        <h1>Spec Helper</h1>
+        <span class="project-name" id="project-name" style="display:none"></span>
+      </div>
+      <div class="actions">
+        <button class="btn-primary" id="btn-new">+ New Task</button>
+        <button class="btn-secondary" id="btn-export">Export</button>
+        <button class="btn-secondary" id="btn-import">Import</button>
+        <button class="btn-icon" id="btn-share" title="Copy link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- List view -->
+    <div class="view-list">
+      <div class="toolbar">
+        <div class="filter-group">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="todo">To Do</button>
+          <button class="filter-btn" data-filter="in-progress">In Progress</button>
+          <button class="filter-btn" data-filter="done">Done</button>
+          <button class="filter-btn" data-filter="blocked">Blocked</button>
+        </div>
+        <input type="text" class="search-input" id="search" placeholder="Search tasks...">
+      </div>
+      <div class="task-list" id="task-list"></div>
+    </div>
+
+    <!-- Detail view -->
+    <div class="view-detail"></div>
+  </div>
+
+  <!-- Export modal -->
+  <div class="modal-overlay" id="export-modal">
+    <div class="modal">
+      <h2>Export Tasks</h2>
+      <label>Project Name</label>
+      <input type="text" id="export-project-name" placeholder="My Project">
+      <div class="modal-actions">
+        <button class="btn-secondary modal-close">Cancel</button>
+        <button class="btn-primary" id="export-confirm">Export JSON</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import modal -->
+  <div class="modal-overlay" id="import-modal">
+    <div class="modal">
+      <h2>Import Tasks</h2>
+      <label>Select JSON file</label>
+      <input type="file" id="import-file" accept=".json">
+      <div id="import-info" style="margin-top:12px;font-size:13px"></div>
+      <div class="modal-actions">
+        <button class="btn-secondary modal-close">Cancel</button>
+        <button class="btn-primary" id="import-confirm">Import</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>
