@@ -1,9 +1,8 @@
-const MUPDF_CDNS = [
-  'https://cdn.jsdelivr.net/npm/mupdf@1.27.0/dist/mupdf.js',
-  'https://unpkg.com/mupdf@1.27.0/dist/mupdf.js',
+const CDN_BASES = [
+  'https://cdn.jsdelivr.net/npm/mupdf@1.27.0/dist',
+  'https://unpkg.com/mupdf@1.27.0/dist',
 ];
 const JSPDF_URL = 'https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js';
-const LOAD_TIMEOUT_MS = 90_000; // 90s for ~10MB WASM
 
 let mupdfLib = null;
 
@@ -130,41 +129,88 @@ function updateCursor() {
 
 // --- MuPDF ---
 
-function withTimeout(promise, ms, label) {
-  return Promise.race([
-    promise,
-    new Promise((_, reject) =>
-      setTimeout(() => reject(new Error(
-        `${label} timed out after ${Math.round(ms / 1000)}s. ` +
-        'The MuPDF library is ~10 MB — try refreshing on a faster connection.'
-      )), ms)
-    ),
-  ]);
+async function fetchWithProgress(url, onProgress) {
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`Fetch failed: ${resp.status} ${resp.statusText}`);
+
+  // If no body reader (old browser), fall back to simple fetch
+  if (!resp.body || !resp.body.getReader) {
+    const buf = await resp.arrayBuffer();
+    return new Uint8Array(buf);
+  }
+
+  const total = parseInt(resp.headers.get('content-length') || '0', 10);
+  const reader = resp.body.getReader();
+  const chunks = [];
+  let received = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+    received += value.length;
+    if (onProgress) {
+      onProgress(received, total);
+    }
+  }
+
+  const merged = new Uint8Array(received);
+  let offset = 0;
+  for (const chunk of chunks) {
+    merged.set(chunk, offset);
+    offset += chunk.length;
+  }
+  return merged;
+}
+
+async function loadMuPDFFrom(baseUrl) {
+  // Step 1: Download the ~10 MB WASM binary with progress
+  showLoading('Downloading PDF engine (0%)...');
+  console.log('[pdf-annotator] Fetching WASM from', baseUrl);
+
+  const wasmBinary = await fetchWithProgress(
+    `${baseUrl}/mupdf-wasm.wasm`,
+    (received, total) => {
+      if (total) {
+        showLoading(`Downloading PDF engine (${Math.round(received / total * 100)}%)...`);
+      } else {
+        showLoading(`Downloading PDF engine (${(received / 1024 / 1024).toFixed(1)} MB)...`);
+      }
+    }
+  );
+
+  // Step 2: Pre-supply the WASM binary so mupdf.js skips its own fetch
+  globalThis.$libmupdf_wasm_Module = { wasmBinary: wasmBinary.buffer };
+
+  // Step 3: Import the JS module — WASM compilation uses our pre-fetched binary
+  showLoading('Initializing PDF engine...');
+  console.log('[pdf-annotator] Importing mupdf.js module...');
+
+  const mod = await import(`${baseUrl}/mupdf.js`);
+  console.log('[pdf-annotator] MuPDF ready');
+  return mod;
 }
 
 async function loadMuPDF() {
   if (mupdfLib) return mupdfLib;
-  showLoading('Loading MuPDF library (~10 MB, first load may be slow)...');
 
   let lastErr;
-  for (const url of MUPDF_CDNS) {
+  for (const base of CDN_BASES) {
     try {
-      console.log('[pdf-annotator] Trying', url);
-      mupdfLib = await withTimeout(import(url), LOAD_TIMEOUT_MS, 'MuPDF import');
-      console.log('[pdf-annotator] MuPDF loaded successfully');
+      mupdfLib = await loadMuPDFFrom(base);
       hideLoading();
       return mupdfLib;
     } catch (err) {
-      console.warn('[pdf-annotator] Failed with', url, err);
+      console.warn('[pdf-annotator] CDN failed:', base, err);
       lastErr = err;
     }
   }
 
   hideLoading();
   throw new Error(
-    'Failed to load MuPDF from any CDN. ' +
-    (lastErr ? lastErr.message + ' ' : '') +
-    'Check your internet connection and try refreshing.'
+    'Could not load PDF engine. ' +
+    (lastErr ? lastErr.message + ' — ' : '') +
+    'Check your connection and refresh.'
   );
 }
 
