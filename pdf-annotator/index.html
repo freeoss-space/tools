@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Annotator</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../aquadrive/assets/tokens.css">
+  <link rel="stylesheet" href="../aquadrive/assets/theme-light.css">
+  <link rel="stylesheet" href="../aquadrive/assets/theme-dark.css">
+  <link rel="stylesheet" href="../aquadrive/assets/typography.css">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+  <header>
+    <a href="../index.html" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M10 2L4 8l6 6"/>
+      </svg>
+      Tools
+    </a>
+    <h1>PDF Annotator</h1>
+    <button id="download-btn" class="btn-primary" disabled>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M8 2v9M4 7l4 4 4-4M2 13h12"/>
+      </svg>
+      Download
+    </button>
+  </header>
+
+  <!-- Drop zone -->
+  <div id="drop-zone">
+    <div class="drop-zone-inner">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round">
+        <rect x="8" y="4" width="28" height="36" rx="3"/>
+        <path d="M14 14h16M14 20h16M14 26h10"/>
+        <path d="M36 28v12M30 34l6 6 6-6"/>
+      </svg>
+      <p>Drop a PDF here or click to open</p>
+      <input type="file" id="file-input" accept=".pdf,application/pdf">
+    </div>
+  </div>
+
+  <!-- Viewer -->
+  <div id="viewer" hidden>
+    <!-- Toolbar -->
+    <div id="toolbar">
+      <div class="tool-group">
+        <button class="tool-btn active" data-tool="freeform" title="Freeform Draw (D)">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 14c2-4 4-8 7-8s3 6 5 6 2-3 2-3"/>
+          </svg>
+        </button>
+        <button class="tool-btn" data-tool="text" title="Text (T)">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M4 4h10M9 4v11M6 15h6"/>
+          </svg>
+        </button>
+        <button class="tool-btn" data-tool="rect" title="Rectangle (R)">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="4" width="12" height="10" rx="1"/>
+          </svg>
+        </button>
+        <button class="tool-btn" data-tool="circle" title="Ellipse (C)">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5">
+            <ellipse cx="9" cy="9" rx="6" ry="5"/>
+          </svg>
+        </button>
+        <button class="tool-btn" data-tool="line" title="Line (L)">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <line x1="3" y1="15" x2="15" y2="3"/>
+          </svg>
+        </button>
+        <button class="tool-btn" data-tool="arrow" title="Arrow (A)">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="15" x2="15" y2="3"/>
+            <polyline points="8,3 15,3 15,10"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="toolbar-separator"></div>
+
+      <div class="tool-group">
+        <label class="color-input-wrap" title="Color">
+          <input type="color" id="color-picker" value="#E66260">
+        </label>
+        <div class="stroke-wrap" title="Stroke Width">
+          <input type="range" id="stroke-width" min="1" max="12" value="3">
+        </div>
+        <div class="font-size-wrap" id="font-size-wrap" hidden>
+          <label>
+            <span class="label-text">Aa</span>
+            <input type="number" id="font-size" value="18" min="8" max="72" step="2">
+          </label>
+        </div>
+      </div>
+
+      <div class="toolbar-separator"></div>
+
+      <div class="tool-group">
+        <button class="tool-btn" id="undo-btn" title="Undo (Ctrl+Z)" disabled>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 7h7a4 4 0 0 1 0 8H9"/>
+            <polyline points="7,4 4,7 7,10"/>
+          </svg>
+        </button>
+        <button class="tool-btn" id="redo-btn" title="Redo (Ctrl+Shift+Z)" disabled>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 7H7a4 4 0 0 0 0 8h2"/>
+            <polyline points="11,4 14,7 11,10"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Canvas area -->
+    <div id="canvas-area">
+      <div id="canvas-container">
+        <canvas id="bg-canvas"></canvas>
+        <canvas id="anno-canvas"></canvas>
+        <textarea id="text-input" hidden></textarea>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer">
+      <div class="nav-group">
+        <button id="prev-page" class="nav-btn" disabled>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M9 2L4 7l5 5"/>
+          </svg>
+        </button>
+        <span id="page-info">1 / 1</span>
+        <button id="next-page" class="nav-btn" disabled>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M5 2l5 5-5 5"/>
+          </svg>
+        </button>
+      </div>
+      <div class="zoom-group">
+        <button id="zoom-out" class="nav-btn">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="3" y1="7" x2="11" y2="7"/>
+          </svg>
+        </button>
+        <span id="zoom-level">100%</span>
+        <button id="zoom-in" class="nav-btn">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="3" y1="7" x2="11" y2="7"/>
+            <line x1="7" y1="3" x2="7" y2="11"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading overlay -->
+  <div id="loading" hidden>
+    <div class="loading-spinner"></div>
+    <span id="loading-text">Loading...</span>
+  </div>
+
+  <script type="module" src="assets/app.js"></script>
+</body>
+</html>
