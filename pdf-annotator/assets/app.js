@@ -1,5 +1,9 @@
-const MUPDF_URL = 'https://cdn.jsdelivr.net/npm/mupdf/dist/mupdf.js';
+const MUPDF_CDNS = [
+  'https://cdn.jsdelivr.net/npm/mupdf@1.27.0/dist/mupdf.js',
+  'https://unpkg.com/mupdf@1.27.0/dist/mupdf.js',
+];
 const JSPDF_URL = 'https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js';
+const LOAD_TIMEOUT_MS = 90_000; // 90s for ~10MB WASM
 
 let mupdfLib = null;
 
@@ -126,17 +130,42 @@ function updateCursor() {
 
 // --- MuPDF ---
 
+function withTimeout(promise, ms, label) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(
+        `${label} timed out after ${Math.round(ms / 1000)}s. ` +
+        'The MuPDF library is ~10 MB — try refreshing on a faster connection.'
+      )), ms)
+    ),
+  ]);
+}
+
 async function loadMuPDF() {
   if (mupdfLib) return mupdfLib;
-  showLoading('Loading MuPDF library...');
-  try {
-    mupdfLib = await import(MUPDF_URL);
-  } catch (err) {
-    hideLoading();
-    throw new Error('Failed to load MuPDF. Check your internet connection.');
+  showLoading('Loading MuPDF library (~10 MB, first load may be slow)...');
+
+  let lastErr;
+  for (const url of MUPDF_CDNS) {
+    try {
+      console.log('[pdf-annotator] Trying', url);
+      mupdfLib = await withTimeout(import(url), LOAD_TIMEOUT_MS, 'MuPDF import');
+      console.log('[pdf-annotator] MuPDF loaded successfully');
+      hideLoading();
+      return mupdfLib;
+    } catch (err) {
+      console.warn('[pdf-annotator] Failed with', url, err);
+      lastErr = err;
+    }
   }
+
   hideLoading();
-  return mupdfLib;
+  throw new Error(
+    'Failed to load MuPDF from any CDN. ' +
+    (lastErr ? lastErr.message + ' ' : '') +
+    'Check your internet connection and try refreshing.'
+  );
 }
 
 function showLoading(msg) {
@@ -154,6 +183,7 @@ async function openFile(file) {
   showLoading('Opening PDF...');
   try {
     const mupdf = await loadMuPDF();
+    showLoading('Reading PDF...');
     const buffer = await file.arrayBuffer();
     state.docBuffer = buffer;
     state.doc = mupdf.Document.openDocument(buffer, file.name);
@@ -169,13 +199,15 @@ async function openFile(file) {
     els.viewer.hidden = false;
     els.downloadBtn.disabled = false;
 
+    showLoading('Rendering page...');
     await renderCurrentPage();
     updateControls();
   } catch (err) {
     console.error('Failed to open PDF:', err);
     alert('Failed to open PDF: ' + err.message);
+  } finally {
+    hideLoading();
   }
-  hideLoading();
 }
 
 // --- Rendering ---
