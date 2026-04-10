@@ -72,10 +72,33 @@
     return `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
   }
 
+  function upsertTemplate(templates, draft) {
+    const list = Array.isArray(templates) ? [...templates] : [];
+    const existingIndex = list.findIndex(item => item.id === draft.id);
+    const existing = existingIndex >= 0 ? list[existingIndex] : null;
+    const content = String(draft.content || '');
+
+    const template = {
+      id: existing?.id || draft.id || generateId(),
+      name: String(draft.name || '').trim() || 'Untitled Prompt',
+      content,
+      variables: extractVariables(content),
+      createdAt: existing?.createdAt || Date.now(),
+    };
+
+    if (existingIndex >= 0) {
+      list[existingIndex] = template;
+      return list;
+    }
+
+    return [template, ...list];
+  }
+
   return {
     extractVariables,
     renderPrompt,
     normalizeImportPayload,
     generateId,
+    upsertTemplate,
   };
 }));
