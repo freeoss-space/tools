@@ -4,7 +4,7 @@ const {
   extractVariables,
   renderPrompt,
   normalizeImportPayload,
-  generateId,
+  upsertTemplate,
 } = window.PromptUtils;
 
 const state = {
@@ -12,6 +12,7 @@ const state = {
   templates: [],
   selectedTemplateId: null,
   localValues: {},
+  editingTemplateId: null,
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -147,7 +148,21 @@ function renderTemplates() {
       renderWorkspace();
     });
 
-    actions.append(useBtn, deleteBtn);
+    const editBtn = document.createElement('button');
+    editBtn.className = 'btn-secondary';
+    editBtn.type = 'button';
+    editBtn.textContent = 'Edit';
+    editBtn.addEventListener('click', () => {
+      state.editingTemplateId = template.id;
+      $('#builder-name').value = template.name;
+      $('#builder-content').value = template.content;
+      $('#save-template-btn').textContent = 'Update Prompt';
+      $('#cancel-edit-btn').classList.remove('hidden');
+      renderBuilderVariables();
+      $('#builder-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    actions.append(useBtn, editBtn, deleteBtn);
     titleRow.append(title, actions);
 
     const preview = document.createElement('p');
@@ -233,22 +248,32 @@ function saveTemplateFromBuilder() {
     return;
   }
 
-  const template = {
-    id: generateId(),
+  state.templates = upsertTemplate(state.templates, {
+    id: state.editingTemplateId,
     name,
     content,
-    variables: extractVariables(content),
-    createdAt: Date.now(),
-  };
-
-  state.templates.unshift(template);
+  });
+  const isEditing = Boolean(state.editingTemplateId);
+  state.editingTemplateId = null;
   saveState();
   renderTemplates();
+  if (state.selectedTemplateId) renderWorkspace();
 
   $('#builder-name').value = '';
   $('#builder-content').value = '';
+  $('#save-template-btn').textContent = 'Save Prompt';
+  $('#cancel-edit-btn').classList.add('hidden');
   renderBuilderVariables();
-  showToast('Prompt saved');
+  showToast(isEditing ? 'Prompt updated' : 'Prompt saved');
+}
+
+function resetBuilderMode() {
+  state.editingTemplateId = null;
+  $('#builder-name').value = '';
+  $('#builder-content').value = '';
+  $('#save-template-btn').textContent = 'Save Prompt';
+  $('#cancel-edit-btn').classList.add('hidden');
+  renderBuilderVariables();
 }
 
 function exportJson() {
@@ -292,6 +317,7 @@ async function importJson(file) {
 function bindEvents() {
   $('#builder-content').addEventListener('input', renderBuilderVariables);
   $('#save-template-btn').addEventListener('click', saveTemplateFromBuilder);
+  $('#cancel-edit-btn').addEventListener('click', resetBuilderMode);
 
   $('#add-global-btn').addEventListener('click', () => {
     state.globalVariables.push({ key: '', value: '' });

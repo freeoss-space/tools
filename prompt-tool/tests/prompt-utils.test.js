@@ -5,6 +5,7 @@ const {
   extractVariables,
   renderPrompt,
   normalizeImportPayload,
+  upsertTemplate,
 } = require('../assets/prompt-utils.js');
 
 test('extractVariables returns unique variables in encounter order', () => {
@@ -29,4 +30,26 @@ test('normalizeImportPayload filters invalid data while preserving valid templat
   assert.deepEqual(normalized.globalVariables, [{ key: 'company', value: 'Acme' }]);
   assert.equal(normalized.templates.length, 1);
   assert.equal(normalized.templates[0].name, 'Greeting');
+});
+
+test('upsertTemplate updates an existing template while preserving createdAt', () => {
+  const templates = [{
+    id: 'abc123',
+    name: 'Old Name',
+    content: 'Hello {{name}}',
+    variables: ['name'],
+    createdAt: 1700000000000,
+  }];
+
+  const updated = upsertTemplate(templates, {
+    id: 'abc123',
+    name: 'New Name',
+    content: 'Hi {{first_name}}',
+  });
+
+  assert.equal(updated.length, 1);
+  assert.equal(updated[0].id, 'abc123');
+  assert.equal(updated[0].name, 'New Name');
+  assert.equal(updated[0].createdAt, 1700000000000);
+  assert.deepEqual(updated[0].variables, ['first_name']);
 });
