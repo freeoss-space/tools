@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prompt Foundry</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../aquadrive/assets/tokens.css">
+  <link rel="stylesheet" href="../aquadrive/assets/theme-light.css">
+  <link rel="stylesheet" href="../aquadrive/assets/theme-dark.css">
+  <link rel="stylesheet" href="../aquadrive/assets/typography.css">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="app-header">
+      <div>
+        <a class="back-link" href="../index.html">← Tools</a>
+        <h1>Prompt Foundry</h1>
+        <p>Create reusable AI prompts with variables, global defaults, and one-click output.</p>
+      </div>
+      <div class="header-actions">
+        <button id="export-btn" class="btn-secondary">Export JSON</button>
+        <label class="btn-secondary file-btn" for="import-input">Import JSON</label>
+        <input id="import-input" type="file" accept="application/json" hidden>
+      </div>
+    </header>
+
+    <section class="card" id="builder-card">
+      <h2>Prompt Builder</h2>
+      <p class="help">Use <code>{{variable_name}}</code> syntax to define variables.</p>
+      <div class="form-grid">
+        <label>
+          Name
+          <input id="builder-name" type="text" placeholder="Customer Support Reply">
+        </label>
+        <label class="grow">
+          Prompt Template
+          <textarea id="builder-content" rows="6" placeholder="You are an assistant for {{company}}. Respond to {{customer_name}} in a {{tone}} tone."></textarea>
+        </label>
+      </div>
+      <div class="builder-meta">
+        <div id="builder-vars" class="chips"></div>
+        <button id="save-template-btn" class="btn-primary">Save Prompt</button>
+      </div>
+    </section>
+
+    <div class="split-grid">
+      <section class="card">
+        <h2>Global Variables</h2>
+        <p class="help">These values apply to every prompt on this page.</p>
+        <div id="global-list" class="kv-list"></div>
+        <button id="add-global-btn" class="btn-secondary">+ Add Global Variable</button>
+      </section>
+
+      <section class="card">
+        <div class="card-title-row">
+          <h2>Saved Prompts</h2>
+          <span id="prompt-count" class="badge">0</span>
+        </div>
+        <div id="template-list" class="template-list"></div>
+      </section>
+    </div>
+
+    <section class="card" id="workspace-card">
+      <h2>Prompt Workspace</h2>
+      <div id="workspace-empty" class="empty">Select a prompt to fill variables and generate output.</div>
+      <div id="workspace" class="workspace hidden">
+        <h3 id="workspace-name"></h3>
+        <div id="workspace-vars" class="kv-list"></div>
+        <label>
+          Generated Prompt
+          <textarea id="generated-output" rows="10" readonly></textarea>
+        </label>
+        <div class="workspace-actions">
+          <button id="copy-output-btn" class="btn-primary">Copy Prompt</button>
+        </div>
+      </div>
+    </section>
+
+    <div id="toast" class="toast"></div>
+  </main>
+
+  <script src="assets/prompt-utils.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
