@@ -572,6 +572,18 @@ btnCopy.addEventListener('click', () => {
   }, 'image/png');
 });
 
+// ── Mobile sidebar toggle ────────────────────────────────
+
+const btnPanelToggle = $('btn-panel-toggle');
+const sidebarEl = document.querySelector('.sidebar');
+
+if (btnPanelToggle) {
+  btnPanelToggle.addEventListener('click', () => {
+    const collapsed = sidebarEl.classList.toggle('is-collapsed');
+    btnPanelToggle.setAttribute('aria-pressed', collapsed);
+  });
+}
+
 // ── Initial UI state ─────────────────────────────────────
 
 showGenPanel();
