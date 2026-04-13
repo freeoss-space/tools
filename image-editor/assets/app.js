@@ -37,6 +37,7 @@ const $ = (id) => document.getElementById(id);
 
 const canvas = $('canvas');
 const ctx = canvas.getContext('2d');
+ctx.imageSmoothingQuality = 'high';
 
 const fgDrop = $('fg-drop');
 const fgInput = $('fg-input');
@@ -70,18 +71,30 @@ function showToast(msg, isError) {
 
 // ── File loading helpers ─────────────────────────────────
 
+// Use createImageBitmap when available — avoids the base64 data-URL round-trip
+// that causes mobile browsers (esp. iOS Safari) to silently downsample large
+// images. Falls back to an object URL so no giant base64 string is ever created.
 function loadImage(file) {
+  if (typeof createImageBitmap !== 'undefined') {
+    return createImageBitmap(file);
+  }
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const img = new Image();
-      img.onload = () => resolve(img);
-      img.onerror = reject;
-      img.src = reader.result;
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('load failed')); };
+    img.src = url;
   });
+}
+
+// Normalise dimension access: ImageBitmap uses .width/.height,
+// HTMLImageElement uses .naturalWidth/.naturalHeight.
+function imgW(img) { return img.naturalWidth  ?? img.width;  }
+function imgH(img) { return img.naturalHeight ?? img.height; }
+
+// Release GPU/memory resources when an ImageBitmap is no longer needed.
+function freeImage(img) {
+  if (img && typeof img.close === 'function') img.close();
 }
 
 function setupDropZone(dropEl, inputEl, onFile) {
@@ -114,6 +127,7 @@ function setupDropZone(dropEl, inputEl, onFile) {
 async function handleForeground(file) {
   try {
     const img = await loadImage(file);
+    freeImage(state.fgImage);   // release previous bitmap
     state.fgImage = img;
     state.fgFile = file;
 
@@ -121,14 +135,16 @@ async function handleForeground(file) {
     fgChip.removeAttribute('hidden');
     fgDrop.setAttribute('hidden', '');
 
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
+    const w = imgW(img);
+    const h = imgH(img);
+    canvas.width  = w;
+    canvas.height = h;
     canvas.removeAttribute('hidden');
     emptyState.setAttribute('hidden', '');
 
     btnDownload.disabled = false;
     btnCopy.disabled = false;
-    canvasInfo.textContent = `Size: ${img.naturalWidth} \u00d7 ${img.naturalHeight} px`;
+    canvasInfo.textContent = `Size: ${w} \u00d7 ${h} px`;
 
     render();
   } catch {
@@ -137,6 +153,7 @@ async function handleForeground(file) {
 }
 
 function removeForeground() {
+  freeImage(state.fgImage);
   state.fgImage = null;
   state.fgFile = null;
   fgChip.setAttribute('hidden', '');
@@ -156,6 +173,7 @@ fgRemove.addEventListener('click', removeForeground);
 async function handleBackground(file) {
   try {
     const img = await loadImage(file);
+    freeImage(state.bgImage);   // release previous bitmap
     state.bgImage = img;
     state.bgFile = file;
 
@@ -170,6 +188,7 @@ async function handleBackground(file) {
 }
 
 function removeBackground() {
+  freeImage(state.bgImage);
   state.bgImage = null;
   state.bgFile = null;
   bgChipRow.setAttribute('hidden', '');
@@ -469,6 +488,7 @@ function drawOutline(ctx, img, color, thickness, opacity) {
   offscreen.width = w;
   offscreen.height = h;
   const oc = offscreen.getContext('2d');
+  oc.imageSmoothingQuality = 'high';
 
   oc.save();
   oc.globalAlpha = opacity;
