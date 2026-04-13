@@ -487,8 +487,9 @@ body {
 /* ── Responsive ────────────────────────────────────────── */
 
 @media (max-width: 680px) {
-  body { overflow: auto; height: auto; }
-  .app { height: auto; min-height: 100vh; overflow: auto; }
+  html { overflow-x: hidden; }
+  body { overflow-x: hidden; overflow-y: auto; height: auto; }
+  .app { height: auto; min-height: 100vh; overflow-x: hidden; overflow-y: auto; max-width: 100vw; }
   .layout { flex-direction: column; overflow: visible; }
 
   /* Sidebar — scrollable panel, collapsible */
@@ -510,12 +511,16 @@ body {
     overflow: visible;
     min-height: 56vw;
     padding: 12px;
+    max-width: 100vw;
   }
 
+  .canvas-wrap { max-width: 100%; }
+
   /* Header */
-  .app-header { padding: 8px 12px; gap: 10px; }
+  .app-header { padding: 8px 12px; gap: 8px; max-width: 100vw; }
   .header-center h1 { font-size: 15px; }
   .header-center p { display: none; }
+  .header-actions { gap: 6px; flex-shrink: 0; }
 
   /* Show toggle, hide button labels */
   .mobile-panel-toggle { display: inline-flex; }
