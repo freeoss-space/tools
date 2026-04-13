@@ -7,7 +7,7 @@
 
 ## Summary
 
-Add a new browser-based image editor tool to the tools site. The tool lets users upload a foreground image, optionally place a background image behind it, and apply a customizable outline stroke around the foreground subject. Built with plain HTML, CSS, and vanilla JavaScript using the Canvas API — no frameworks, no build step. Styled entirely with the AquaDrive design system.
+Add a new browser-based image editor tool to the tools site. The tool lets users upload a foreground image, place a background behind it (either an uploaded image or a procedurally generated one), and apply a customizable outline stroke around the foreground subject. The procedural background generator supports solid fills, gradients, and tiled geometric patterns — all configurable with color pickers and sliders. Built with plain HTML, CSS, and vanilla JavaScript using the Canvas API — no frameworks, no build step. Styled entirely with the AquaDrive design system.
 
 ---
 
@@ -22,7 +22,9 @@ Many users who share images on social media or in presentations need a quick way
 ### Core Workflow
 
 1. **Upload foreground image** — The user picks or drops an image file that contains a subject with a transparent background (PNG, WebP, or GIF with alpha). If the image has no alpha channel, a basic luminance threshold is applied as a fallback to approximate transparency.
-2. **Upload background image** *(optional)* — The user picks a second image (any format) that is rendered behind the foreground. If omitted, the canvas background is transparent (checkerboard preview).
+2. **Set background** *(optional)* — The background section has two modes, switched with a tab group:
+   - **Upload** — pick or drop any image file rendered behind the foreground.
+   - **Generate** — build a background on the canvas using procedural generation: solid color, linear/radial gradient, or a tiled geometric pattern (dots, lines, checkerboard, hexagons, triangles). All parameters are controlled with color pickers and sliders with immediate preview.
 3. **Configure outline** — A color picker and a thickness slider control the color and width of the stroke drawn around the visible (non-transparent) edges of the foreground.
 4. **Live preview** — Every change is immediately reflected in the canvas preview.
 5. **Export / download** — The composited result is exported as a PNG.
@@ -32,8 +34,20 @@ Many users who share images on social media or in presentations need a quick way
 | Control | Type | Notes |
 |---|---|---|
 | Foreground upload | File input + drag-and-drop zone | Accept `image/*` |
-| Background upload | File input + drag-and-drop zone | Accept `image/*`; optional |
-| Clear background | Button (ghost, danger-tinted) | Removes background, reverts to transparent |
+| Background mode | Tab group: Upload / Generate | Persisted in state |
+| Background upload | File input + drag-and-drop zone | Visible when mode = Upload |
+| Clear background | Button (ghost, danger-tinted) | Reverts to transparent checkerboard |
+| Generator type | Tab group: Solid / Gradient / Pattern | Visible when mode = Generate |
+| Solid color | `<input type="color">` + hex input | Shown for Solid type |
+| Gradient color A & B | Two color pickers + hex inputs | Shown for Gradient type |
+| Gradient style | Toggle: Linear / Radial | Linear shows angle slider |
+| Gradient angle | Range slider + degree label | 0–360°, default 135°; linear only |
+| Pattern shape | Tab group: Dots / Lines / Checks / Hex / Triangles | Shown for Pattern type |
+| Pattern foreground color | `<input type="color">` + hex input | Shape fill color |
+| Pattern background color | `<input type="color">` + hex input | Canvas base fill |
+| Pattern size | Range slider + px label | 4–80 px, default 20 px |
+| Pattern gap | Range slider + px label | 0–60 px, default 10 px |
+| Pattern angle | Range slider + degree label | 0–360°, default 0°; lines/hex/triangles only |
 | Outline color | `<input type="color">` + hex text input | Defaults to `#ffffff` |
 | Outline thickness | Range slider + numeric input | 1–60 px, default 8 px |
 | Outline opacity | Range slider + percentage label | 0–100%, default 100% |
@@ -85,13 +99,39 @@ SECTION LABEL  "FOREGROUND"  (.text-section-label)
 ```
 
 **Section: Background**
+
+The background section is headed by a two-tab `.tabs` switcher (Upload / Generate). Below it the controls change based on the active mode.
+
 ```
 SECTION LABEL  "BACKGROUND"
+[ Upload ] [ Generate ]         ← .tabs  (small variant)
+
+── Upload mode ──────────────────
 ┌──────────────────────────────┐
 │  Drop image here             │
 │  or click to upload          │
 └──────────────────────────────┘
 [filename.jpg  ×]  [Clear]
+
+── Generate mode ────────────────
+[ Solid ] [ Gradient ] [ Pattern ]   ← generator type tabs
+
+  ·· Solid ··
+  Color   [████] #1c1828
+
+  ·· Gradient ··
+  Style   [ Linear ] [ Radial ]
+  Color A [████] #1c1828
+  Color B [████] #656ea4
+  Angle   ──●──────  135°      (linear only)
+
+  ·· Pattern ··
+  Shape   [ Dots ] [ Lines ] [ Checks ] [ Hex ] [ Tri ]
+  Color   [████] #656ea4
+  BG      [████] #1c1828
+  Size    ──●──── 20 px
+  Gap     ──●──── 10 px
+  Angle   ──●──── 0°            (lines / hex / tri only)
 ```
 
 **Section: Outline**
@@ -170,17 +210,47 @@ image-editor/
 
 ```js
 const state = {
-  fgImage:         null,   // HTMLImageElement or null
-  fgFile:          null,   // File object
-  bgImage:         null,   // HTMLImageElement or null
-  bgFile:          null,   // File object
-  outlineColor:    '#ffffff',
+  // Foreground
+  fgImage:          null,       // HTMLImageElement or null
+  fgFile:           null,       // File object
+
+  // Background
+  bgMode:           'upload',   // 'upload' | 'generate'
+  bgImage:          null,       // HTMLImageElement — used when bgMode = 'upload'
+  bgFile:           null,       // File object
+
+  // Procedural background generator
+  bgGen: {
+    type:           'gradient', // 'solid' | 'gradient' | 'pattern'
+    // Solid
+    solidColor:     '#1c1828',
+    // Gradient
+    gradStyle:      'linear',   // 'linear' | 'radial'
+    colorA:         '#1c1828',
+    colorB:         '#656ea4',
+    angle:          135,        // degrees; linear only
+    // Pattern
+    pattern:        'dots',     // 'dots' | 'lines' | 'checks' | 'hex' | 'triangles'
+    patternColor:   '#656ea4',
+    patternBg:      '#1c1828',
+    patternSize:    20,         // px
+    patternGap:     10,         // px
+    patternAngle:   0,          // degrees; lines / hex / triangles only
+  },
+
+  // Outline
+  outlineColor:     '#ffffff',
   outlineThickness: 8,
-  outlineOpacity:  1.0,
+  outlineOpacity:   1.0,
 };
 ```
 
-`render()` is the single function that redraws the canvas from scratch on every state mutation. All event handlers mutate state then call `render()`.
+`render()` is the single function that redraws the canvas from scratch on every state mutation. All event handlers mutate state then call `render()`. The render pipeline is:
+
+1. If `bgMode === 'upload'` and `bgImage` is set → draw uploaded background
+2. If `bgMode === 'generate'` → call `drawProceduralBg(ctx, state.bgGen)`
+3. Draw outline layer (if `fgImage` is set)
+4. Draw foreground image on top
 
 ### Outline Algorithm (Canvas API)
 
@@ -222,6 +292,169 @@ function drawOutline(ctx, img, color, thickness, opacity) {
   oc.drawImage(img, 0, 0);
 
   ctx.drawImage(offscreen, 0, 0);
+}
+```
+
+### Procedural Background Rendering
+
+All generators write into a canvas that is exactly the foreground image's pixel dimensions. The dispatcher is:
+
+```js
+function drawProceduralBg(ctx, gen) {
+  const { width: w, height: h } = ctx.canvas;
+  if (gen.type === 'solid')    drawSolid(ctx, w, h, gen);
+  if (gen.type === 'gradient') drawGradient(ctx, w, h, gen);
+  if (gen.type === 'pattern')  drawPattern(ctx, w, h, gen);
+}
+```
+
+**Solid**
+```js
+function drawSolid(ctx, w, h, gen) {
+  ctx.fillStyle = gen.solidColor;
+  ctx.fillRect(0, 0, w, h);
+}
+```
+
+**Linear gradient**
+```js
+function drawGradient(ctx, w, h, gen) {
+  let fill;
+  if (gen.gradStyle === 'linear') {
+    const rad = gen.angle * Math.PI / 180;
+    const cx = w / 2, cy = h / 2;
+    const len = Math.abs(w * Math.cos(rad)) + Math.abs(h * Math.sin(rad));
+    fill = ctx.createLinearGradient(
+      cx - Math.cos(rad) * len / 2, cy - Math.sin(rad) * len / 2,
+      cx + Math.cos(rad) * len / 2, cy + Math.sin(rad) * len / 2,
+    );
+  } else {
+    fill = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.hypot(w, h) / 2);
+  }
+  fill.addColorStop(0, gen.colorA);
+  fill.addColorStop(1, gen.colorB);
+  ctx.fillStyle = fill;
+  ctx.fillRect(0, 0, w, h);
+}
+```
+
+**Pattern — Dots**
+```js
+function drawDots(ctx, w, h, gen) {
+  ctx.fillStyle = gen.patternBg;
+  ctx.fillRect(0, 0, w, h);
+  const step = gen.patternSize + gen.patternGap;
+  const r = gen.patternSize / 2;
+  ctx.fillStyle = gen.patternColor;
+  for (let y = r; y < h + step; y += step) {
+    for (let x = r; x < w + step; x += step) {
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+}
+```
+
+**Pattern — Lines** (supports rotation via `patternAngle`)
+```js
+function drawLines(ctx, w, h, gen) {
+  ctx.fillStyle = gen.patternBg;
+  ctx.fillRect(0, 0, w, h);
+  const step = gen.patternSize + gen.patternGap;
+  const diag = Math.hypot(w, h);
+  ctx.save();
+  ctx.translate(w / 2, h / 2);
+  ctx.rotate(gen.patternAngle * Math.PI / 180);
+  ctx.strokeStyle = gen.patternColor;
+  ctx.lineWidth = gen.patternSize;
+  for (let x = -diag; x <= diag; x += step) {
+    ctx.beginPath();
+    ctx.moveTo(x, -diag);
+    ctx.lineTo(x, diag);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+```
+
+**Pattern — Checkerboard**
+```js
+function drawChecks(ctx, w, h, gen) {
+  const cell = gen.patternSize + gen.patternGap;
+  for (let row = 0; row * cell < h + cell; row++) {
+    for (let col = 0; col * cell < w + cell; col++) {
+      ctx.fillStyle = (row + col) % 2 === 0 ? gen.patternBg : gen.patternColor;
+      ctx.fillRect(col * cell, row * cell, cell, cell);
+    }
+  }
+}
+```
+
+**Pattern — Hexagons** (flat-top orientation, supports `patternAngle` rotation of the whole grid)
+```js
+function drawHex(ctx, w, h, gen) {
+  ctx.fillStyle = gen.patternBg;
+  ctx.fillRect(0, 0, w, h);
+  const r = gen.patternSize / 2;
+  const hx = r * Math.sqrt(3);
+  const hy = r * 1.5;
+  ctx.save();
+  ctx.translate(w / 2, h / 2);
+  ctx.rotate(gen.patternAngle * Math.PI / 180);
+  ctx.translate(-w / 2, -h / 2);
+  const cols = Math.ceil(w / hx) + 2;
+  const rows = Math.ceil(h / hy) + 2;
+  for (let row = -1; row < rows; row++) {
+    for (let col = -1; col < cols; col++) {
+      const cx = col * hx + (row % 2 === 0 ? 0 : hx / 2);
+      const cy = row * hy;
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const a = (Math.PI / 3) * i;
+        const px = cx + r * Math.cos(a);
+        const py = cy + r * Math.sin(a);
+        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = gen.patternColor;
+      ctx.lineWidth = Math.max(1, gen.patternGap);
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+```
+
+**Pattern — Triangles** (equilateral grid, supports `patternAngle`)
+```js
+function drawTriangles(ctx, w, h, gen) {
+  ctx.fillStyle = gen.patternBg;
+  ctx.fillRect(0, 0, w, h);
+  const s = gen.patternSize + gen.patternGap;
+  const th = (s * Math.sqrt(3)) / 2;
+  ctx.save();
+  ctx.translate(w / 2, h / 2);
+  ctx.rotate(gen.patternAngle * Math.PI / 180);
+  ctx.translate(-w / 2, -h / 2);
+  ctx.strokeStyle = gen.patternColor;
+  ctx.lineWidth = Math.max(1, gen.patternGap * 0.5);
+  const cols = Math.ceil(w / s) + 2;
+  const rows = Math.ceil(h / th) + 2;
+  for (let row = -1; row < rows; row++) {
+    for (let col = -1; col < cols; col++) {
+      const x = col * s + (row % 2 === 0 ? 0 : s / 2);
+      const y = row * th;
+      // Upward triangle
+      ctx.beginPath();
+      ctx.moveTo(x, y + th);
+      ctx.lineTo(x + s / 2, y);
+      ctx.lineTo(x + s, y + th);
+      ctx.closePath();
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
 }
 ```
 
@@ -321,16 +554,34 @@ A simple frame / photo icon in AquaDrive primary blue, 32×32 viewBox, stroke-ba
 
 ## Acceptance Criteria
 
+**Foreground & Outline**
 - [ ] Uploading a foreground PNG with transparency renders the subject on the canvas
-- [ ] Uploading a background image composites it behind the foreground
-- [ ] Clearing the background reverts to the checkerboard transparent preview
 - [ ] The outline is drawn around the full alpha edge of the foreground subject
 - [ ] Changing outline color is immediately reflected in the canvas
 - [ ] Changing thickness (1–60 px) is immediately reflected
 - [ ] Changing opacity (0–100%) is immediately reflected
+
+**Background — Upload mode**
+- [ ] Uploading a background image composites it behind the foreground
+- [ ] Clearing the background reverts to the checkerboard transparent preview
+- [ ] Drag-and-drop works for both foreground and background upload zones
+
+**Background — Generate mode**
+- [ ] Switching to Generate mode replaces the drop zone with the generator controls
+- [ ] Solid type fills the canvas with the chosen color immediately
+- [ ] Linear gradient renders at the correct angle and updates live on any change
+- [ ] Radial gradient radiates from the canvas center with correct color stops
+- [ ] Dots pattern tiles correctly at all combinations of size and gap
+- [ ] Lines pattern tiles and rotates correctly via the angle control
+- [ ] Checkerboard pattern renders with both colors and respects the size/gap controls
+- [ ] Hexagons pattern renders a proper flat-top hex grid and rotates via the angle control
+- [ ] Triangles pattern renders equilateral triangles and rotates via the angle control
+- [ ] Switching generator type updates the visible controls without page reload
+- [ ] The generated background is baked into the exported PNG at full resolution
+
+**Export & General**
 - [ ] Download button exports a valid PNG file at the source image's native resolution
 - [ ] Copy button copies the PNG to the clipboard (with graceful degradation if the API is unavailable)
-- [ ] Drag-and-drop works for both foreground and background upload zones
 - [ ] The tool is usable on a 375 px wide mobile viewport (controls stack above canvas)
 - [ ] The tool card appears in the root `index.html` grid
 - [ ] All UI uses AquaDrive tokens/components — no hardcoded color values outside `style.css`
