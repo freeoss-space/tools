@@ -480,24 +480,75 @@ body {
   font-size: 12px;
 }
 
+/* ── Mobile panel toggle (desktop: hidden) ─────────────── */
+
+.mobile-panel-toggle { display: none; }
+
 /* ── Responsive ────────────────────────────────────────── */
 
 @media (max-width: 680px) {
   body { overflow: auto; height: auto; }
   .app { height: auto; min-height: 100vh; overflow: auto; }
   .layout { flex-direction: column; overflow: visible; }
+
+  /* Sidebar — scrollable panel, collapsible */
   .sidebar {
     width: 100%;
-    max-height: 45vh;
+    max-height: 55vh;
     border-right: none;
     border-bottom: 1px solid var(--border);
+    transition: max-height 0.28s ease, border-color 0.28s;
   }
+
+  .sidebar.is-collapsed {
+    max-height: 0;
+    border-bottom-color: transparent;
+  }
+
+  /* Canvas area */
   .main {
     overflow: visible;
-    min-height: 50vh;
-    padding: 16px;
+    min-height: 56vw;
+    padding: 12px;
   }
+
+  /* Header */
+  .app-header { padding: 8px 12px; gap: 10px; }
   .header-center h1 { font-size: 15px; }
   .header-center p { display: none; }
+
+  /* Show toggle, hide button labels */
+  .mobile-panel-toggle { display: inline-flex; }
   .header-actions .btn span { display: none; }
+  .header-actions .btn { padding: 6px 9px; }
+
+  /* Touch-friendly tabs */
+  .tab { padding: 7px 12px; }
+  .tab-group-xs .tab { padding: 6px 10px; }
+
+  /* Larger range slider thumb for touch */
+  .range-group input[type="range"] {
+    height: 20px;
+    cursor: pointer;
+  }
+  .range-group input[type="range"]::-webkit-slider-thumb {
+    width: 22px;
+    height: 22px;
+  }
+  .range-group input[type="range"]::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* Prevent iOS auto-zoom on text inputs (requires font-size ≥ 16px) */
+  .hex-input { font-size: 16px; }
+
+  /* Drop zones — bigger tap area on touch */
+  .drop-zone { min-height: 96px; }
+
+  /* Sidebar scroll area padding */
+  .sidebar-scroll { padding: 12px 12px 20px; }
+
+  /* Remove-button larger tap target */
+  .file-chip-remove { padding: 2px 6px; font-size: 18px; }
 }
