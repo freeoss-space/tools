@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Image Editor — Add outlines &amp; backgrounds</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
+  <link rel="stylesheet" href="../aquadrive/assets/tokens.css">
+  <link rel="stylesheet" href="../aquadrive/assets/theme-dark.css">
+  <link rel="stylesheet" href="../aquadrive/assets/typography.css">
+  <link rel="stylesheet" href="../aquadrive/assets/components.css">
+  <link rel="stylesheet" href="assets/style.css"/>
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="app-header">
+      <a class="header-back" href="../index.html">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 12L6 8l4-4"/>
+        </svg>
+        All tools
+      </a>
+      <div class="header-center">
+        <h1>Image Editor</h1>
+        <p>Add outlines and backgrounds to images</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary" id="btn-copy" disabled>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="5" width="9" height="9" rx="2"/>
+            <path d="M5 11H3.5A1.5 1.5 0 012 9.5v-7A1.5 1.5 0 013.5 1h7A1.5 1.5 0 0112 2.5V5"/>
+          </svg>
+          Copy
+        </button>
+        <button class="btn btn-primary" id="btn-download" disabled>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 2v9M4 7l4 4 4-4M2 13h12"/>
+          </svg>
+          Download PNG
+        </button>
+      </div>
+    </header>
+
+    <!-- Layout -->
+    <div class="layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-scroll">
+
+          <!-- Foreground section -->
+          <div class="section">
+            <div class="section-label text-section-label">Foreground</div>
+            <div class="drop-zone" id="fg-drop" tabindex="0">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+              </svg>
+              <span>Drop image here<br>or click to upload</span>
+            </div>
+            <input type="file" id="fg-input" accept="image/*" hidden>
+            <div class="file-chip" id="fg-chip" hidden>
+              <span class="file-chip-name" id="fg-chip-name"></span>
+              <button class="file-chip-remove" id="fg-remove" title="Remove">&times;</button>
+            </div>
+          </div>
+
+          <hr class="divider">
+
+          <!-- Background section -->
+          <div class="section">
+            <div class="section-label text-section-label">Background</div>
+            <div class="tab-group tab-group-sm" id="bg-mode-tabs">
+              <button class="tab active" data-tab="upload">Upload</button>
+              <button class="tab" data-tab="generate">Generate</button>
+            </div>
+
+            <!-- Background Upload mode -->
+            <div class="bg-panel" id="bg-upload-panel">
+              <div class="drop-zone" id="bg-drop" tabindex="0">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                </svg>
+                <span>Drop background image<br>or click to upload</span>
+              </div>
+              <input type="file" id="bg-input" accept="image/*" hidden>
+              <div class="file-chip-row" id="bg-chip-row" hidden>
+                <div class="file-chip">
+                  <span class="file-chip-name" id="bg-chip-name"></span>
+                  <button class="file-chip-remove" id="bg-remove" title="Remove">&times;</button>
+                </div>
+                <button class="btn btn-ghost btn-sm btn-danger-text" id="bg-clear">Clear</button>
+              </div>
+            </div>
+
+            <!-- Background Generate mode -->
+            <div class="bg-panel" id="bg-generate-panel" hidden>
+              <div class="tab-group tab-group-sm" id="gen-type-tabs">
+                <button class="tab" data-tab="solid">Solid</button>
+                <button class="tab active" data-tab="gradient">Gradient</button>
+                <button class="tab" data-tab="pattern">Pattern</button>
+              </div>
+
+              <!-- Solid -->
+              <div class="gen-panel" id="gen-solid" hidden>
+                <div class="control-row">
+                  <label class="control-label">Color</label>
+                  <div class="color-input-group">
+                    <input type="color" id="solid-color" value="#1c1828">
+                    <input type="text" class="hex-input" id="solid-color-hex" value="#1c1828" maxlength="7">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Gradient -->
+              <div class="gen-panel" id="gen-gradient">
+                <div class="control-row">
+                  <label class="control-label">Style</label>
+                  <div class="tab-group tab-group-xs" id="grad-style-tabs">
+                    <button class="tab active" data-tab="linear">Linear</button>
+                    <button class="tab" data-tab="radial">Radial</button>
+                  </div>
+                </div>
+                <div class="control-row">
+                  <label class="control-label">Color A</label>
+                  <div class="color-input-group">
+                    <input type="color" id="grad-colorA" value="#1c1828">
+                    <input type="text" class="hex-input" id="grad-colorA-hex" value="#1c1828" maxlength="7">
+                  </div>
+                </div>
+                <div class="control-row">
+                  <label class="control-label">Color B</label>
+                  <div class="color-input-group">
+                    <input type="color" id="grad-colorB" value="#656ea4">
+                    <input type="text" class="hex-input" id="grad-colorB-hex" value="#656ea4" maxlength="7">
+                  </div>
+                </div>
+                <div class="control-row" id="grad-angle-row">
+                  <label class="control-label">Angle</label>
+                  <div class="range-group">
+                    <input type="range" id="grad-angle" min="0" max="360" value="135">
+                    <span class="range-value" id="grad-angle-val">135&deg;</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pattern -->
+              <div class="gen-panel" id="gen-pattern" hidden>
+                <div class="control-row">
+                  <label class="control-label">Shape</label>
+                  <div class="tab-group tab-group-xs tab-group-wrap" id="pattern-shape-tabs">
+                    <button class="tab active" data-tab="dots">Dots</button>
+                    <button class="tab" data-tab="lines">Lines</button>
+                    <button class="tab" data-tab="checks">Checks</button>
+                    <button class="tab" data-tab="hex">Hex</button>
+                    <button class="tab" data-tab="triangles">Tri</button>
+                  </div>
+                </div>
+                <div class="control-row">
+                  <label class="control-label">Color</label>
+                  <div class="color-input-group">
+                    <input type="color" id="pat-color" value="#656ea4">
+                    <input type="text" class="hex-input" id="pat-color-hex" value="#656ea4" maxlength="7">
+                  </div>
+                </div>
+                <div class="control-row">
+                  <label class="control-label">BG</label>
+                  <div class="color-input-group">
+                    <input type="color" id="pat-bg" value="#1c1828">
+                    <input type="text" class="hex-input" id="pat-bg-hex" value="#1c1828" maxlength="7">
+                  </div>
+                </div>
+                <div class="control-row">
+                  <label class="control-label">Size</label>
+                  <div class="range-group">
+                    <input type="range" id="pat-size" min="4" max="80" value="20">
+                    <span class="range-value" id="pat-size-val">20 px</span>
+                  </div>
+                </div>
+                <div class="control-row">
+                  <label class="control-label">Gap</label>
+                  <div class="range-group">
+                    <input type="range" id="pat-gap" min="0" max="60" value="10">
+                    <span class="range-value" id="pat-gap-val">10 px</span>
+                  </div>
+                </div>
+                <div class="control-row" id="pat-angle-row">
+                  <label class="control-label">Angle</label>
+                  <div class="range-group">
+                    <input type="range" id="pat-angle" min="0" max="360" value="0">
+                    <span class="range-value" id="pat-angle-val">0&deg;</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <hr class="divider">
+
+          <!-- Outline section -->
+          <div class="section">
+            <div class="section-label text-section-label">Outline</div>
+            <div class="control-row">
+              <label class="control-label">Color</label>
+              <div class="color-input-group">
+                <input type="color" id="outline-color" value="#ffffff">
+                <input type="text" class="hex-input" id="outline-color-hex" value="#ffffff" maxlength="7">
+              </div>
+            </div>
+            <div class="control-row">
+              <label class="control-label">Thickness</label>
+              <div class="range-group">
+                <input type="range" id="outline-thickness" min="1" max="60" value="8">
+                <span class="range-value" id="outline-thickness-val">8 px</span>
+              </div>
+            </div>
+            <div class="control-row">
+              <label class="control-label">Opacity</label>
+              <div class="range-group">
+                <input type="range" id="outline-opacity" min="0" max="100" value="100">
+                <span class="range-value" id="outline-opacity-val">100%</span>
+              </div>
+            </div>
+          </div>
+
+          <hr class="divider">
+
+          <!-- Output section -->
+          <div class="section">
+            <div class="section-label text-section-label">Output</div>
+            <div class="output-info text-caption text-muted" id="canvas-info">No image loaded</div>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- Main canvas area -->
+      <main class="main">
+        <div class="canvas-wrap" id="canvas-wrap">
+          <!-- Empty state -->
+          <div class="empty-state" id="empty-state">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.5">
+              <rect x="6" y="6" width="36" height="36" rx="6"/>
+              <path d="M6 34l10-10 8 8 6-6 12 12"/>
+              <circle cx="18" cy="18" r="4"/>
+            </svg>
+            <p>Upload a foreground image<br>to get started</p>
+          </div>
+          <!-- Canvas (hidden until fg loaded) -->
+          <canvas id="canvas" hidden></canvas>
+        </div>
+      </main>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>
