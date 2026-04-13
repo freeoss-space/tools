@@ -97,6 +97,18 @@ function freeImage(img) {
   if (img && typeof img.close === 'function') img.close();
 }
 
+// Compute output canvas dimensions: max of foreground and background.
+function computeCanvasSize() {
+  if (!state.fgImage) return null;
+  let w = imgW(state.fgImage);
+  let h = imgH(state.fgImage);
+  if (state.bgMode === 'upload' && state.bgImage) {
+    w = Math.max(w, imgW(state.bgImage));
+    h = Math.max(h, imgH(state.bgImage));
+  }
+  return { w, h };
+}
+
 function setupDropZone(dropEl, inputEl, onFile) {
   dropEl.addEventListener('click', () => inputEl.click());
   dropEl.addEventListener('keydown', (e) => {
@@ -135,16 +147,15 @@ async function handleForeground(file) {
     fgChip.removeAttribute('hidden');
     fgDrop.setAttribute('hidden', '');
 
-    const w = imgW(img);
-    const h = imgH(img);
-    canvas.width  = w;
-    canvas.height = h;
+    const size = computeCanvasSize();
+    canvas.width  = size.w;
+    canvas.height = size.h;
     canvas.removeAttribute('hidden');
     emptyState.setAttribute('hidden', '');
 
     btnDownload.disabled = false;
     btnCopy.disabled = false;
-    canvasInfo.textContent = `Size: ${w} \u00d7 ${h} px`;
+    canvasInfo.textContent = `Size: ${size.w} \u00d7 ${size.h} px`;
 
     render();
   } catch {
@@ -481,7 +492,7 @@ function drawProceduralBg(ctx, gen) {
 
 // ── Outline algorithm ────────────────────────────────────
 
-function drawOutline(ctx, img, color, thickness, opacity) {
+function drawOutline(ctx, img, color, thickness, opacity, fx, fy) {
   const w = ctx.canvas.width;
   const h = ctx.canvas.height;
   const offscreen = document.createElement('canvas');
@@ -499,7 +510,7 @@ function drawOutline(ctx, img, color, thickness, opacity) {
     const angle = (i / steps) * Math.PI * 2;
     const dx = Math.cos(angle) * thickness;
     const dy = Math.sin(angle) * thickness;
-    oc.drawImage(img, dx, dy);
+    oc.drawImage(img, fx + dx, fy + dy);
   }
 
   // Tint to outline color
@@ -510,7 +521,7 @@ function drawOutline(ctx, img, color, thickness, opacity) {
 
   // Erase overlap with original to get ring only
   oc.globalCompositeOperation = 'destination-out';
-  oc.drawImage(img, 0, 0);
+  oc.drawImage(img, fx, fy);
 
   ctx.drawImage(offscreen, 0, 0);
 }
@@ -528,6 +539,14 @@ function _render() {
   renderRAF = null;
   if (!state.fgImage) return;
 
+  // Recompute canvas size (max of fg and bg)
+  const size = computeCanvasSize();
+  if (canvas.width !== size.w || canvas.height !== size.h) {
+    canvas.width = size.w;
+    canvas.height = size.h;
+  }
+  canvasInfo.textContent = `Size: ${size.w} \u00d7 ${size.h} px`;
+
   const w = canvas.width;
   const h = canvas.height;
 
@@ -535,18 +554,29 @@ function _render() {
 
   // 1. Background
   if (state.bgMode === 'upload' && state.bgImage) {
-    ctx.drawImage(state.bgImage, 0, 0, w, h);
+    // Draw bg at natural size, centered
+    const bw = imgW(state.bgImage);
+    const bh = imgH(state.bgImage);
+    const bx = (w - bw) / 2;
+    const by = (h - bh) / 2;
+    ctx.drawImage(state.bgImage, bx, by, bw, bh);
   } else if (state.bgMode === 'generate') {
     drawProceduralBg(ctx, state.bgGen);
   }
 
+  // Foreground position: centered on canvas
+  const fw = imgW(state.fgImage);
+  const fh = imgH(state.fgImage);
+  const fx = (w - fw) / 2;
+  const fy = (h - fh) / 2;
+
   // 2. Outline
   if (state.outlineThickness > 0 && state.outlineOpacity > 0) {
-    drawOutline(ctx, state.fgImage, state.outlineColor, state.outlineThickness, state.outlineOpacity);
+    drawOutline(ctx, state.fgImage, state.outlineColor, state.outlineThickness, state.outlineOpacity, fx, fy);
   }
 
   // 3. Foreground
-  ctx.drawImage(state.fgImage, 0, 0);
+  ctx.drawImage(state.fgImage, fx, fy);
 }
 
 // ── Export: Download ──────────────────────────────────────
