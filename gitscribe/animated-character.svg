@@ -1,0 +1,60 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="GitScribe animated mascot face">
+  <defs>
+    <linearGradient id="bgGradient" x1="96" y1="96" x2="416" y2="416" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ddd6fe">
+        <animate attributeName="offset" values="0;0.15;0" dur="5s" repeatCount="indefinite" />
+      </stop>
+      <stop offset="50%" stop-color="#a855f7">
+        <animate attributeName="offset" values="0.45;0.65;0.45" dur="5s" repeatCount="indefinite" />
+      </stop>
+      <stop offset="100%" stop-color="#6b21a8">
+        <animate attributeName="offset" values="0.85;1;0.85" dur="5s" repeatCount="indefinite" />
+      </stop>
+    </linearGradient>
+    <radialGradient id="shine" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(190 170) rotate(25) scale(200)">
+      <stop stop-color="#f5f3ff" stop-opacity="0.62"/>
+      <stop offset="1" stop-color="#f5f3ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <g>
+    <circle cx="256" cy="256" r="188" fill="url(#bgGradient)" />
+    <circle cx="256" cy="256" r="188" fill="url(#shine)" />
+    <circle cx="256" cy="256" r="188" stroke="#581c87" stroke-width="12" />
+  </g>
+
+  <g opacity="0.7">
+    <circle cx="198" cy="352" r="9" fill="#c084fc">
+      <animate attributeName="cy" values="352;334;352" dur="3.2s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="322" cy="356" r="7" fill="#d8b4fe">
+      <animate attributeName="cy" values="356;338;356" dur="2.8s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="256" cy="372" r="6" fill="#e9d5ff">
+      <animate attributeName="cy" values="372;350;372" dur="3.6s" repeatCount="indefinite" />
+    </circle>
+  </g>
+
+  <g transform="translate(256 170)">
+    <animateTransform attributeName="transform" type="rotate" values="0 0 0;8 0 0;0 0 0;-8 0 0;0 0 0" dur="6s" repeatCount="indefinite" additive="sum" />
+    <path d="M-72 0L0 -42L72 0L40 26L0 8L-40 26Z" fill="#7e22ce" stroke="#f3e8ff" stroke-width="5" stroke-linejoin="round" />
+    <circle cx="-52" cy="0" r="12" fill="#f3e8ff"/>
+    <circle cx="0" cy="-28" r="12" fill="#f3e8ff"/>
+    <circle cx="52" cy="0" r="12" fill="#f3e8ff"/>
+  </g>
+
+  <g>
+    <ellipse cx="194" cy="250" rx="48" ry="56" fill="#faf5ff" />
+    <ellipse cx="318" cy="250" rx="48" ry="56" fill="#faf5ff" />
+
+    <circle cx="194" cy="258" r="20" fill="#4c1d95">
+      <animate attributeName="cy" values="258;254;258" dur="4s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="318" cy="258" r="20" fill="#4c1d95">
+      <animate attributeName="cy" values="258;254;258" dur="4s" repeatCount="indefinite" />
+    </circle>
+
+    <circle cx="202" cy="248" r="6" fill="#f5f3ff" />
+    <circle cx="326" cy="248" r="6" fill="#f5f3ff" />
+  </g>
+</svg>
