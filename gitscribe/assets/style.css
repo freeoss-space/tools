@@ -1,0 +1,30 @@
+:root {
+  --purple-300: #d8b4fe;
+  --purple-400: #c084fc;
+  --purple-500: #a855f7;
+  --purple-600: #9333ea;
+  --purple-700: #7e22ce;
+  --purple-800: #6b21a8;
+  --purple-900: #581c87;
+  --bg: #0f172a;
+}
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; display:grid; place-items:center; background: radial-gradient(circle at top, var(--purple-900), var(--bg)); }
+.face {
+  width: 260px; height: 260px; border-radius: 50%; position: relative;
+  background: linear-gradient(135deg, var(--purple-400), var(--purple-700));
+  border: 3px solid var(--purple-300); box-shadow: 0 0 40px var(--purple-700);
+  overflow: hidden;
+}
+.git-ring {
+  position:absolute; inset:26px; border-radius:50%; border:2px dashed var(--purple-300); opacity:.75;
+  animation: spin 8s linear infinite;
+}
+.eyes { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; gap:46px; }
+.eye { width:42px; height:42px; border-radius:50%; background:#faf5ff; position:relative; border:2px solid var(--purple-800); }
+.spark { position:absolute; width:11px; height:11px; border-radius:50%; background:var(--purple-700); top:13px; left:16px; animation: blink 3s infinite; }
+.bubble { position:absolute; width:16px; height:16px; border-radius:50%; background:var(--purple-300); opacity:.6; }
+.bubble-left { left:36px; bottom:62px; }
+.bubble-right { right:34px; bottom:66px; }
+@keyframes spin { to { transform: rotate(360deg);} }
+@keyframes blink { 0%,45%,100%{ transform:scaleY(1);} 50%{ transform:scaleY(.2);} }
