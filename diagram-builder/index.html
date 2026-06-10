@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagram Builder</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../aquadrive/assets/tokens.css">
+  <link rel="stylesheet" href="../aquadrive/assets/theme-light.css">
+  <link rel="stylesheet" href="../aquadrive/assets/theme-dark.css">
+  <link rel="stylesheet" href="../aquadrive/assets/typography.css">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar__title">
+      <a class="topbar__back" href="../index.html" title="All tools">&larr;</a>
+      <h1>Diagram Builder</h1>
+    </div>
+    <div class="topbar__actions">
+      <div class="seg" role="group" aria-label="Layout direction">
+        <button id="dir-td" class="seg__btn" title="Top to bottom layout">Vertical</button>
+        <button id="dir-lr" class="seg__btn" title="Left to right layout">Horizontal</button>
+      </div>
+      <button id="btn-png" class="btn btn--ghost" title="Download diagram as PNG">PNG</button>
+      <button id="btn-svg" class="btn btn--ghost" title="Download diagram as SVG">SVG</button>
+      <button id="btn-mermaid" class="btn btn--ghost" title="Copy Mermaid source to clipboard">Copy Mermaid</button>
+      <button id="btn-export" class="btn btn--ghost" title="Export project as JSON">Export</button>
+      <button id="btn-import" class="btn btn--ghost" title="Import project from JSON">Import</button>
+      <button id="btn-clear" class="btn btn--ghost btn--danger" title="Clear the whole diagram">Clear</button>
+    </div>
+  </header>
+
+  <div class="view-toggle" role="tablist" aria-label="Mobile view">
+    <button id="tab-edit" class="view-toggle__btn is-active" role="tab">Edit</button>
+    <button id="tab-diagram" class="view-toggle__btn" role="tab">Diagram</button>
+  </div>
+
+  <main class="app">
+    <aside class="panel" id="edit-panel">
+      <section class="panel__section">
+        <div class="panel__head">
+          <h2>Nodes</h2>
+          <button id="btn-add-node" class="btn btn--primary">+ Add node</button>
+        </div>
+        <p class="panel__hint">Tap a thumbnail to upload your own image, or pick a built-in icon.</p>
+        <div id="node-list" class="node-list"></div>
+      </section>
+
+      <section class="panel__section">
+        <div class="panel__head">
+          <h2>Connections</h2>
+          <button id="btn-add-edge" class="btn btn--primary">+ Connect</button>
+        </div>
+        <p class="panel__hint">Connections can be named (e.g. "ethernet", "wifi", "fiber").</p>
+        <div id="edge-list" class="edge-list"></div>
+      </section>
+    </aside>
+
+    <section class="canvas" id="diagram-panel">
+      <div class="canvas__toolbar">
+        <span id="diagram-status" class="canvas__status"></span>
+        <div class="canvas__zoom">
+          <button id="zoom-out" class="btn btn--ghost" title="Zoom out">&minus;</button>
+          <button id="zoom-reset" class="btn btn--ghost" title="Reset zoom">100%</button>
+          <button id="zoom-in" class="btn btn--ghost" title="Zoom in">+</button>
+        </div>
+      </div>
+      <div class="canvas__scroll" id="diagram-scroll">
+        <div class="canvas__inner" id="diagram"></div>
+      </div>
+      <div id="diagram-error" class="canvas__error" hidden></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    Diagrams rendered with <a href="https://mermaid.js.org" target="_blank" rel="noopener">Mermaid</a>
+    using its flowchart <a href="https://mermaid.js.org/syntax/flowchart.html#image-shape" target="_blank" rel="noopener">image shape</a>.
+    Everything stays in your browser.
+  </footer>
+
+  <input type="file" id="file-image" accept="image/*" hidden>
+  <input type="file" id="file-json" accept="application/json,.json" hidden>
+
+  <script type="module" src="assets/app.js"></script>
+</body>
+</html>
