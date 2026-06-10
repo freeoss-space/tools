@@ -6,7 +6,7 @@ A collection of handy browser-based utilities, deployed via GitHub Pages.
 
 - **Static site**: Each tool lives in its own folder with `index.html`, `favicon.svg`, and an `assets/` directory (CSS, JS)
 - **No build step**: Plain HTML, CSS, and vanilla JavaScript — no frameworks or bundlers
-- **Deployment**: GitHub Pages serves the repo root directly
+- **Deployment**: GitHub Pages serves the repo root directly. CI deploys on push to `main` via `.github/workflows/deploy-pages.yml` (Pages source must be set to "GitHub Actions" in repo settings)
 
 ## Structure
 
@@ -25,7 +25,11 @@ tools/
 ├── which-scheme/       # Theme comparison browser
 ├── spec-helper/        # Spec-driven dev helper
 ├── rss-reader/         # RSS feed reader (PWA)
-└── tax-helper/         # Tax tracking tool
+├── tax-helper/         # Tax tracking tool
+├── pdf-annotator/      # PDF viewer/annotator (MuPDF via CDN)
+├── prompt-tool/        # Prompt Foundry — AI prompt templates
+├── image-editor/       # Image outline/background editor
+└── diagram-builder/    # Visual diagram builder with image nodes (Mermaid via CDN)
 ```
 
 ## Adding a New Tool
