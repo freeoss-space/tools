@@ -29,7 +29,8 @@ tools/
 ├── pdf-annotator/      # PDF viewer/annotator (MuPDF via CDN)
 ├── prompt-tool/        # Prompt Foundry — AI prompt templates
 ├── image-editor/       # Image outline/background editor
-└── diagram-builder/    # Visual diagram builder with image nodes (Mermaid via CDN)
+├── diagram-builder/    # Visual diagram builder with image nodes (Mermaid via CDN)
+└── uber-driver-helper/ # Shift trip cards (km, expenses, gains) + reusable checklists
 ```
 
 ## Adding a New Tool
@@ -57,6 +58,7 @@ tools/
 - BEM-like CSS class naming
 - Inline SVGs for icons (stroke-based, 16–18px)
 - Single-file tools are acceptable for small utilities (see `tax-helper`)
+- Pure domain logic belongs in its own UMD-style module under `assets/` so it can be unit tested with `node --test tool-name/tests/*.test.js` (see `prompt-tool`, `uber-driver-helper`)
 
 ## AquaDrive Design System
 

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Uber Driver Helper</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../aquadrive/assets/tokens.css">
+  <link rel="stylesheet" href="../aquadrive/assets/theme-light.css">
+  <link rel="stylesheet" href="../aquadrive/assets/theme-dark.css">
+  <link rel="stylesheet" href="../aquadrive/assets/typography.css">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <div class="app-header-left">
+        <a class="back-link" href="../index.html">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Tools
+        </a>
+        <h1>Uber Driver Helper</h1>
+        <p>Trip cards with km, expenses and gains — plus pre-flight style checklists.</p>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Sections">
+        <button class="tab active" type="button" role="tab" data-tab="trip" aria-selected="true">Trip</button>
+        <button class="tab" type="button" role="tab" data-tab="checklists" aria-selected="false">Checklists</button>
+      </div>
+    </header>
+
+    <!-- Trip panel -->
+    <main class="panel" id="panel-trip" role="tabpanel" aria-label="Trip">
+      <aside class="sidebar">
+        <div class="sidebar-head">
+          <h2 class="card-title">Cards</h2>
+          <button class="btn btn-primary btn-sm" type="button" id="btn-new-trip">+ New</button>
+        </div>
+        <div class="trip-list" id="trip-list"></div>
+        <div class="trip-list-total" id="trip-list-total"></div>
+      </aside>
+      <div class="trip-main" id="trip-main"></div>
+    </main>
+
+    <!-- Checklists panel -->
+    <main class="panel hidden" id="panel-checklists" role="tabpanel" aria-label="Checklists">
+      <div class="checklist-toolbar">
+        <div>
+          <h2 class="card-title">Checklists</h2>
+          <p class="card-hint">Run them before and after every shift, then reset — the steps stay.</p>
+        </div>
+        <div class="checklist-toolbar-actions">
+          <button class="btn btn-primary btn-sm" type="button" id="btn-new-checklist">+ New checklist</button>
+          <button class="btn btn-ghost btn-sm" type="button" id="btn-reset-all">Reset all</button>
+        </div>
+      </div>
+      <div class="checklist-grid" id="checklist-grid"></div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="assets/store.js"></script>
+  <script src="assets/trip-utils.js"></script>
+  <script src="assets/checklist-utils.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
